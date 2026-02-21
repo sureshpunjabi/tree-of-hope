@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #FFFAF5;
-  --color-foreground: #3E2723;
-  --font-sans: 'Inter', sans-serif;
-  --font-serif: 'Playfair Display', serif;
+  --color-background: #FBFAF8;
+  --color-foreground: #1d1d1f;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
 
-  /* Tree of Hope design tokens */
+  /* Tree of Hope design tokens — refined */
   --color-trunk: #5D4037;
   --color-leaf-1: #66BB6A;
   --color-leaf-2: #81C784;
@@ -15,12 +15,12 @@
   --color-leaf-5: #FFD54F;
   --color-sanctuary: #F5F5DC;
   --color-hope: #4A6741;
-  --color-hope-hover: #3E5537;
-  --color-text: #3E2723;
-  --color-text-muted: #795548;
-  --color-bg: #FFFAF5;
+  --color-hope-hover: #3d5636;
+  --color-text: #1d1d1f;
+  --color-text-muted: #6e6e73;
+  --color-bg: #FBFAF8;
   --color-card: #FFFFFF;
-  --color-border: #D7CCC8;
+  --color-border: #d2d2d7;
 }
 
 * {
@@ -28,7 +28,7 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto !important;
 }
 
 body {
@@ -37,77 +37,101 @@ body {
   background-color: var(--color-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-serif);
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
 }
+
+/* ===== Apple-tier Section Styles ===== */
+
+.section-dark {
+  background-color: #1d1d1f;
+  color: #f5f5f7;
+}
+
+.section-dark .text-muted {
+  color: #a1a1a6;
+}
+
+.section-dark .text-hope {
+  color: #7fb069;
+}
+
+/* ===== Buttons ===== */
 
 .btn-primary {
   background-color: var(--color-hope);
   color: white;
-  padding: 12px 32px;
-  border-radius: 24px;
-  font-weight: 600;
-  font-size: 16px;
+  padding: 14px 36px;
+  border-radius: 980px;
+  font-weight: 500;
+  font-size: 17px;
   border: none;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   text-decoration: none;
+  letter-spacing: -0.01em;
 }
 
 .btn-primary:hover {
   background-color: var(--color-hope-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(74, 103, 65, 0.3);
+  transform: scale(1.02);
 }
 
 .btn-secondary {
   background-color: transparent;
-  color: var(--color-trunk);
-  padding: 12px 32px;
-  border-radius: 24px;
-  font-weight: 600;
-  font-size: 16px;
-  border: 2px solid var(--color-border);
+  color: var(--color-text);
+  padding: 14px 36px;
+  border-radius: 980px;
+  font-weight: 500;
+  font-size: 17px;
+  border: 1.5px solid var(--color-border);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   text-decoration: none;
+  letter-spacing: -0.01em;
 }
 
 .btn-secondary:hover {
-  border-color: var(--color-trunk);
-  background-color: rgba(93, 64, 55, 0.05);
+  border-color: var(--color-text);
+  background-color: rgba(29, 29, 31, 0.04);
 }
+
+/* ===== Cards ===== */
 
 .card {
   background: var(--color-card);
   border: 1px solid var(--color-border);
-  border-radius: 12px;
+  border-radius: 18px;
   padding: 24px;
-  transition: box-shadow 0.2s ease;
+  transition: box-shadow 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 .card:hover {
-  box-shadow: 0 4px 20px rgba(93, 64, 55, 0.08);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.06);
 }
+
+/* ===== Utility ===== */
 
 .trust-language {
   font-size: 12px;
   color: var(--color-text-muted);
   text-align: center;
   padding: 16px;
-  line-height: 1.5;
+  line-height: 1.6;
   max-width: 480px;
   margin: 0 auto;
 }
@@ -119,7 +143,7 @@ h1, h2, h3, h4, h5, h6 {
 .evolving-state {
   background: linear-gradient(135deg, var(--color-leaf-4) 0%, var(--color-sanctuary) 100%);
   border: 1px dashed var(--color-leaf-2);
-  border-radius: 12px;
+  border-radius: 18px;
   padding: 24px;
   text-align: center;
 }
@@ -129,6 +153,8 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0 auto;
   padding: 24px 16px;
 }
+
+/* ===== Animations ===== */
 
 .leaf-fade-in {
   animation: leafFadeIn 0.6s ease-out;
@@ -150,34 +176,35 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .tier-card {
-  border: 2px solid var(--color-border);
-  border-radius: 12px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 18px;
   padding: 24px;
   text-align: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 .tier-card:hover {
-  border-color: var(--color-leaf-1);
-  box-shadow: 0 4px 16px rgba(102, 187, 106, 0.15);
+  border-color: var(--color-hope);
+  box-shadow: 0 4px 20px rgba(74, 103, 65, 0.1);
 }
 
 .tier-card.selected {
-  border-color: var(--color-leaf-1);
-  background: linear-gradient(135deg, rgba(102, 187, 106, 0.05) 0%, rgba(200, 230, 201, 0.1) 100%);
-  box-shadow: 0 4px 16px rgba(102, 187, 106, 0.2);
+  border-color: var(--color-hope);
+  background: linear-gradient(135deg, rgba(74, 103, 65, 0.04) 0%, rgba(200, 230, 201, 0.06) 100%);
+  box-shadow: 0 4px 20px rgba(74, 103, 65, 0.12);
 }
+
+/* ===== Responsive ===== */
 
 @media (max-width: 768px) {
   .page-container { padding: 16px 12px; }
   h1 { font-size: 28px; }
   h2 { font-size: 22px; }
 
-  /* Mobile-specific improvements */
   .btn-primary, .btn-secondary {
-    padding: 10px 24px;
-    font-size: 14px;
+    padding: 12px 28px;
+    font-size: 15px;
     width: 100%;
     text-align: center;
   }
@@ -188,20 +215,18 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Small mobile */
 @media (max-width: 480px) {
   h1 { font-size: 24px; }
   h2 { font-size: 20px; }
 
   .btn-primary, .btn-secondary {
     padding: 10px 20px;
-    font-size: 13px;
+    font-size: 14px;
   }
 }
 
-/* ===== Enhanced Animations and Polish ===== */
+/* ===== Refined Animations ===== */
 
-/* 1. Smooth page transition animation */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
@@ -211,34 +236,22 @@ h1, h2, h3, h4, h5, h6 {
   animation: fadeInUp 0.6s ease-out;
 }
 
-/* 2. Staggered animation delays */
 .stagger-1 { animation-delay: 0.1s; animation-fill-mode: both; }
 .stagger-2 { animation-delay: 0.2s; animation-fill-mode: both; }
 .stagger-3 { animation-delay: 0.3s; animation-fill-mode: both; }
 .stagger-4 { animation-delay: 0.4s; animation-fill-mode: both; }
 .stagger-5 { animation-delay: 0.5s; animation-fill-mode: both; }
 
-/* 3. Subtle pulse for CTA buttons */
-@keyframes gentlePulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(74, 103, 65, 0.4); }
-  50% { box-shadow: 0 0 0 8px rgba(74, 103, 65, 0); }
-}
-
-.pulse-cta {
-  animation: gentlePulse 2.5s ease-in-out infinite;
-}
-
-/* 4. Floating animation for tree images */
 @keyframes gentleFloat {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+  50% { transform: translateY(-6px); }
 }
 
 .animate-float {
-  animation: gentleFloat 4s ease-in-out infinite;
+  animation: gentleFloat 5s ease-in-out infinite;
 }
 
-/* 5. Nav link underline animation */
+/* Nav link underline */
 .nav-link {
   position: relative;
 }
@@ -246,19 +259,19 @@ h1, h2, h3, h4, h5, h6 {
 .nav-link::after {
   content: '';
   position: absolute;
-  bottom: -4px;
+  bottom: -2px;
   left: 0;
   width: 0;
-  height: 2px;
-  background-color: var(--color-hope);
-  transition: width 0.3s ease;
+  height: 1.5px;
+  background-color: var(--color-text);
+  transition: width 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 .nav-link:hover::after {
   width: 100%;
 }
 
-/* 6. Gradient text utility */
+/* Gradient text */
 .gradient-text {
   background: linear-gradient(135deg, var(--color-hope) 0%, var(--color-leaf-1) 100%);
   -webkit-background-clip: text;
@@ -266,93 +279,22 @@ h1, h2, h3, h4, h5, h6 {
   background-clip: text;
 }
 
-/* 7. Card shine effect on hover */
-.card-shine {
-  position: relative;
-  overflow: hidden;
+/* ===== Lenis ===== */
+
+html.lenis, html.lenis body {
+  height: auto;
 }
 
-.card-shine::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    to bottom right,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  transform: rotate(45deg) translateX(-100%);
-  transition: transform 0.6s ease;
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
 }
 
-.card-shine:hover::before {
-  transform: rotate(45deg) translateX(100%);
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
 }
 
-/* 8. Scroll reveal animation */
-@keyframes slideInFromLeft {
-  from { opacity: 0; transform: translateX(-30px); }
-  to { opacity: 1; transform: translateX(0); }
-}
+/* ===== Polish ===== */
 
-@keyframes slideInFromRight {
-  from { opacity: 0; transform: translateX(30px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-.animate-slide-left {
-  animation: slideInFromLeft 0.6s ease-out;
-}
-
-.animate-slide-right {
-  animation: slideInFromRight 0.6s ease-out;
-}
-
-/* 9. Mobile menu slide-down */
-@keyframes slideDown {
-  from { opacity: 0; max-height: 0; }
-  to { opacity: 1; max-height: 500px; }
-}
-
-.animate-slide-down {
-  animation: slideDown 0.3s ease-out;
-}
-
-/* 10. Progress bar shimmer */
-@keyframes shimmer {
-  0% { background-position: -200px 0; }
-  100% { background-position: 200px 0; }
-}
-
-.shimmer {
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  background-size: 200px 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-/* Accessibility: Focus visible */
-*:focus-visible {
-  outline: 2px solid var(--color-hope);
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-
-/* Reduced motion preference */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* ===== 20x Experience Layer ===== */
-
-/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -367,48 +309,25 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--color-text-muted);
 }
 
-/* Text selection color */
 ::selection {
-  background-color: rgba(74, 103, 65, 0.15);
+  background-color: rgba(74, 103, 65, 0.12);
   color: var(--color-text);
 }
 
-/* Smooth image rendering */
 img {
   image-rendering: auto;
 }
 
-/* Remove scroll-behavior: smooth since Lenis handles it */
-html {
-  scroll-behavior: auto !important;
-}
-
-/* Lenis body style */
-html.lenis, html.lenis body {
-  height: auto;
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
-/* Horizontal rule styling */
 hr {
   border: none;
   border-top: 1px solid var(--color-border);
   margin: 2rem 0;
 }
 
-/* Link transitions */
 a {
-  transition: color 0.2s ease, opacity 0.2s ease;
+  transition: color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
-/* Loading skeleton pulse */
 @keyframes skeletonPulse {
   0%, 100% { opacity: 0.4; }
   50% { opacity: 0.8; }
@@ -419,48 +338,17 @@ a {
   border-radius: 4px;
 }
 
-/* Magnetic button hover area */
-.magnetic-btn {
-  position: relative;
-  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+/* Accessibility */
+*:focus-visible {
+  outline: 2px solid var(--color-hope);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
-/* Image parallax container */
-.parallax-container {
-  overflow: hidden;
-}
-.parallax-image {
-  will-change: transform;
-  transition: transform 0.1s linear;
-}
-
-/* Staggered reveal for grid children */
-.stagger-grid > * {
-  opacity: 0;
-  transform: translateY(20px);
-  animation: staggerFadeIn 0.5s ease forwards;
-}
-.stagger-grid > *:nth-child(1) { animation-delay: 0.1s; }
-.stagger-grid > *:nth-child(2) { animation-delay: 0.2s; }
-.stagger-grid > *:nth-child(3) { animation-delay: 0.3s; }
-.stagger-grid > *:nth-child(4) { animation-delay: 0.4s; }
-.stagger-grid > *:nth-child(5) { animation-delay: 0.5s; }
-.stagger-grid > *:nth-child(6) { animation-delay: 0.6s; }
-
-@keyframes staggerFadeIn {
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Horizontal divider with label */
-.divider-label {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-.divider-label::before,
-.divider-label::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--color-border);
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -7,7 +7,6 @@ import { getDayNumber } from '@/lib/utils'
 import ScrollReveal from '@/components/ui/ScrollReveal'
 import SplitText from '@/components/ui/SplitText'
 import CountUp from '@/components/ui/CountUp'
-import TiltCard from '@/components/ui/TiltCard'
 import MagneticButton from '@/components/ui/MagneticButton'
 
 interface PageProps {
@@ -69,107 +68,103 @@ export default async function CampaignPage({ params }: PageProps) {
   const totalSupporters = campaign.supporter_count || leaves.length || 0
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)]">
-      {/* ─── HERO ─── Cathedral-like, emotionally immersive */}
-        <section className="relative overflow-hidden bg-[var(--color-bg)]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 md:py-48">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 lg:gap-32 items-center">
-              <div className="flex flex-col justify-center">
-                <p className="text-xs md:text-sm font-medium tracking-[0.25em] uppercase text-[var(--color-hope)] mb-8">
-                  {isGathering ? `Day ${dayNumber} of 5 · Gathering` : 'Tree complete'}
-                </p>
-                {isGathering ? (
-                  <SplitText as="h1" className="text-6xl md:text-7xl font-light text-[var(--color-text)] leading-[1.05] mb-8">
-                    {`We are gathering around ${campaign.patient_name}.`}
-                  </SplitText>
-                ) : (
-                  <SplitText as="h1" className="text-6xl md:text-7xl font-light text-[var(--color-text)] leading-[1.05] mb-8">
-                    {`The circle has formed around ${campaign.patient_name}.`}
-                  </SplitText>
-                )}
-                <p className="text-lg md:text-xl text-[var(--color-text-muted)] mb-12 leading-relaxed max-w-2xl">
-                  {isGathering
-                    ? `A quiet circle is forming to sustain ${campaign.patient_name}'s Sanctuary. Add your leaf and join the community.`
-                    : `The Tree is complete. ${totalSupporters} people have come together in support.`}
-                </p>
-                <div className="flex flex-wrap gap-4">
-                  {campaign.status === 'active' && isGathering ? (
-                    <>
-                      <MagneticButton strength={0.12} className="inline-block">
-                        <Link
-                          href={`/c/${campaign.slug}/leaf`}
-                          className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-4 px-10 rounded-full text-base transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
-                        >
-                          Add your leaf
-                        </Link>
-                      </MagneticButton>
-                      <MagneticButton strength={0.12} className="inline-block">
-                        <Link
-                          href="#how-it-works"
-                          className="inline-flex items-center justify-center border-2 border-[var(--color-border)] hover:border-[var(--color-text)] text-[var(--color-text)] font-medium py-4 px-10 rounded-full text-base transition-all duration-200"
-                        >
-                          How it works
-                        </Link>
-                      </MagneticButton>
-                    </>
-                  ) : (
-                    <>
-                      <MagneticButton strength={0.12} className="inline-block">
-                        <Link
-                          href={`/c/${campaign.slug}/commitment`}
-                          className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-4 px-10 rounded-full text-base transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
-                        >
-                          Join sustaining circle
-                        </Link>
-                      </MagneticButton>
-                      <MagneticButton strength={0.12} className="inline-block">
-                        <Link
-                          href="#leaves"
-                          className="inline-flex items-center justify-center border-2 border-[var(--color-border)] hover:border-[var(--color-text)] text-[var(--color-text)] font-medium py-4 px-10 rounded-full text-base transition-all duration-200"
-                        >
-                          View the Tree
-                        </Link>
-                      </MagneticButton>
-                    </>
-                  )}
-                </div>
-              </div>
+    <div className="min-h-screen">
+      {/* ─── HERO ─── Centered, Apple-tier */}
+      <section className="relative min-h-[85svh] flex flex-col items-center justify-center px-5 sm:px-8 text-center">
+        <div className="max-w-[800px] mx-auto">
+          <p className="text-[13px] font-medium tracking-[0.15em] uppercase text-[var(--color-text-muted)] mb-6">
+            {isGathering ? `Day ${dayNumber} of 5` : 'Tree complete'}
+          </p>
 
-              <div className="relative flex justify-center lg:justify-end">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-[var(--color-hope)] opacity-[0.06] rounded-full blur-3xl scale-110" />
-                  <Image
-                    src="/tree-hero.png"
-                    alt={`${campaign.patient_name}'s Tree of Hope`}
-                    width={500}
-                    height={518}
-                    className="relative z-10 drop-shadow-2xl"
-                    priority
-                  />
-                </div>
-              </div>
+          <SplitText
+            as="h1"
+            className="text-[clamp(2.75rem,6.5vw,5.5rem)] font-semibold text-[var(--color-text)] leading-[1.06] tracking-[-0.03em] mb-6"
+            delay={100}
+          >
+            {isGathering
+              ? `Gathering around ${campaign.patient_name}.`
+              : `${campaign.patient_name}'s circle.`}
+          </SplitText>
+
+          <ScrollReveal delay={500}>
+            <p className="text-[clamp(1rem,1.8vw,1.25rem)] text-[var(--color-text-muted)] max-w-[480px] mx-auto leading-[1.5] mb-10 tracking-[-0.01em]">
+              {isGathering
+                ? `Add your leaf and join the community sustaining ${campaign.patient_name}'s Sanctuary.`
+                : `${totalSupporters} people have come together in support.`}
+            </p>
+          </ScrollReveal>
+
+          <ScrollReveal delay={700}>
+            <div className="flex flex-col sm:flex-row justify-center gap-3.5">
+              {campaign.status === 'active' && isGathering ? (
+                <>
+                  <MagneticButton strength={0.1} className="inline-block">
+                    <Link
+                      href={`/c/${campaign.slug}/leaf`}
+                      className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-3.5 px-8 rounded-full text-[15px] transition-all duration-300 tracking-[-0.01em]"
+                    >
+                      Add your leaf
+                    </Link>
+                  </MagneticButton>
+                  <MagneticButton strength={0.1} className="inline-block">
+                    <Link
+                      href="#how-it-works"
+                      className="inline-flex items-center justify-center text-[var(--color-hope)] font-medium py-3.5 px-8 rounded-full text-[15px] transition-all duration-300 tracking-[-0.01em] hover:bg-[var(--color-hope)]/[0.06]"
+                    >
+                      How it works
+                    </Link>
+                  </MagneticButton>
+                </>
+              ) : (
+                <MagneticButton strength={0.1} className="inline-block">
+                  <Link
+                    href={`/c/${campaign.slug}/commitment`}
+                    className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-3.5 px-8 rounded-full text-[15px] transition-all duration-300 tracking-[-0.01em]"
+                  >
+                    Join the circle
+                  </Link>
+                </MagneticButton>
+              )}
             </div>
-          </div>
-        </section>
+          </ScrollReveal>
+        </div>
+      </section>
 
-      {/* ─── STATS BAR ─── Elegant, large numbers */}
+      {/* ─── TREE IMAGE ─── Breathing room */}
+      <section className="py-16 md:py-24 flex justify-center px-5">
+        <ScrollReveal>
+          <div className="relative">
+            <div className="absolute inset-0 bg-[var(--color-hope)] opacity-[0.04] rounded-full blur-[80px] scale-[2]" />
+            <Image
+              src="/tree-hero.png"
+              alt={`${campaign.patient_name}'s Tree of Hope`}
+              width={360}
+              height={373}
+              className="relative z-10 drop-shadow-xl"
+              priority
+            />
+          </div>
+        </ScrollReveal>
+      </section>
+
+      {/* ─── STATS ─── Clean, minimal */}
       <ScrollReveal>
-        <section className="border-y border-[var(--color-border)] bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-3 divide-x divide-[var(--color-border)]">
+        <section className="border-y border-black/[0.06]">
+          <div className="max-w-4xl mx-auto">
+            <div className="grid grid-cols-3 divide-x divide-black/[0.06]">
               {[
-                { number: isGathering ? dayNumber : 5, label: isGathering ? 'Day of gathering' : 'Days gathered' },
-                { number: leaves.length, label: 'Leaves on tree' },
-                { number: totalSupporters, label: 'Supporters joined' },
+                { number: isGathering ? dayNumber : 5, label: isGathering ? 'Day' : 'Days' },
+                { number: leaves.length, label: 'Leaves' },
+                { number: totalSupporters, label: 'Supporters' },
               ].map((stat) => (
-                <div key={stat.label} className="py-12 md:py-16 px-6 text-center">
+                <div key={stat.label} className="py-10 md:py-14 text-center">
                   <div
-                    className="text-5xl md:text-6xl font-light text-[var(--color-hope)] mb-2"
+                    className="text-[clamp(2.5rem,5vw,3.75rem)] font-semibold text-[var(--color-text)] mb-1 tracking-[-0.03em]"
                     style={{ fontFamily: 'var(--font-serif)' }}
                   >
                     <CountUp end={stat.number} />
                   </div>
-                  <div className="text-xs md:text-sm text-[var(--color-text-muted)] font-medium tracking-wide uppercase">
+                  <div className="text-[13px] text-[var(--color-text-muted)] tracking-[0.05em]">
                     {stat.label}
                   </div>
                 </div>
@@ -179,234 +174,163 @@ export default async function CampaignPage({ params }: PageProps) {
         </section>
       </ScrollReveal>
 
-      {/* ─── STORY ─── Full-width emotional blockquote */}
+      {/* ─── STORY ─── */}
       {campaign.story && (
-        <ScrollReveal>
-          <section className="py-32 md:py-48" style={{ backgroundColor: '#f9f7f3' }}>
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-              <p className="text-xs md:text-sm font-medium tracking-[0.25em] uppercase text-[var(--color-hope)] mb-8">
+        <section className="py-28 md:py-40">
+          <div className="max-w-[680px] mx-auto px-5 sm:px-8">
+            <ScrollReveal>
+              <p className="text-[13px] font-medium tracking-[0.15em] uppercase text-[var(--color-text-muted)] mb-5">
                 The story
               </p>
               <h2
-                className="text-5xl md:text-6xl font-light text-[var(--color-text)] mb-12 leading-[1.1]"
+                className="text-[clamp(2rem,4vw,3rem)] font-semibold text-[var(--color-text)] mb-8 tracking-[-0.02em] leading-[1.1]"
                 style={{ fontFamily: 'var(--font-serif)' }}
               >
                 {campaign.patient_name}&apos;s journey.
               </h2>
-              <div
-                className="text-xl md:text-2xl text-[var(--color-text)] whitespace-pre-wrap leading-relaxed font-light"
-                style={{ fontFamily: 'var(--font-serif)' }}
-              >
+              <div className="text-[17px] text-[var(--color-text-muted)] whitespace-pre-wrap leading-[1.7]">
                 {campaign.story}
               </div>
-            </div>
-          </section>
-        </ScrollReveal>
+            </ScrollReveal>
+          </div>
+        </section>
       )}
 
-      {/* ─── HOW IT WORKS ─── Elegant numbered steps with thin green border */}
-      <ScrollReveal>
-        <section id="how-it-works" className="py-32 md:py-48 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-20">
-              <p className="text-xs md:text-sm font-medium tracking-[0.25em] uppercase text-[var(--color-hope)] mb-8">
-                How it works
-              </p>
-              <h2
-                className="text-5xl md:text-6xl font-light text-[var(--color-text)] leading-[1.1]"
-                style={{ fontFamily: 'var(--font-serif)' }}
-              >
-                Three simple steps.
-              </h2>
-            </div>
+      {/* ─── HOW IT WORKS ─── */}
+      <section id="how-it-works" className="py-28 md:py-40 bg-[#f5f5f0]">
+        <div className="max-w-5xl mx-auto px-5 sm:px-8">
+          <SplitText
+            as="h2"
+            className="text-[clamp(2rem,4.5vw,3.75rem)] font-semibold text-[var(--color-text)] leading-[1.08] tracking-[-0.03em] text-center mb-20"
+          >
+            Three simple steps.
+          </SplitText>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16">
-              {[
-                {
-                  step: '01',
-                  title: 'Add a leaf',
-                  desc: 'Write a message of hope. It becomes a leaf on the tree — visible to the whole community.',
-                },
-                {
-                  step: '02',
-                  title: 'Make a commitment',
-                  desc: 'Choose a monthly tier that fits your life. Pause anytime for hardship, no questions asked.',
-                },
-                {
-                  step: '03',
-                  title: 'Watch it grow',
-                  desc: 'The tree grows as more people join. After 5 days, a private Sanctuary opens for the patient.',
-                },
-              ].map((item) => (
-                <div
-                  key={item.step}
-                  className="group border-t-2 border-[var(--color-hope)] pt-8 hover:opacity-75 transition-opacity duration-300"
-                >
-                  <div className="text-xs font-medium tracking-[0.25em] text-[var(--color-hope)] mb-4 uppercase">
-                    {item.step}
-                  </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-16 md:gap-10">
+            {[
+              {
+                num: '01',
+                title: 'Add a leaf',
+                desc: 'Write a message of hope. It becomes a leaf on the tree.',
+              },
+              {
+                num: '02',
+                title: 'Commit',
+                desc: 'Choose a monthly amount. Pause anytime, no questions asked.',
+              },
+              {
+                num: '03',
+                title: 'Watch it grow',
+                desc: 'After 5 days, a private Sanctuary opens for the patient.',
+              },
+            ].map((item) => (
+              <ScrollReveal key={item.num}>
+                <div>
+                  <span className="text-[13px] font-medium tracking-[0.15em] text-[var(--color-text-muted)] uppercase block mb-5">
+                    {item.num}
+                  </span>
                   <h3
-                    className="text-2xl md:text-3xl font-light text-[var(--color-text)] mb-4 group-hover:text-[var(--color-hope)] transition-colors duration-300"
+                    className="text-[24px] md:text-[28px] font-semibold text-[var(--color-text)] mb-3 tracking-[-0.02em]"
                     style={{ fontFamily: 'var(--font-serif)' }}
                   >
                     {item.title}
                   </h3>
-                  <p className="text-base md:text-lg text-[var(--color-text-muted)] leading-relaxed">
+                  <p className="text-[15px] text-[var(--color-text-muted)] leading-[1.6]">
                     {item.desc}
                   </p>
                 </div>
-              ))}
-            </div>
+              </ScrollReveal>
+            ))}
           </div>
-        </section>
-      </ScrollReveal>
+        </div>
+      </section>
 
-      {/* ─── LEAVES ─── Elegant masonry-like cards with left border */}
-      <ScrollReveal>
-        <section id="leaves" className="py-32 md:py-48 bg-[var(--color-bg)]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {leaves.length > 0 ? (
-              <>
-                <div className="text-center mb-20">
-                  <p className="text-xs md:text-sm font-medium tracking-[0.25em] uppercase text-[var(--color-hope)] mb-8">
-                    Messages of hope
-                  </p>
-                  <h2
-                    className="text-5xl md:text-6xl font-light text-[var(--color-text)] leading-[1.1]"
-                    style={{ fontFamily: 'var(--font-serif)' }}
+      {/* ─── LEAVES ─── */}
+      <section id="leaves" className="py-28 md:py-40">
+        <div className="max-w-5xl mx-auto px-5 sm:px-8">
+          {leaves.length > 0 ? (
+            <>
+              <SplitText
+                as="h2"
+                className="text-[clamp(2rem,4.5vw,3.75rem)] font-semibold text-[var(--color-text)] leading-[1.08] tracking-[-0.03em] text-center mb-16"
+              >
+                {`${leaves.length} ${leaves.length === 1 ? 'leaf' : 'leaves'} on the tree.`}
+              </SplitText>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {leaves.map((leaf) => (
+                  <div
+                    key={leaf.id}
+                    className="bg-[#f5f5f0] rounded-2xl p-7 transition-all duration-300 hover:bg-[#efefe8]"
                   >
-                    {leaves.length} {leaves.length === 1 ? 'leaf' : 'leaves'} on the tree.
-                  </h2>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-max">
-                  {leaves.map((leaf, index) => {
-                    const heights = ['md:row-span-1', 'md:row-span-1', 'md:row-span-2']
-                    const heightClass = heights[index % heights.length]
-                    return (
-                      <TiltCard
-                        key={leaf.id}
-                        className={cn(
-                          'bg-white rounded-lg border-l-4 border-l-[var(--color-hope)] border border-l-[var(--color-hope)] border-t-[var(--color-border)] border-r-[var(--color-border)] border-b-[var(--color-border)] p-8 hover:shadow-md transition-all duration-300 flex flex-col',
-                          heightClass
-                        )}
-                      >
-                        <p
-                          className="text-sm md:text-base text-[var(--color-text)] leading-relaxed mb-6 flex-grow"
-                          style={{ lineHeight: '1.75' }}
-                        >
-                          {leaf.message}
-                        </p>
-                        <div className="border-t border-[var(--color-border)] pt-4">
-                          <p
-                            className="font-light italic text-[var(--color-hope)] text-sm md:text-base"
-                            style={{ fontFamily: 'var(--font-serif)' }}
-                          >
-                            — {leaf.author_name}
-                          </p>
-                          <p className="text-xs text-[var(--color-text-muted)] mt-2">
-                            {new Date(leaf.created_at).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              year: new Date(leaf.created_at).getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined,
-                            })}
-                          </p>
-                        </div>
-                      </TiltCard>
-                    )
-                  })}
-                </div>
-              </>
-            ) : (
-              <div className="text-center py-20">
-                <h2
-                  className="text-4xl md:text-5xl font-light text-[var(--color-text)] mb-6"
-                  style={{ fontFamily: 'var(--font-serif)' }}
-                >
-                  No leaves yet.
-                </h2>
-                <p className="text-lg text-[var(--color-text-muted)] mb-12 max-w-md mx-auto leading-relaxed">
-                  Be the first to support {campaign.patient_name}. Your leaf starts the tree.
-                </p>
-                {campaign.status === 'active' && (
-                  <MagneticButton strength={0.12} className="inline-block">
-                    <Link
-                      href={`/c/${campaign.slug}/leaf`}
-                      className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-4 px-10 rounded-full text-base transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
-                    >
-                      Add the first leaf
-                    </Link>
-                  </MagneticButton>
-                )}
+                    <p className="text-[15px] text-[var(--color-text)] leading-[1.65] mb-5">
+                      &ldquo;{leaf.message}&rdquo;
+                    </p>
+                    <p className="text-[13px] text-[var(--color-text-muted)]">
+                      {leaf.author_name}
+                    </p>
+                  </div>
+                ))}
               </div>
-            )}
-          </div>
-        </section>
-      </ScrollReveal>
+            </>
+          ) : (
+            <div className="text-center py-16">
+              <h2
+                className="text-[clamp(2rem,4vw,3rem)] font-semibold text-[var(--color-text)] mb-4 tracking-[-0.02em]"
+                style={{ fontFamily: 'var(--font-serif)' }}
+              >
+                No leaves yet.
+              </h2>
+              <p className="text-[15px] text-[var(--color-text-muted)] mb-10 max-w-[400px] mx-auto leading-[1.6]">
+                Be the first to support {campaign.patient_name}.
+              </p>
+              {campaign.status === 'active' && (
+                <MagneticButton strength={0.1} className="inline-block">
+                  <Link
+                    href={`/c/${campaign.slug}/leaf`}
+                    className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-3.5 px-8 rounded-full text-[15px] transition-all duration-300 tracking-[-0.01em]"
+                  >
+                    Add the first leaf
+                  </Link>
+                </MagneticButton>
+              )}
+            </div>
+          )}
+        </div>
+      </section>
 
-      {/* ─── FINAL CTA ─── Cathedral-like, full-height viewport sensation */}
-      <ScrollReveal>
-        <section className="min-h-screen bg-white border-t border-[var(--color-border)] flex items-center justify-center py-32 md:py-48">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      {/* ─── FINAL CTA ─── */}
+      <section className="section-dark py-28 md:py-40">
+        <div className="max-w-3xl mx-auto px-5 sm:px-8 text-center">
+          <ScrollReveal>
             <Image
               src="/tree-hero.png"
               alt="Tree of Hope"
-              width={200}
-              height={207}
-              className="mx-auto mb-16 drop-shadow-lg"
+              width={120}
+              height={124}
+              className="mx-auto mb-10 drop-shadow-md invert opacity-90"
             />
             <h2
-              className="text-5xl md:text-6xl lg:text-7xl font-light text-[var(--color-text)] mb-8 leading-[1.05]"
+              className="text-[clamp(2rem,4.5vw,3.75rem)] font-semibold text-[#f5f5f7] leading-[1.08] tracking-[-0.03em] mb-5"
               style={{ fontFamily: 'var(--font-serif)' }}
             >
               {isGathering
                 ? `Join ${campaign.patient_name}'s circle.`
-                : `${campaign.patient_name}'s tree is complete.`}
+                : `The circle is complete.`}
             </h2>
-            <p className="text-xl md:text-2xl text-[var(--color-text-muted)] mb-16 max-w-2xl mx-auto leading-relaxed font-light">
-              {isGathering
-                ? 'Every leaf matters. Add yours and help this community grow.'
-                : 'The Sanctuary is open. Monthly support continues quietly.'}
+            <p className="text-[clamp(1rem,1.8vw,1.15rem)] text-[#a1a1a6] mb-10 leading-[1.5]">
+              Every leaf matters.
             </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              {campaign.status === 'active' && isGathering ? (
-                <MagneticButton strength={0.12} className="inline-block">
-                  <Link
-                    href={`/c/${campaign.slug}/leaf`}
-                    className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-4 px-10 rounded-full text-base transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
-                  >
-                    Add your leaf
-                  </Link>
-                </MagneticButton>
-              ) : (
-                <MagneticButton strength={0.12} className="inline-block">
-                  <Link
-                    href={`/c/${campaign.slug}/commitment`}
-                    className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-4 px-10 rounded-full text-base transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
-                  >
-                    Join sustaining circle
-                  </Link>
-                </MagneticButton>
-              )}
-              <MagneticButton strength={0.12} className="inline-block">
+            {campaign.status === 'active' && isGathering && (
+              <MagneticButton strength={0.1} className="inline-block">
                 <Link
-                  href="/campaigns"
-                  className="inline-flex items-center justify-center border-2 border-[var(--color-border)] hover:border-[var(--color-text)] text-[var(--color-text)] font-medium py-4 px-10 rounded-full text-base transition-all duration-200"
+                  href={`/c/${campaign.slug}/leaf`}
+                  className="inline-flex items-center justify-center bg-white hover:bg-white/90 text-[#1d1d1f] font-medium py-3.5 px-8 rounded-full text-[15px] transition-all duration-300 tracking-[-0.01em]"
                 >
-                  Browse campaigns
+                  Add your leaf
                 </Link>
               </MagneticButton>
-            </div>
-          </div>
-        </section>
-      </ScrollReveal>
-
-      {/* Trust language footer */}
-      <section className="py-12 md:py-16 bg-[var(--color-bg)]">
-        <div className="trust-language">
-          <p className="text-sm text-[var(--color-text-muted)] text-center">
-            Tree of Hope is a for-profit service. Your contribution funds the Sanctuary
-            and ongoing platform operations. It is not sent to the patient.
-          </p>
+            )}
+          </ScrollReveal>
         </div>
       </section>
     </div>
