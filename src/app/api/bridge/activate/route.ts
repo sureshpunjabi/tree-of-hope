@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/lib/supabase';
 import { stripe, STRIPE_PRODUCTS } from '@/lib/stripe';
+import { IS_STRIPE_CONFIGURED, STRIPE_DEMO_MESSAGE } from '@/lib/stripe-config';
 import { trackServerEvent } from '@/lib/analytics';
 
 interface BridgeActivateRequest {
@@ -100,6 +101,23 @@ export async function POST(
       .from('campaigns')
       .update({ leaf_count: currentLeafCount + 1 })
       .eq('id', campaign_id);
+
+    // Demo mode: Stripe not configured — still create the leaf but skip checkout
+    if (!IS_STRIPE_CONFIGURED) {
+      await trackServerEvent('bridge_activated', {
+        campaign_id,
+        author_name,
+        monthly_tier,
+        demo: true,
+      });
+
+      return NextResponse.json({
+        success: true,
+        leaf_id: leaf.id,
+        demo: true,
+        demo_message: STRIPE_DEMO_MESSAGE,
+      });
+    }
 
     // Create checkout session
     const monthlyProduct = STRIPE_PRODUCTS.monthlyTiers[monthly_tier as keyof typeof STRIPE_PRODUCTS.monthlyTiers];

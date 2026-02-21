@@ -80,7 +80,7 @@ export default function Header() {
                 >
                   Sign In
                 </Link>
-                <Link href="/auth/signup" className="btn-primary text-sm">
+                <Link href="/auth/signin" className="btn-primary text-sm">
                   Get Started
                 </Link>
               </div>
@@ -152,7 +152,7 @@ export default function Header() {
                     Sign In
                   </Link>
                   <Link
-                    href="/auth/signup"
+                    href="/auth/signin"
                     onClick={() => setMobileMenuOpen(false)}
                     className="block btn-primary text-sm text-center"
                   >

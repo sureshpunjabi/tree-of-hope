@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServiceSupabase } from '@/lib/supabase';
+import { getServiceSupabase, getAuthenticatedUser } from '@/lib/supabase';
 import { trackServerEvent } from '@/lib/analytics';
 
 interface BridgeClaimRequest {
@@ -17,6 +17,11 @@ export async function POST(
   request: NextRequest
 ): Promise<NextResponse<BridgeClaimResponse>> {
   try {
+    const user = await getAuthenticatedUser(request)
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const body: BridgeClaimRequest = await request.json();
     const { bridge_id, user_id } = body;
 
@@ -24,6 +29,13 @@ export async function POST(
       return NextResponse.json(
         { success: false, error: 'Bridge ID and user ID are required' },
         { status: 400 }
+      );
+    }
+
+    if (user.id !== user_id) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized: user can only claim for themselves' },
+        { status: 401 }
       );
     }
 

@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Leaf, AlertCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { trackEvent } from '@/lib/analytics'
@@ -254,23 +255,40 @@ export default function BridgeActivatePage() {
 
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="font-serif font-bold text-4xl md:text-5xl text-[var(--color-text)] mb-4">
-            Add your leaf to{' '}
-            <span className="text-[var(--color-hope)]">{campaign.patient_name}'s</span> Tree
-          </h1>
-          <p className="text-lg text-[var(--color-text-muted)]">
-            Your message and commitment will help them feel supported every single day.
-          </p>
+      {/* Hero Section with Tree Image */}
+      <div className="py-12 md:py-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-12">
+            <div>
+              <h1 className="font-bold text-4xl md:text-5xl text-[var(--color-text)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>
+                Add your leaf to{' '}
+                <span className="text-[var(--color-hope)]">{campaign.patient_name}'s</span> Tree
+              </h1>
+              <p className="text-lg text-[var(--color-text-muted)] leading-relaxed">
+                Your message and commitment will help them feel supported every single day.
+              </p>
+            </div>
+            <div className="hidden md:flex justify-end">
+              <Image
+                src="/tree-hero.png"
+                alt="Tree of Hope"
+                width={340}
+                height={352}
+                className="rounded-lg"
+              />
+            </div>
+          </div>
         </div>
+      </div>
+
+      {/* Form Section */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 md:pb-16">
 
         {/* Main Form */}
         <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
           {/* Section 1: Write Your Leaf */}
           <section className="bg-white rounded-lg p-8 border border-[var(--color-border)] shadow-sm">
-            <h2 className="font-serif font-bold text-2xl text-[var(--color-text)] mb-6">
+            <h2 className="font-bold text-2xl text-[var(--color-text)] mb-6" style={{ fontFamily: 'var(--font-serif)' }}>
               Write your leaf
             </h2>
 
@@ -366,7 +384,7 @@ export default function BridgeActivatePage() {
                     : 'border-[var(--color-border)] bg-white hover:border-[var(--color-leaf-1)]'
                 )}
               >
-                <p className="font-serif font-bold text-lg text-[var(--color-text)]">Nurture</p>
+                <p className="font-bold text-lg text-[var(--color-text)]" style={{ fontFamily: 'var(--font-serif)' }}>Nurture</p>
                 <p className="text-3xl font-bold text-[var(--color-hope)] my-2">$9</p>
                 <p className="text-sm text-[var(--color-text-muted)]">per month</p>
               </button>
@@ -382,7 +400,7 @@ export default function BridgeActivatePage() {
                     : 'border-[var(--color-border)] bg-white hover:border-[var(--color-leaf-1)]'
                 )}
               >
-                <p className="font-serif font-bold text-lg text-[var(--color-text)]">Sustain</p>
+                <p className="font-bold text-lg text-[var(--color-text)]" style={{ fontFamily: 'var(--font-serif)' }}>Sustain</p>
                 <p className="text-3xl font-bold text-[var(--color-hope)] my-2">$19</p>
                 <p className="text-sm text-[var(--color-text-muted)]">per month</p>
               </button>
@@ -398,7 +416,7 @@ export default function BridgeActivatePage() {
                     : 'border-[var(--color-border)] bg-white hover:border-[var(--color-leaf-1)]'
                 )}
               >
-                <p className="font-serif font-bold text-lg text-[var(--color-text)]">Flourish</p>
+                <p className="font-bold text-lg text-[var(--color-text)]" style={{ fontFamily: 'var(--font-serif)' }}>Flourish</p>
                 <p className="text-3xl font-bold text-[var(--color-hope)] my-2">$35</p>
                 <p className="text-sm text-[var(--color-text-muted)]">per month</p>
               </button>

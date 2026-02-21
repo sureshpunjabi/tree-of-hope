@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServiceSupabase } from '@/lib/supabase';
+import { getServiceSupabase, getAuthenticatedUser } from '@/lib/supabase';
 import { trackServerEvent } from '@/lib/analytics';
 
 interface PreBuildRequest {
@@ -35,6 +35,11 @@ export async function POST(
   request: NextRequest
 ): Promise<NextResponse<PreBuildResponse>> {
   try {
+    const user = await getAuthenticatedUser(request)
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const body: PreBuildRequest = await request.json();
     const { bridge_id, patient_name, title, story } = body;
 

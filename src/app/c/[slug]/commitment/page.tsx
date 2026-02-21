@@ -135,11 +135,18 @@ export default function CommitmentPage() {
         }),
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to create checkout session')
+      const data = await response.json()
+
+      // Handle demo mode gracefully
+      if (data.demo) {
+        setError(data.error)
+        setLoading(false)
+        return
       }
 
-      const data = await response.json()
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create checkout session')
+      }
 
       if (data.url) {
         window.location.href = data.url

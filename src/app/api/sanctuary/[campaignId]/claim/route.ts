@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServiceSupabase } from '@/lib/supabase';
+import { getServiceSupabase, getAuthenticatedUser } from '@/lib/supabase';
 import { trackServerEvent } from '@/lib/analytics';
 
 interface ClaimRequest {
@@ -17,6 +17,11 @@ export async function POST(
   { params }: { params: Promise<{ campaignId: string }> }
 ): Promise<NextResponse<ClaimResponse>> {
   try {
+    const user = await getAuthenticatedUser(request)
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const body: ClaimRequest = await request.json();
     const { campaignId } = await params;
     const { user_id } = body;
@@ -25,6 +30,13 @@ export async function POST(
       return NextResponse.json(
         { success: false, error: 'User ID is required' },
         { status: 400 }
+      );
+    }
+
+    if (user.id !== user_id) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized: user can only claim for themselves' },
+        { status: 401 }
       );
     }
 

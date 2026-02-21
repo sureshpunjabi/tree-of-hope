@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServiceSupabase } from '@/lib/supabase';
+import { getServiceSupabase, getAuthenticatedUser } from '@/lib/supabase';
 import { trackServerEvent } from '@/lib/analytics';
 
 interface OutreachRequest {
@@ -18,6 +18,11 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<OutreachResponse>> {
   try {
+    const user = await getAuthenticatedUser(request)
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const body: OutreachRequest = await request.json();
     const { id: bridgeId } = await params;
     const { channel, message_summary } = body;

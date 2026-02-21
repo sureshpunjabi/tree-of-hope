@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServiceSupabase } from '@/lib/supabase';
+import { getServiceSupabase, getAuthenticatedUser } from '@/lib/supabase';
 
 interface UpdateBridgeRequest {
   status?: string;
@@ -19,6 +19,11 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<BridgeResponse>> {
   try {
+    const user = await getAuthenticatedUser(request)
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const supabase = getServiceSupabase();
     const { id } = await params;
 
@@ -53,6 +58,11 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<BridgeResponse>> {
   try {
+    const user = await getAuthenticatedUser(request)
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const body: UpdateBridgeRequest = await request.json();
     const { id } = await params;
 

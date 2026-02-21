@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServiceSupabase } from '@/lib/supabase';
+import { getServiceSupabase, getAuthenticatedUser } from '@/lib/supabase';
 
 interface CreateCampaignRequest {
   title: string;
@@ -35,6 +35,11 @@ export async function GET(
   request: NextRequest
 ): Promise<NextResponse<CampaignsResponse>> {
   try {
+    const user = await getAuthenticatedUser(request)
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const supabase = getServiceSupabase();
 
     const { data: campaigns = [], error } = await supabase
@@ -66,6 +71,11 @@ export async function POST(
   request: NextRequest
 ): Promise<NextResponse<CampaignsResponse>> {
   try {
+    const user = await getAuthenticatedUser(request)
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const body: CreateCampaignRequest = await request.json();
     const {
       title,

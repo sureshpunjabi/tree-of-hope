@@ -106,7 +106,7 @@ export default function AdminDashboardPage() {
       <div className="space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-serif font-bold text-[var(--color-text)]">
+          <h1 className="text-3xl font-bold text-[var(--color-text)]" style={{ fontFamily: 'var(--font-serif)' }}>
             Tree of Hope Admin
           </h1>
           <p className="text-[var(--color-text-muted)] mt-2">
@@ -125,13 +125,13 @@ export default function AdminDashboardPage() {
         <div className="flex gap-4 flex-wrap">
           <Link
             href="/admin/campaigns/new"
-            className="btn-primary"
+            className="bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-semibold py-2 px-6 rounded-lg transition-all duration-200 hover:shadow-md inline-block"
           >
             + New Campaign
           </Link>
           <Link
             href="/admin/bridge"
-            className="btn-secondary"
+            className="border-2 border-[var(--color-hope)] text-[var(--color-hope)] hover:bg-[var(--color-hope)] hover:text-white font-semibold py-2 px-6 rounded-lg transition-all duration-200 inline-block"
           >
             Bridge Scanner
           </Link>
@@ -145,7 +145,7 @@ export default function AdminDashboardPage() {
               <div className="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wide">
                 Total Campaigns
               </div>
-              <div className="text-4xl font-serif font-bold text-[var(--color-text)] mt-2">
+              <div className="text-4xl font-bold text-[var(--color-text)] mt-2" style={{ fontFamily: 'var(--font-serif)' }}>
                 {stats.total_active + stats.total_draft + stats.total_paused}
               </div>
               <div className="text-xs text-[var(--color-text-muted)] mt-3 space-y-1">
@@ -160,7 +160,7 @@ export default function AdminDashboardPage() {
               <div className="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wide">
                 Total Supporters
               </div>
-              <div className="text-4xl font-serif font-bold text-[var(--color-text)] mt-2">
+              <div className="text-4xl font-bold text-[var(--color-text)] mt-2" style={{ fontFamily: 'var(--font-serif)' }}>
                 {stats.total_supporters.toLocaleString()}
               </div>
               <div className="text-xs text-[var(--color-text-muted)] mt-3">
@@ -173,7 +173,7 @@ export default function AdminDashboardPage() {
               <div className="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wide">
                 Monthly Revenue
               </div>
-              <div className="text-4xl font-serif font-bold text-[var(--color-text)] mt-2">
+              <div className="text-4xl font-bold text-[var(--color-text)] mt-2" style={{ fontFamily: 'var(--font-serif)' }}>
                 {formatCurrency(stats.total_monthly_revenue)}
               </div>
               <div className="text-xs text-[var(--color-text-muted)] mt-3">
@@ -186,7 +186,7 @@ export default function AdminDashboardPage() {
               <div className="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wide">
                 Bridge Pipeline
               </div>
-              <div className="text-4xl font-serif font-bold text-[var(--color-text)] mt-2">
+              <div className="text-4xl font-bold text-[var(--color-text)] mt-2" style={{ fontFamily: 'var(--font-serif)' }}>
                 {stats.bridge_pipeline_count}
               </div>
               <div className="text-xs text-[var(--color-text-muted)] mt-3">
@@ -209,7 +209,7 @@ export default function AdminDashboardPage() {
         {/* Recent Campaigns */}
         <div className="bg-white border border-[var(--color-border)] rounded-lg shadow-sm">
           <div className="px-6 py-4 border-b border-[var(--color-border)]">
-            <h2 className="text-lg font-serif font-bold text-[var(--color-text)]">
+            <h2 className="text-lg font-bold text-[var(--color-text)]" style={{ fontFamily: 'var(--font-serif)' }}>
               Recent Campaigns
             </h2>
           </div>

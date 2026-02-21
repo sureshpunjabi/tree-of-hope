@@ -350,7 +350,7 @@ export default function WriteLeafPage() {
           <div className="bg-white rounded-lg p-8 border border-[var(--color-border)] shadow-sm">
             <div className="text-center mb-8">
               <div className="text-5xl mb-4">✉️</div>
-              <h2 className="font-serif text-2xl font-bold text-[var(--color-text)] mb-2">
+              <h2 className="text-2xl font-bold text-[var(--color-text)] mb-2" style={{ fontFamily: 'var(--font-serif)' }}>
                 Check your email
               </h2>
               <p className="text-[var(--color-text-muted)]">

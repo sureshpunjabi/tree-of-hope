@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ChevronDown, ExternalLink, Leaf } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { TreeVisualization } from '@/components/tree/TreeVisualization'
@@ -136,9 +137,9 @@ export default function BridgeLandingPage() {
 
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-b from-amber-50 to-[var(--color-bg)] py-12 md:py-16">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Hero Section with Tree Image */}
+      <div className="py-12 md:py-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Logo */}
           <div className="text-center mb-8">
             <p className="text-sm font-medium text-[var(--color-hope)] mb-3">
@@ -146,11 +147,27 @@ export default function BridgeLandingPage() {
             </p>
           </div>
 
-          {/* Main Heading */}
-          <h1 className="font-serif font-bold text-4xl md:text-5xl text-[var(--color-text)] text-center mb-12">
-            A Tree is growing for{' '}
-            <span className="text-[var(--color-hope)]">{campaign.patient_name}</span>
-          </h1>
+          {/* Main Heading + Tree Image */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-12">
+            <div>
+              <h1 className="font-bold text-4xl md:text-5xl text-[var(--color-text)] mb-4" style={{ fontFamily: 'var(--font-serif)' }}>
+                A Tree is growing for{' '}
+                <span className="text-[var(--color-hope)]">{campaign.patient_name}</span>
+              </h1>
+              <p className="text-lg text-[var(--color-text-muted)] leading-relaxed">
+                Their journey matters. Your support makes a difference.
+              </p>
+            </div>
+            <div className="hidden md:flex justify-end">
+              <Image
+                src="/tree-hero.png"
+                alt="Tree of Hope"
+                width={340}
+                height={352}
+                className="rounded-lg"
+              />
+            </div>
+          </div>
 
           {/* Tree Visualization */}
           <div className="bg-white rounded-lg p-8 border border-[var(--color-border)] shadow-sm mb-12">
@@ -215,7 +232,7 @@ export default function BridgeLandingPage() {
               className="w-full bg-white rounded-lg p-6 border border-[var(--color-border)] shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="flex items-center justify-between gap-4">
-                <h3 className="font-serif font-bold text-lg md:text-xl text-[var(--color-text)] text-left">
+                <h3 className="font-bold text-lg md:text-xl text-[var(--color-text)] text-left" style={{ fontFamily: 'var(--font-serif)' }}>
                   What is Tree of Hope?
                 </h3>
                 <ChevronDown
@@ -243,7 +260,7 @@ export default function BridgeLandingPage() {
 
           {/* How It Works */}
           <div className="mb-12">
-            <h2 className="font-serif font-bold text-2xl md:text-3xl text-[var(--color-text)] text-center mb-8">
+            <h2 className="font-bold text-2xl md:text-3xl text-[var(--color-text)] text-center mb-8" style={{ fontFamily: 'var(--font-serif)' }}>
               How It Works
             </h2>
             <div className="grid md:grid-cols-3 gap-6">
@@ -252,7 +269,7 @@ export default function BridgeLandingPage() {
                 <div className="flex items-center justify-center w-12 h-12 bg-[var(--color-leaf-1)] rounded-full mb-4">
                   <span className="text-white font-serif font-bold text-lg">1</span>
                 </div>
-                <h3 className="font-serif font-bold text-lg text-[var(--color-text)] mb-3">
+                <h3 className="font-bold text-lg text-[var(--color-text)] mb-3" style={{ fontFamily: 'var(--font-serif)' }}>
                   Write a Leaf
                 </h3>
                 <p className="text-[var(--color-text-muted)]">
@@ -265,7 +282,7 @@ export default function BridgeLandingPage() {
                 <div className="flex items-center justify-center w-12 h-12 bg-[var(--color-leaf-2)] rounded-full mb-4">
                   <span className="text-white font-serif font-bold text-lg">2</span>
                 </div>
-                <h3 className="font-serif font-bold text-lg text-[var(--color-text)] mb-3">
+                <h3 className="font-bold text-lg text-[var(--color-text)] mb-3" style={{ fontFamily: 'var(--font-serif)' }}>
                   Choose Your Commitment
                 </h3>
                 <p className="text-[var(--color-text-muted)]">
@@ -278,7 +295,7 @@ export default function BridgeLandingPage() {
                 <div className="flex items-center justify-center w-12 h-12 bg-[var(--color-hope)] rounded-full mb-4">
                   <span className="text-white font-serif font-bold text-lg">3</span>
                 </div>
-                <h3 className="font-serif font-bold text-lg text-[var(--color-text)] mb-3">
+                <h3 className="font-bold text-lg text-[var(--color-text)] mb-3" style={{ fontFamily: 'var(--font-serif)' }}>
                   Fund the Sanctuary
                 </h3>
                 <p className="text-[var(--color-text-muted)]">

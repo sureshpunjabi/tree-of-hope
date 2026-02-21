@@ -96,7 +96,7 @@ export default function SanctuaryHomePage() {
       <div className="bg-white border-b border-color-border sticky top-0 z-40">
         <div className="page-container flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-color-text">Day {dayNumber} of {maxDays}</h1>
+            <h1 className="text-3xl font-bold text-color-text" style={{ fontFamily: 'var(--font-serif)' }}>Day {dayNumber} of {maxDays}</h1>
           </div>
           <Link href="/" className="btn-secondary text-sm">
             ← Back
@@ -123,12 +123,12 @@ export default function SanctuaryHomePage() {
           <div className="space-y-8">
             {/* Today's Content */}
             <div>
-              <h2 className="text-3xl font-bold text-color-text mb-4">{content.title}</h2>
+              <h2 className="text-3xl font-bold text-color-text mb-4" style={{ fontFamily: 'var(--font-serif)' }}>{content.title}</h2>
               <div className="prose prose-sm max-w-none text-color-text leading-relaxed">
                 <ReactMarkdown
                   components={{
-                    h1: ({ node, ...props }) => <h3 className="text-xl font-bold mt-4 mb-2" {...props} />,
-                    h2: ({ node, ...props }) => <h3 className="text-lg font-bold mt-4 mb-2" {...props} />,
+                    h1: ({ node, ...props }) => <h3 className="text-xl font-bold mt-4 mb-2" style={{ fontFamily: 'var(--font-serif)' }} {...props} />,
+                    h2: ({ node, ...props }) => <h3 className="text-lg font-bold mt-4 mb-2" style={{ fontFamily: 'var(--font-serif)' }} {...props} />,
                     p: ({ node, ...props }) => <p className="mb-4" {...props} />,
                     ul: ({ node, ...props }) => <ul className="list-disc list-inside mb-4 space-y-2" {...props} />,
                     ol: ({ node, ...props }) => <ol className="list-decimal list-inside mb-4 space-y-2" {...props} />,

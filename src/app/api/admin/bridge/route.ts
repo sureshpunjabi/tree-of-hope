@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServiceSupabase } from '@/lib/supabase';
+import { getServiceSupabase, getAuthenticatedUser } from '@/lib/supabase';
 
 interface BridgeCampaign {
   id: string;
@@ -27,6 +27,11 @@ export async function GET(
   request: NextRequest
 ): Promise<NextResponse<BridgeResponse>> {
   try {
+    const user = await getAuthenticatedUser(request)
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const supabase = getServiceSupabase();
     const searchParams = request.nextUrl.searchParams;
     const status = searchParams.get('status');

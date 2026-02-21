@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/lib/supabase';
 import { stripe, STRIPE_PRODUCTS } from '@/lib/stripe';
+import { IS_STRIPE_CONFIGURED, STRIPE_DEMO_MESSAGE } from '@/lib/stripe-config';
 import { trackServerEvent } from '@/lib/analytics';
 
 interface CheckoutRequest {
@@ -37,6 +38,14 @@ export async function POST(
       return NextResponse.json(
         { success: false, error: 'Missing required fields' },
         { status: 400 }
+      );
+    }
+
+    // Demo mode: Stripe not configured
+    if (!IS_STRIPE_CONFIGURED) {
+      return NextResponse.json(
+        { success: false, error: STRIPE_DEMO_MESSAGE, demo: true },
+        { status: 503 }
       );
     }
 

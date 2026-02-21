@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { getServiceSupabase } from '@/lib/supabase';
+import { IS_STRIPE_CONFIGURED } from '@/lib/stripe-config';
 import { trackServerEvent } from '@/lib/analytics';
 
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
@@ -13,6 +14,11 @@ interface CheckoutSessionMetadata {
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
+  // Silently accept webhooks in demo mode
+  if (!IS_STRIPE_CONFIGURED) {
+    return NextResponse.json({ received: true });
+  }
+
   try {
     const body = await request.text();
     const signature = request.headers.get('stripe-signature') || '';

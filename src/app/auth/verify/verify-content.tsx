@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { supabase } from '@/lib/supabase'
 import { trackEvent } from '@/lib/analytics'
 import Link from 'next/link'
@@ -70,48 +71,67 @@ export default function VerifyPageContent() {
   }, [searchParams, router])
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        {status === 'loading' && (
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-hope)] mx-auto mb-4" />
-            <p className="text-[var(--color-text-muted)]">
-              Verifying your email...
-            </p>
-          </div>
-        )}
+    <div className="min-h-screen bg-[var(--color-bg)]">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 flex items-center justify-center min-h-screen">
+        <div className="w-full max-w-2xl grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          {/* Content — Left */}
+          <div>
+            {status === 'loading' && (
+              <div className="text-center md:text-left">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-hope)] mb-4 md:mx-0 mx-auto" />
+                <h1 className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-3" style={{ fontFamily: 'var(--font-serif)' }}>
+                  Verifying...
+                </h1>
+                <p className="text-lg text-[var(--color-text-muted)]">
+                  Checking your email verification
+                </p>
+              </div>
+            )}
 
-        {status === 'success' && (
-          <div className="text-center">
-            <div className="flex justify-center mb-4">
-              <CheckCircle className="w-12 h-12 text-green-600" />
-            </div>
-            <h1 className="text-2xl font-bold text-[var(--color-text-primary)] mb-2">
-              Email Verified!
-            </h1>
-            <p className="text-[var(--color-text-muted)] mb-6">
-              Your email has been verified successfully. Redirecting you to the home page...
-            </p>
-            <Link href="/" className="inline-block btn-primary">
-              Go to Home
-            </Link>
-          </div>
-        )}
+            {status === 'success' && (
+              <div className="text-center md:text-left">
+                <div className="flex justify-center md:justify-start mb-6">
+                  <CheckCircle className="w-16 h-16 text-green-600" />
+                </div>
+                <h1 className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-3" style={{ fontFamily: 'var(--font-serif)' }}>
+                  Email Verified!
+                </h1>
+                <p className="text-lg text-[var(--color-text-muted)] mb-6 leading-relaxed">
+                  Your email has been verified successfully. Redirecting you to the home page...
+                </p>
+                <Link href="/" className="inline-block bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-semibold py-3 px-8 rounded-full transition-all duration-200 hover:shadow-lg">
+                  Go to Home
+                </Link>
+              </div>
+            )}
 
-        {status === 'error' && (
-          <div className="text-center">
-            <div className="flex justify-center mb-4">
-              <AlertCircle className="w-12 h-12 text-red-600" />
-            </div>
-            <h1 className="text-2xl font-bold text-[var(--color-text-primary)] mb-2">
-              Verification Failed
-            </h1>
-            <p className="text-red-600 mb-6">{errorMessage}</p>
-            <Link href="/" className="inline-block btn-primary">
-              Back to Home
-            </Link>
+            {status === 'error' && (
+              <div className="text-center md:text-left">
+                <div className="flex justify-center md:justify-start mb-6">
+                  <AlertCircle className="w-16 h-16 text-red-600" />
+                </div>
+                <h1 className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-3" style={{ fontFamily: 'var(--font-serif)' }}>
+                  Verification Failed
+                </h1>
+                <p className="text-lg text-red-600 mb-6">{errorMessage}</p>
+                <Link href="/" className="inline-block bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-semibold py-3 px-8 rounded-full transition-all duration-200 hover:shadow-lg">
+                  Back to Home
+                </Link>
+              </div>
+            )}
           </div>
-        )}
+
+          {/* Tree Image — Right */}
+          <div className="hidden md:flex justify-end">
+            <Image
+              src="/tree-hero.png"
+              alt="Tree of Hope"
+              width={340}
+              height={352}
+              className="rounded-lg"
+            />
+          </div>
+        </div>
       </div>
     </div>
   )
