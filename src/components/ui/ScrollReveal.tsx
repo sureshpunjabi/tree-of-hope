@@ -1,6 +1,7 @@
 'use client'
 
-import { useRef, useEffect, ReactNode } from 'react'
+import { ReactNode } from 'react'
+import { motion } from 'framer-motion'
 
 interface ScrollRevealProps {
   children: ReactNode
@@ -15,75 +16,26 @@ export default function ScrollReveal({
   delay = 0,
   direction = 'up',
 }: ScrollRevealProps) {
-  const ref = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            // Element is in viewport, make it visible
-            if (ref.current) {
-              ref.current.classList.remove('opacity-0')
-              ref.current.classList.add('opacity-100')
-
-              // Remove translate classes based on direction
-              if (direction === 'up') {
-                ref.current.classList.remove('translate-y-[30px]')
-              } else if (direction === 'down') {
-                ref.current.classList.remove('-translate-y-[30px]')
-              } else if (direction === 'left') {
-                ref.current.classList.remove('translate-x-[30px]')
-              } else if (direction === 'right') {
-                ref.current.classList.remove('-translate-x-[30px]')
-              }
-              ref.current.classList.add('translate-0')
-            }
-            // Disconnect after first intersection to keep it visible
-            observer.unobserve(entry.target)
-          }
-        })
-      },
-      { threshold: 0.1 }
-    )
-
-    if (ref.current) {
-      observer.observe(ref.current)
-    }
-
-    return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current)
-      }
-    }
-  }, [direction])
-
-  // Determine initial translate class based on direction
-  const getInitialTranslate = () => {
-    switch (direction) {
-      case 'up':
-        return 'translate-y-[30px]'
-      case 'down':
-        return '-translate-y-[30px]'
-      case 'left':
-        return 'translate-x-[30px]'
-      case 'right':
-        return '-translate-x-[30px]'
-      default:
-        return 'translate-y-[30px]'
-    }
+  const directionOffset = {
+    up: { y: 40 },
+    down: { y: -40 },
+    left: { x: 40 },
+    right: { x: -40 },
   }
 
   return (
-    <div
-      ref={ref}
-      className={`opacity-0 ${getInitialTranslate()} ${className}`}
-      style={{
-        transition: 'opacity 0.6s ease, transform 0.6s ease',
-        transitionDelay: `${delay}ms`,
+    <motion.div
+      initial={{ opacity: 0, ...directionOffset[direction] }}
+      whileInView={{ opacity: 1, x: 0, y: 0 }}
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{
+        duration: 0.8,
+        delay: delay / 1000,
+        ease: [0.25, 0.1, 0.25, 1],
       }}
+      className={className}
     >
       {children}
-    </div>
+    </motion.div>
   )
 }

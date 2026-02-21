@@ -1,4 +1,4 @@
-import { supabase } from './supabase'
+import { getSupabase } from './supabase'
 
 export type AnalyticsEvent =
   // Campaign funnel
@@ -60,6 +60,9 @@ export async function trackEvent(
     if (typeof window !== 'undefined' && sessionId) {
       sessionStorage.setItem('toh_session_id', sessionId)
     }
+
+    const supabase = getSupabase()
+    if (!supabase) return
 
     await supabase.from('analytics_events').insert({
       event_name: eventName,

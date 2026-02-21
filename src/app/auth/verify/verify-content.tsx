@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { supabase } from '@/lib/supabase'
+import { getSupabase } from '@/lib/supabase'
 import { trackEvent } from '@/lib/analytics'
 import Link from 'next/link'
 import { AlertCircle, CheckCircle } from 'lucide-react'
@@ -32,6 +32,12 @@ export default function VerifyPageContent() {
 
       try {
         // Verify the OTP token
+        const supabase = getSupabase()
+        if (!supabase) {
+          setStatus('error')
+          setErrorMessage('Authentication service unavailable.')
+          return
+        }
         const { data, error } = await supabase.auth.verifyOtp({
           token_hash: tokenHash,
           type: type as 'signup' | 'recovery' | 'magiclink' | 'email_change',
