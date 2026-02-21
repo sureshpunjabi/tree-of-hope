@@ -16,7 +16,7 @@ interface BridgeData {
     title: string
     patient_name: string
     story?: string
-    current_cents: number
+    monthly_total_cents: number
     supporter_count?: number
     leaf_count?: number
   }

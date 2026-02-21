@@ -18,8 +18,7 @@ interface Campaign {
   title: string
   patient_name: string
   story?: string
-  target_cents: number
-  current_cents: number
+  monthly_total_cents: number
   status: string
   created_at: string
   updated_at: string
@@ -81,21 +80,20 @@ export default async function CampaignPage({ params }: PageProps) {
             <TrustBadge />
           </div>
 
-          {/* Progress Bar */}
+          {/* Monthly Support Summary */}
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
             <div className="mb-4">
               <div className="flex justify-between mb-2">
-                <span className="text-sm font-medium text-gray-700">Progress</span>
+                <span className="text-sm font-medium text-gray-700">Monthly Support</span>
                 <span className="text-sm font-bold text-green-600">
-                  {formatCurrency(campaign.current_cents)} of{' '}
-                  {formatCurrency(campaign.target_cents)}
+                  {formatCurrency(campaign.monthly_total_cents || 0)}/mo
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
                   className="bg-green-500 h-3 rounded-full transition-all"
                   style={{
-                    width: `${Math.min((campaign.current_cents / campaign.target_cents) * 100, 100)}%`,
+                    width: `${Math.min(((campaign.monthly_total_cents || 0) / 50000) * 100, 100)}%`,
                   }}
                 />
               </div>

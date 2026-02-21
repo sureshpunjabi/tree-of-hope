@@ -20,8 +20,7 @@ export interface Campaign {
   title: string
   description?: string
   story?: string
-  target_cents: number
-  current_cents: number
+  monthly_total_cents: number
   status: 'active' | 'completed' | 'paused' | 'archived'
   start_date: string
   end_date?: string
