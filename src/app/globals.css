@@ -15,8 +15,8 @@
   --color-leaf-4: #C8E6C9;
   --color-leaf-5: #FFD54F;
   --color-sanctuary: #F5F5DC;
-  --color-hope: #FF8A65;
-  --color-hope-hover: #FF7043;
+  --color-hope: #4A6741;
+  --color-hope-hover: #3E5537;
   --color-text: #3E2723;
   --color-text-muted: #795548;
   --color-bg: #FFFAF5;
@@ -66,7 +66,7 @@ h1, h2, h3, h4, h5, h6 {
 .btn-primary:hover {
   background-color: var(--color-hope-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 138, 101, 0.3);
+  box-shadow: 0 4px 12px rgba(74, 103, 65, 0.3);
 }
 
 .btn-secondary {

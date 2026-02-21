@@ -33,7 +33,7 @@ export async function POST(
       cancel_url,
     } = body;
 
-    if (!campaign_id || !user_id || !monthly_tier || !success_url || !cancel_url) {
+    if (!campaign_id || !monthly_tier) {
       return NextResponse.json(
         { success: false, error: 'Missing required fields' },
         { status: 400 }
@@ -46,6 +46,14 @@ export async function POST(
       return NextResponse.json(
         { success: false, error: 'Invalid monthly tier' },
         { status: 400 }
+      );
+    }
+
+    // Validate that Stripe price IDs are configured
+    if (!monthlyProduct.priceId) {
+      return NextResponse.json(
+        { success: false, error: 'Stripe price IDs are not configured. Please set STRIPE_PRICE_* environment variables.' },
+        { status: 500 }
       );
     }
 
@@ -62,7 +70,7 @@ export async function POST(
     // Add joining gift if provided
     if (joining_gift_tier) {
       const joiningGiftProduct = STRIPE_PRODUCTS.joiningGifts[joining_gift_tier as keyof typeof STRIPE_PRODUCTS.joiningGifts];
-      if (joiningGiftProduct) {
+      if (joiningGiftProduct && joiningGiftProduct.priceId) {
         lineItems.push({
           price: joiningGiftProduct.priceId,
           quantity: 1,
@@ -70,13 +78,18 @@ export async function POST(
       }
     }
 
+    // Fallback URLs
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://tree-of-hope-olive.vercel.app';
+    const finalSuccessUrl = success_url || `${baseUrl}/c/${campaign_id}/thank-you?session_id={CHECKOUT_SESSION_ID}`;
+    const finalCancelUrl = cancel_url || `${baseUrl}/c/${campaign_id}/commitment`;
+
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       payment_method_types: ['card'],
       line_items: lineItems,
-      success_url,
-      cancel_url,
+      success_url: finalSuccessUrl,
+      cancel_url: finalCancelUrl,
       metadata: {
         campaign_id,
         user_id,

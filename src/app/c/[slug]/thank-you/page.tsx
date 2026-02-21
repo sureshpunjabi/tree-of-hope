@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Copy, Share2, MessageCircle } from 'lucide-react'
 import { trackEvent } from '@/lib/analytics'
 import { getBaseUrl } from '@/lib/utils'
@@ -30,10 +31,11 @@ export default function ThankYouPage() {
     // Fetch campaign data
     const fetchCampaign = async () => {
       try {
-        const response = await fetch(`/api/campaigns/${slug}`)
+        const response = await fetch(`/api/public/campaigns/${slug}`)
         if (response.ok) {
           const data = await response.json()
-          setPatientName(data.patient_name || data.title || 'this patient')
+          const campaign = data.campaign || data
+          setPatientName(campaign.patient_name || campaign.title || 'this patient')
         }
       } catch (err) {
         console.error('Failed to fetch campaign:', err)
@@ -72,26 +74,61 @@ export default function ThankYouPage() {
 
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-b from-green-50 to-[var(--color-bg)] py-12 md:py-20">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Celebration Icon */}
-          <div className="flex justify-center mb-8">
-            <div className="text-7xl animate-bounce">✓</div>
-          </div>
+      {/* Hero Section — PRD design */}
+      <div className="py-12 md:py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div>
+              <h1
+                className="font-bold text-5xl md:text-6xl text-[var(--color-text)] mb-4"
+                style={{ fontFamily: 'var(--font-serif)' }}
+              >
+                Thank you.
+              </h1>
+              <p className="text-lg text-[var(--color-text-muted)] mb-6 leading-relaxed">
+                Your leaf is now part of the Tree of Hope.
+              </p>
+              <p className="text-[var(--color-text-muted)] mb-8">
+                If you'd like, share this page with someone else in the circle.
+              </p>
 
-          <h1
-            className="font-serif font-bold text-4xl md:text-5xl text-[var(--color-text)] text-center mb-4"
-            style={{ fontFamily: 'var(--font-serif)' }}
-          >
-            Thank you for nurturing {patientName}'s Tree
-          </h1>
-          <p className="text-lg text-[var(--color-text-muted)] text-center">
-            Your leaf has been added and your commitment is active.{' '}
-            <span className="font-semibold text-[var(--color-text)]">
-              {patientName} will feel your support.
-            </span>
-          </p>
+              <div className="flex flex-wrap gap-4">
+                <button
+                  onClick={handleCopyLink}
+                  className={cn(
+                    'inline-flex items-center justify-center gap-2',
+                    'bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)]',
+                    'text-white font-semibold py-3 px-8 rounded-full text-base',
+                    'transition-all duration-200 hover:shadow-lg'
+                  )}
+                >
+                  <Share2 className="w-4 h-4" />
+                  {copySuccess ? 'Copied!' : 'Share'}
+                </button>
+
+                <Link
+                  href={`/c/${slug}`}
+                  className={cn(
+                    'inline-flex items-center justify-center',
+                    'border-2 border-[var(--color-border)] hover:border-[var(--color-text)]',
+                    'text-[var(--color-text)] font-semibold py-3 px-8 rounded-full text-base',
+                    'transition-all duration-200'
+                  )}
+                >
+                  View the Tree
+                </Link>
+              </div>
+            </div>
+            <div className="hidden md:flex justify-end">
+              <Image
+                src="/tree-hero.png"
+                alt="Tree of Hope"
+                width={460}
+                height={476}
+                className="rounded-lg"
+              />
+            </div>
+          </div>
         </div>
       </div>
 

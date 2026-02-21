@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/lib/auth-context'
 import { trackEvent } from '@/lib/analytics'
@@ -303,36 +304,42 @@ export default function WriteLeafPage() {
 
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
-      {/* Header */}
-      <div className="bg-gradient-to-b from-amber-50 to-[var(--color-bg)] py-8 md:py-12">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Link
-            href={`/c/${slug}`}
-            className="inline-flex items-center text-[var(--color-hope)] hover:text-[var(--color-hope-hover)] font-medium mb-4 transition-colors"
-          >
-            <svg
-              className="w-4 h-4 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-            Back to campaign
-          </Link>
+      {/* Header — PRD design: text left, tree right */}
+      <div className="py-8 md:py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div>
+              <Link
+                href={`/c/${slug}`}
+                className="inline-flex items-center text-[var(--color-hope)] hover:text-[var(--color-hope-hover)] font-medium mb-4 transition-colors"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to campaign
+              </Link>
 
-          <h1 className="font-serif font-bold text-4xl md:text-5xl text-[var(--color-text)] mb-4">
-            Write a message of hope
-          </h1>
-          <p className="text-lg text-[var(--color-text-muted)] leading-relaxed">
-            for <span className="font-semibold">{campaign.patient_name}</span>. It
-            doesn't need to be long. It just needs to be yours.
-          </p>
+              <h1
+                className="font-bold text-4xl md:text-5xl text-[var(--color-text)] mb-4"
+                style={{ fontFamily: 'var(--font-serif)' }}
+              >
+                Add a leaf.
+              </h1>
+              <p className="text-lg text-[var(--color-text-muted)] leading-relaxed">
+                Write one message of hope for <span className="font-semibold">{campaign.patient_name}</span>.
+                Keep it simple and true.
+              </p>
+            </div>
+            <div className="hidden md:flex justify-end">
+              <Image
+                src="/tree-hero.png"
+                alt="Tree of Hope"
+                width={340}
+                height={352}
+                className="rounded-lg"
+              />
+            </div>
+          </div>
         </div>
       </div>
 

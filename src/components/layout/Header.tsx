@@ -29,12 +29,11 @@ export default function Header() {
             className="flex items-center gap-2 no-underline hover:opacity-90 transition-opacity"
           >
             <span
-              className="text-2xl font-bold"
-              style={{ fontFamily: 'var(--font-serif)' }}
+              className="text-lg font-medium tracking-wide"
+              style={{ fontFamily: 'var(--font-sans)' }}
             >
               Tree of Hope
             </span>
-            <span className="text-xl">🍃</span>
           </Link>
 
           {/* Desktop Navigation */}

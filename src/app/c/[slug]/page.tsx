@@ -1,10 +1,9 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { getServiceSupabase } from '@/lib/supabase'
 import { cn } from '@/lib/utils'
-import { TrustBadge } from '@/components/layout/TrustBadge'
-import { formatCurrency } from '@/lib/utils'
-import CampaignTreeSection from './campaign-tree-section'
+import { getDayNumber } from '@/lib/utils'
 
 interface PageProps {
   params: Promise<{
@@ -63,168 +62,204 @@ export default async function CampaignPage({ params }: PageProps) {
 
   const leaves: Leaf[] = leavesData || []
 
+  // Calculate day number (1-5 for active gathering)
+  const dayNumber = getDayNumber(new Date(campaign.created_at))
+  const isGathering = dayNumber <= 5
+  const totalSupporters = campaign.supporter_count || leaves.length || 0
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
-      <div className="container mx-auto px-4 py-12">
-        {/* Header Section */}
-        <div className="mb-12">
-          <div className="flex items-center justify-between mb-4">
+    <div className="min-h-screen bg-[var(--color-bg)]">
+      {/* Hero Section — PRD design: text left, tree right */}
+      <section className="py-12 md:py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            {/* Left: Campaign Info */}
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                {campaign.title}
-              </h1>
-              <p className="text-lg text-gray-600">
-                Supporting {campaign.patient_name}
-              </p>
-            </div>
-            <TrustBadge />
-          </div>
-
-          {/* Monthly Support Summary */}
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <div className="mb-4">
-              <div className="flex justify-between mb-2">
-                <span className="text-sm font-medium text-gray-700">Monthly Support</span>
-                <span className="text-sm font-bold text-green-600">
-                  {formatCurrency(campaign.monthly_total_cents || 0)}/mo
+              {/* Day badge */}
+              {campaign.status === 'active' && (
+                <span className="inline-block text-sm text-[var(--color-text-muted)] mb-4">
+                  {isGathering ? `Day ${dayNumber} of 5` : 'Closed'}
                 </span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-3">
-                <div
-                  className="bg-green-500 h-3 rounded-full transition-all"
-                  style={{
-                    width: `${Math.min(((campaign.monthly_total_cents || 0) / 50000) * 100, 100)}%`,
-                  }}
-                />
+              )}
+
+              <h1
+                className="font-bold text-4xl md:text-5xl text-[var(--color-text)] mb-4 leading-tight"
+                style={{ fontFamily: 'var(--font-serif)' }}
+              >
+                {isGathering
+                  ? `We are gathering around ${campaign.patient_name}.`
+                  : `The circle has formed around ${campaign.patient_name}.`}
+              </h1>
+
+              <p className="text-lg text-[var(--color-text-muted)] mb-2 leading-relaxed">
+                {isGathering
+                  ? `A quiet circle has formed to sustain ${campaign.patient_name}'s Sanctuary.`
+                  : `The Tree is complete.`}
+              </p>
+
+              {totalSupporters > 0 && (
+                <p className="text-[var(--color-text)] mb-6">
+                  {totalSupporters} {totalSupporters === 1 ? 'person has' : 'people have'} joined.
+                </p>
+              )}
+
+              {/* CTA Buttons */}
+              <div className="flex flex-wrap gap-4">
+                {campaign.status === 'active' && isGathering ? (
+                  <>
+                    <Link
+                      href={`/c/${campaign.slug}/leaf`}
+                      className={cn(
+                        'inline-flex items-center justify-center',
+                        'bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)]',
+                        'text-white font-semibold py-3 px-8 rounded-full text-base',
+                        'transition-all duration-200 hover:shadow-lg'
+                      )}
+                    >
+                      Add your leaf
+                    </Link>
+                    <Link
+                      href="#how-it-works"
+                      className={cn(
+                        'inline-flex items-center justify-center',
+                        'border-2 border-[var(--color-border)] hover:border-[var(--color-text)]',
+                        'text-[var(--color-text)] font-semibold py-3 px-8 rounded-full text-base',
+                        'transition-all duration-200'
+                      )}
+                    >
+                      How it works
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href={`/c/${campaign.slug}/commitment`}
+                      className={cn(
+                        'inline-flex items-center justify-center',
+                        'bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)]',
+                        'text-white font-semibold py-3 px-8 rounded-full text-base',
+                        'transition-all duration-200 hover:shadow-lg'
+                      )}
+                    >
+                      Join sustaining circle
+                    </Link>
+                    <Link
+                      href="#leaves"
+                      className={cn(
+                        'inline-flex items-center justify-center',
+                        'border-2 border-[var(--color-border)] hover:border-[var(--color-text)]',
+                        'text-[var(--color-text)] font-semibold py-3 px-8 rounded-full text-base',
+                        'transition-all duration-200'
+                      )}
+                    >
+                      View the Tree
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
-            <div className="text-sm text-gray-600">
-              {campaign.supporter_count || 0} supporters · {campaign.leaf_count || 0} leaves
+
+            {/* Right: Bonsai Tree */}
+            <div className="flex justify-center md:justify-end">
+              <Image
+                src="/tree-hero.png"
+                alt={`${campaign.patient_name}'s Tree of Hope`}
+                width={460}
+                height={476}
+                className="rounded-lg"
+                priority
+              />
             </div>
           </div>
+        </div>
+      </section>
 
-          {/* Story Section */}
-          {campaign.story && (
-            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                {campaign.patient_name}'s Story
+      {/* Story Section */}
+      {campaign.story && (
+        <section className="py-12 border-t border-[var(--color-border)]">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2
+              className="text-2xl font-bold text-[var(--color-text)] mb-4"
+              style={{ fontFamily: 'var(--font-serif)' }}
+            >
+              {campaign.patient_name}&apos;s Story
+            </h2>
+            <p className="text-[var(--color-text-muted)] whitespace-pre-wrap leading-relaxed">
+              {campaign.story}
+            </p>
+          </div>
+        </section>
+      )}
+
+      {/* Leaves Section */}
+      <section id="leaves" className="py-12 border-t border-[var(--color-border)]">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          {leaves.length > 0 ? (
+            <>
+              <h2
+                className="text-2xl font-bold text-[var(--color-text)] mb-8"
+                style={{ fontFamily: 'var(--font-serif)' }}
+              >
+                Leaves on the Tree ({leaves.length})
               </h2>
-              <p className="text-gray-700 whitespace-pre-wrap">{campaign.story}</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {leaves.map((leaf) => (
+                  <div
+                    key={leaf.id}
+                    className="bg-white rounded-lg border border-[var(--color-border)] p-5 hover:shadow-sm transition-shadow"
+                  >
+                    <p className="text-sm font-medium text-[var(--color-text-muted)] mb-2">
+                      {leaf.author_name}
+                    </p>
+                    <p className="text-[var(--color-text)] leading-relaxed">
+                      {leaf.message}
+                    </p>
+                    <p className="text-xs text-[var(--color-text-muted)] mt-3">
+                      {new Date(leaf.created_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-12">
+              <h2
+                className="text-2xl font-bold text-[var(--color-text)] mb-2"
+                style={{ fontFamily: 'var(--font-serif)' }}
+              >
+                No leaves yet
+              </h2>
+              <p className="text-[var(--color-text-muted)] mb-8">
+                Be the first to support {campaign.patient_name}.
+              </p>
+              {campaign.status === 'active' && (
+                <Link
+                  href={`/c/${campaign.slug}/leaf`}
+                  className={cn(
+                    'inline-flex items-center justify-center',
+                    'bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)]',
+                    'text-white font-semibold py-3 px-8 rounded-full text-base',
+                    'transition-all duration-200 hover:shadow-lg'
+                  )}
+                >
+                  Add your leaf
+                </Link>
+              )}
             </div>
           )}
         </div>
+      </section>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Tree Visualization */}
-          <CampaignTreeSection leaves={leaves} patientName={campaign.patient_name} />
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* CTA Button */}
-            <Link
-              href={`/c/${campaign.slug}/checkout`}
-              className={cn(
-                'block w-full px-6 py-3 text-center font-semibold rounded-lg transition-all',
-                campaign.status === 'active'
-                  ? 'bg-green-600 hover:bg-green-700 text-white shadow-md'
-                  : 'bg-gray-300 text-gray-600 cursor-not-allowed'
-              )}
-            >
-              {campaign.status === 'active' ? 'Support This Campaign' : 'Campaign Ended'}
-            </Link>
-
-            {/* Info Cards */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-sm font-semibold text-gray-900 mb-4 uppercase tracking-wide">
-                Quick Info
-              </h3>
-              <dl className="space-y-4">
-                <div>
-                  <dt className="text-xs font-medium text-gray-500 uppercase">Status</dt>
-                  <dd className="text-sm font-semibold text-gray-900 capitalize">
-                    {campaign.status}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-xs font-medium text-gray-500 uppercase">Created</dt>
-                  <dd className="text-sm font-semibold text-gray-900">
-                    {new Date(campaign.created_at).toLocaleDateString()}
-                  </dd>
-                </div>
-              </dl>
-            </div>
-
-            {/* Recent Leaves */}
-            {leaves.length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-sm font-semibold text-gray-900 mb-4 uppercase tracking-wide">
-                  Recent Leaves
-                </h3>
-                <div className="space-y-3">
-                  {leaves.slice(0, 3).map((leaf) => (
-                    <div key={leaf.id} className="border-l-2 border-green-200 pl-3">
-                      <p className="text-xs font-medium text-gray-500">
-                        {leaf.author_name}
-                      </p>
-                      <p className="text-sm text-gray-700 truncate">
-                        {leaf.message}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+      {/* Trust Language */}
+      <section className="py-8 border-t border-[var(--color-border)]">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-sm text-[var(--color-text-muted)] text-center leading-relaxed">
+            Tree of Hope is a for-profit service. Your contribution funds the
+            Sanctuary and ongoing platform operations. It is not sent to the
+            patient.
+          </p>
         </div>
-
-        {/* All Leaves Section */}
-        {leaves.length > 0 && (
-          <div className="mt-12 bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              All Leaves ({leaves.length})
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {leaves.map((leaf) => (
-                <div
-                  key={leaf.id}
-                  className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-                >
-                  <p className="text-sm font-medium text-gray-600 mb-2">
-                    {leaf.author_name}
-                  </p>
-                  <p className="text-sm text-gray-700 line-clamp-3">
-                    {leaf.message}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-2">
-                    {new Date(leaf.created_at).toLocaleDateString()}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* No Leaves State */}
-        {leaves.length === 0 && (
-          <div className="mt-12 bg-white rounded-lg shadow-sm p-8 text-center">
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              No leaves yet
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Be the first to support {campaign.patient_name}!
-            </p>
-            {campaign.status === 'active' && (
-              <Link
-                href={`/c/${campaign.slug}/checkout`}
-                className="inline-block px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-all"
-              >
-                Support This Campaign
-              </Link>
-            )}
-          </div>
-        )}
-      </div>
+      </section>
     </div>
   )
 }

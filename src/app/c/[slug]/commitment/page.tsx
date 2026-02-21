@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { trackEvent } from '@/lib/analytics'
 import { STRIPE_PRODUCTS } from '@/lib/stripe'
 import { cn } from '@/lib/utils'
@@ -27,10 +28,11 @@ export default function CommitmentPage() {
     // Fetch campaign data to get patient name
     const fetchCampaign = async () => {
       try {
-        const response = await fetch(`/api/campaigns/${slug}`)
+        const response = await fetch(`/api/public/campaigns/${slug}`)
         if (response.ok) {
           const data = await response.json()
-          setPatientName(data.patient_name || data.title || 'this patient')
+          const campaign = data.campaign || data
+          setPatientName(campaign.patient_name || campaign.title || 'this patient')
         }
       } catch (err) {
         console.error('Failed to fetch campaign:', err)
@@ -128,6 +130,8 @@ export default function CommitmentPage() {
           campaign_id: slug,
           monthly_tier: monthlyTier,
           joining_gift_tier: joiningGift,
+          success_url: `${window.location.origin}/c/${slug}/thank-you?session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${window.location.origin}/c/${slug}/commitment`,
         }),
       })
 
@@ -162,18 +166,34 @@ export default function CommitmentPage() {
 
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-b from-amber-50 to-[var(--color-bg)] py-12 md:py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1
-            className="font-serif font-bold text-4xl md:text-5xl text-[var(--color-text)] text-center mb-4"
-            style={{ fontFamily: 'var(--font-serif)' }}
-          >
-            Choose how you'd like to support {patientName}'s journey
-          </h1>
-          <p className="text-lg text-[var(--color-text-muted)] text-center">
-            Your leaf is your message. Your commitment is your presence.
-          </p>
+      {/* Hero Section — PRD design */}
+      <div className="py-12 md:py-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div>
+              <h1
+                className="font-bold text-4xl md:text-5xl text-[var(--color-text)] mb-4"
+                style={{ fontFamily: 'var(--font-serif)' }}
+              >
+                Make a commitment.
+              </h1>
+              <p className="text-lg text-[var(--color-text-muted)] mb-2">
+                Today is a one-time start. Monthly support continues quietly in the background.
+              </p>
+              <p className="text-[var(--color-text-muted)]">
+                You can pause for hardship at any time.
+              </p>
+            </div>
+            <div className="hidden md:flex justify-end">
+              <Image
+                src="/tree-hero.png"
+                alt="Tree of Hope"
+                width={340}
+                height={352}
+                className="rounded-lg"
+              />
+            </div>
+          </div>
         </div>
       </div>
 
