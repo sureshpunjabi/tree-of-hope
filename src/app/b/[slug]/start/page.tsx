@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { Leaf, AlertCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { trackEvent } from '@/lib/analytics'
-import { STRIPE_PRODUCTS, type MonthlyTier, type JoiningGiftTier } from '@/lib/stripe'
+import { STRIPE_PRODUCTS, type MonthlyTier, type JoiningGiftTier } from '@/lib/stripe-products'
 
 interface BridgeData {
   success: boolean

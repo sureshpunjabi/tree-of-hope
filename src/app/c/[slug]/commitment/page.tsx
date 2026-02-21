@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { trackEvent } from '@/lib/analytics'
-import { STRIPE_PRODUCTS } from '@/lib/stripe'
+import { STRIPE_PRODUCTS } from '@/lib/stripe-products'
 import { cn } from '@/lib/utils'
 
 type JoiningGiftTier = 'seedling' | 'sapling' | 'mightyOak' | null
