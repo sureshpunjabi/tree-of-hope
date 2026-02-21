@@ -235,53 +235,47 @@ export default function WriteLeafPage() {
     <div className="min-h-screen bg-[var(--color-bg)]">
       {/* ─── HERO ─── */}
       <section className="relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <div className="max-w-xl">
-              <Link
-                href={`/c/${slug}`}
-                className="inline-flex items-center text-[var(--color-hope)] hover:text-[var(--color-hope-hover)] font-medium mb-6 transition-colors text-sm"
-              >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                Back to {campaign.patient_name}&apos;s tree
-              </Link>
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-32 md:py-48">
+          <div className="text-center">
+            <Link
+              href={`/c/${slug}`}
+              className="inline-flex items-center text-[var(--color-hope)] hover:text-[var(--color-hope-hover)] font-medium mb-8 transition-colors text-sm"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to {campaign.patient_name}&apos;s tree
+            </Link>
 
-              <p className="text-sm font-semibold tracking-widest uppercase text-[var(--color-hope)] mb-4">
-                Add a leaf
-              </p>
-              <h1
-                className="text-5xl md:text-[3.5rem] font-bold text-[var(--color-text)] leading-[1.1] mb-6"
-                style={{ fontFamily: 'var(--font-serif)' }}
-              >
-                Write one message
-                <br />
-                <span className="text-[var(--color-hope)]">of hope.</span>
-              </h1>
-              <p className="text-lg text-[var(--color-text-muted)] leading-relaxed">
-                Keep it simple and true. Your words become a leaf on <span className="font-semibold">{campaign.patient_name}</span>&apos;s tree.
-              </p>
-            </div>
-
-            <div className="relative hidden lg:flex justify-center lg:justify-end">
-              <div className="relative">
-                <div className="absolute inset-0 bg-[var(--color-hope)] opacity-[0.06] rounded-full blur-3xl scale-110" />
-                <Image
-                  src="/tree-hero.png"
-                  alt="Tree of Hope"
-                  width={400}
-                  height={414}
-                  className="relative z-10 drop-shadow-2xl"
-                />
-              </div>
-            </div>
+            <p className="text-sm font-semibold tracking-[0.25em] uppercase text-[var(--color-hope)] mb-6">
+              Add a leaf
+            </p>
+            <h1
+              className="text-5xl md:text-6xl font-light text-[var(--color-text)] leading-[1.2] mb-8"
+              style={{ fontFamily: 'var(--font-serif)' }}
+            >
+              Write one message of hope.
+            </h1>
           </div>
         </div>
       </section>
 
+      {/* ─── BLOCKQUOTE ─── */}
+      <section className="py-12 md:py-16 border-t border-b border-[var(--color-border)]">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+          <blockquote className="text-center">
+            <p
+              className="text-lg md:text-xl text-[var(--color-text-muted)] italic leading-relaxed"
+              style={{ fontFamily: 'var(--font-serif)' }}
+            >
+              "The right words at the right time can carry someone through the hardest days."
+            </p>
+          </blockquote>
+        </div>
+      </section>
+
       {/* ─── FORM ─── */}
-      <section className="py-20 md:py-28 bg-white">
+      <section className="py-20 md:py-28">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           {authState.status === 'email-sent' ? (
             <div className="bg-[var(--color-bg)] rounded-3xl p-8 md:p-10">
@@ -342,15 +336,15 @@ export default function WriteLeafPage() {
               )}
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-8">
+            <form onSubmit={handleSubmit} className="space-y-10">
               {error && (
                 <div className="bg-red-50 border border-red-200 rounded-2xl p-4">
                   <p className="text-red-700 text-sm">{error}</p>
                 </div>
               )}
 
-              <div>
-                <label htmlFor="name" className="block text-sm font-semibold text-[var(--color-text)] mb-2">
+              <div className="border-b border-[var(--color-border)] pb-6">
+                <label htmlFor="name" className="block text-sm font-semibold text-[var(--color-text)] mb-4">
                   Your name
                 </label>
                 <input
@@ -360,12 +354,12 @@ export default function WriteLeafPage() {
                   value={form.name}
                   onChange={handleInputChange}
                   placeholder="Sarah Chen"
-                  className="w-full px-5 py-4 rounded-2xl border bg-[var(--color-bg)] border-[var(--color-border)] text-[var(--color-text)] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] transition-colors"
+                  className="w-full bg-transparent text-[var(--color-text)] placeholder-gray-400 focus:outline-none transition-colors py-2"
                 />
               </div>
 
-              <div>
-                <label htmlFor="email" className="block text-sm font-semibold text-[var(--color-text)] mb-2">
+              <div className="border-b border-[var(--color-border)] pb-6">
+                <label htmlFor="email" className="block text-sm font-semibold text-[var(--color-text)] mb-4">
                   Your email
                 </label>
                 <input
@@ -375,15 +369,15 @@ export default function WriteLeafPage() {
                   value={form.email}
                   onChange={handleInputChange}
                   placeholder="you@example.com"
-                  className="w-full px-5 py-4 rounded-2xl border bg-[var(--color-bg)] border-[var(--color-border)] text-[var(--color-text)] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] transition-colors"
+                  className="w-full bg-transparent text-[var(--color-text)] placeholder-gray-400 focus:outline-none transition-colors py-2"
                 />
-                <p className="text-xs text-[var(--color-text-muted)] mt-2">
+                <p className="text-xs text-[var(--color-text-muted)] mt-4">
                   Used to verify your identity. Never shared.
                 </p>
               </div>
 
-              <div>
-                <label htmlFor="message" className="block text-sm font-semibold text-[var(--color-text)] mb-2">
+              <div className="border-b border-[var(--color-border)] pb-6">
+                <label htmlFor="message" className="block text-sm font-semibold text-[var(--color-text)] mb-4">
                   Your message
                 </label>
                 <textarea
@@ -393,9 +387,9 @@ export default function WriteLeafPage() {
                   value={form.message}
                   onChange={handleInputChange}
                   onFocus={handleMessageFocus}
-                  placeholder="Share a word of encouragement, a memory, or why you care..."
-                  rows={6}
-                  className="w-full px-5 py-4 rounded-2xl border bg-[var(--color-bg)] border-[var(--color-border)] text-[var(--color-text)] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] transition-colors resize-none"
+                  placeholder="What would you want to hear if you were in their shoes?"
+                  rows={8}
+                  className="w-full bg-transparent text-[var(--color-text)] placeholder-gray-400 focus:outline-none transition-colors py-2 resize-none"
                 />
               </div>
 
@@ -415,11 +409,11 @@ export default function WriteLeafPage() {
                 </label>
               </div>
 
-              <div className="pt-4">
+              <div className="pt-6">
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-semibold py-4 px-10 rounded-full text-base transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-semibold py-3 px-12 rounded-full text-base transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {submitting ? (
                     <>
@@ -427,7 +421,7 @@ export default function WriteLeafPage() {
                       Sending...
                     </>
                   ) : (
-                    <>🌱 Add your leaf to {campaign.patient_name}&apos;s Tree</>
+                    <>🌱 Add your leaf</>
                   )}
                 </button>
               </div>
