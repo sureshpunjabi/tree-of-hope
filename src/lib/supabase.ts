@@ -13,10 +13,8 @@ export function getSupabase() {
   return _supabase
 }
 
-// Keep backward compatibility
-export const supabase = supabaseUrl && supabaseAnonKey 
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null as unknown as SupabaseClient
+// Backward-compatible named export (uses singleton)
+export const supabase = null as unknown as SupabaseClient // Use getSupabase() instead
 
 // Server-side Supabase client (uses service role key for admin operations)
 export function getServiceSupabase() {
