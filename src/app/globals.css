@@ -1,0 +1,177 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@theme inline {
+  --color-background: #FFFAF5;
+  --color-foreground: #3E2723;
+  --font-sans: 'Inter', sans-serif;
+  --font-serif: 'Playfair Display', serif;
+
+  /* Tree of Hope design tokens */
+  --color-trunk: #5D4037;
+  --color-leaf-1: #66BB6A;
+  --color-leaf-2: #81C784;
+  --color-leaf-3: #A5D6A7;
+  --color-leaf-4: #C8E6C9;
+  --color-leaf-5: #FFD54F;
+  --color-sanctuary: #F5F5DC;
+  --color-hope: #FF8A65;
+  --color-hope-hover: #FF7043;
+  --color-text: #3E2723;
+  --color-text-muted: #795548;
+  --color-bg: #FFFAF5;
+  --color-card: #FFFFFF;
+  --color-border: #D7CCC8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.btn-primary {
+  background-color: var(--color-hope);
+  color: white;
+  padding: 12px 32px;
+  border-radius: 24px;
+  font-weight: 600;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-hope-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 138, 101, 0.3);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--color-trunk);
+  padding: 12px 32px;
+  border-radius: 24px;
+  font-weight: 600;
+  font-size: 16px;
+  border: 2px solid var(--color-border);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.btn-secondary:hover {
+  border-color: var(--color-trunk);
+  background-color: rgba(93, 64, 55, 0.05);
+}
+
+.card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 24px;
+  transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 20px rgba(93, 64, 55, 0.08);
+}
+
+.trust-language {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 16px;
+  line-height: 1.5;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.sanctuary-bg {
+  background-color: var(--color-sanctuary);
+}
+
+.evolving-state {
+  background: linear-gradient(135deg, var(--color-leaf-4) 0%, var(--color-sanctuary) 100%);
+  border: 1px dashed var(--color-leaf-2);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+}
+
+.page-container {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.leaf-fade-in {
+  animation: leafFadeIn 0.6s ease-out;
+}
+
+@keyframes leafFadeIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes gentleSway {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+
+.leaf-sway {
+  animation: gentleSway 3s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+.tier-card {
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tier-card:hover {
+  border-color: var(--color-leaf-1);
+  box-shadow: 0 4px 16px rgba(102, 187, 106, 0.15);
+}
+
+.tier-card.selected {
+  border-color: var(--color-leaf-1);
+  background: linear-gradient(135deg, rgba(102, 187, 106, 0.05) 0%, rgba(200, 230, 201, 0.1) 100%);
+  box-shadow: 0 4px 16px rgba(102, 187, 106, 0.2);
+}
+
+@media (max-width: 768px) {
+  .page-container { padding: 16px 12px; }
+  h1 { font-size: 28px; }
+  h2 { font-size: 22px; }
+}
