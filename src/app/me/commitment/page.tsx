@@ -47,7 +47,7 @@ export default function MyCommitmentPage() {
     try {
       const response = await fetch('/api/me/commitment', {
         headers: {
-          Authorization: `Bearer ${(await (await import('@/lib/supabase')).supabase.auth.getSession()).data.session?.access_token}`,
+          Authorization: `Bearer ${(await (await import('@/lib/supabase')).getSupabase()?.auth.getSession())?.data.session?.access_token}`,
         },
       })
       if (response.ok) {
@@ -64,7 +64,7 @@ export default function MyCommitmentPage() {
   const handlePause = async (commitmentId: string) => {
     setPausingId(commitmentId)
     try {
-      const session = (await (await import('@/lib/supabase')).supabase.auth.getSession()).data.session
+      const session = (await (await import('@/lib/supabase')).getSupabase()?.auth.getSession())?.data.session
       const response = await fetch('/api/me/commitment/pause', {
         method: 'POST',
         headers: {

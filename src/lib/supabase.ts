@@ -4,17 +4,19 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-// Client-side Supabase client (uses anon key) - lazy init to avoid errors when env vars not set
-let _supabase: SupabaseClient | null = null
-export function getSupabase() {
-  if (!_supabase && supabaseUrl && supabaseAnonKey) {
-    _supabase = createClient(supabaseUrl, supabaseAnonKey)
-  }
-  return _supabase
-}
+// Use globalThis to ensure a true singleton across Next.js code-split chunks
+const globalKey = '__toh_supabase_client__' as const
 
-// Backward-compatible named export (uses singleton)
-export const supabase = null as unknown as SupabaseClient // Use getSupabase() instead
+export function getSupabase(): SupabaseClient | null {
+  if (typeof window === 'undefined') return null // SSR safety
+  if (!supabaseUrl || !supabaseAnonKey) return null
+
+  const g = globalThis as unknown as Record<string, SupabaseClient | undefined>
+  if (!g[globalKey]) {
+    g[globalKey] = createClient(supabaseUrl, supabaseAnonKey)
+  }
+  return g[globalKey]!
+}
 
 // Server-side Supabase client (uses service role key for admin operations)
 export function getServiceSupabase() {
