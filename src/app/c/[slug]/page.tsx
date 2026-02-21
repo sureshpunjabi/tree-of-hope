@@ -5,6 +5,10 @@ import { getServiceSupabase } from '@/lib/supabase'
 import { cn } from '@/lib/utils'
 import { getDayNumber } from '@/lib/utils'
 import ScrollReveal from '@/components/ui/ScrollReveal'
+import SplitText from '@/components/ui/SplitText'
+import CountUp from '@/components/ui/CountUp'
+import TiltCard from '@/components/ui/TiltCard'
+import MagneticButton from '@/components/ui/MagneticButton'
 
 interface PageProps {
   params: Promise<{
@@ -74,14 +78,15 @@ export default async function CampaignPage({ params }: PageProps) {
                 <p className="text-xs md:text-sm font-medium tracking-[0.25em] uppercase text-[var(--color-hope)] mb-8">
                   {isGathering ? `Day ${dayNumber} of 5 · Gathering` : 'Tree complete'}
                 </p>
-                <h1
-                  className="text-6xl md:text-7xl font-light text-[var(--color-text)] leading-[1.05] mb-8"
-                  style={{ fontFamily: 'var(--font-serif)' }}
-                >
-                  {isGathering
-                    ? <>We are gathering around <span className="text-[var(--color-hope)]">{campaign.patient_name}</span>.</>
-                    : <>The circle has formed around <span className="text-[var(--color-hope)]">{campaign.patient_name}</span>.</>}
-                </h1>
+                {isGathering ? (
+                  <SplitText as="h1" className="text-6xl md:text-7xl font-light text-[var(--color-text)] leading-[1.05] mb-8">
+                    {`We are gathering around ${campaign.patient_name}.`}
+                  </SplitText>
+                ) : (
+                  <SplitText as="h1" className="text-6xl md:text-7xl font-light text-[var(--color-text)] leading-[1.05] mb-8">
+                    {`The circle has formed around ${campaign.patient_name}.`}
+                  </SplitText>
+                )}
                 <p className="text-lg md:text-xl text-[var(--color-text-muted)] mb-12 leading-relaxed max-w-2xl">
                   {isGathering
                     ? `A quiet circle is forming to sustain ${campaign.patient_name}'s Sanctuary. Add your leaf and join the community.`
@@ -90,33 +95,41 @@ export default async function CampaignPage({ params }: PageProps) {
                 <div className="flex flex-wrap gap-4">
                   {campaign.status === 'active' && isGathering ? (
                     <>
-                      <Link
-                        href={`/c/${campaign.slug}/leaf`}
-                        className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-4 px-10 rounded-full text-base transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
-                      >
-                        Add your leaf
-                      </Link>
-                      <Link
-                        href="#how-it-works"
-                        className="inline-flex items-center justify-center border-2 border-[var(--color-border)] hover:border-[var(--color-text)] text-[var(--color-text)] font-medium py-4 px-10 rounded-full text-base transition-all duration-200"
-                      >
-                        How it works
-                      </Link>
+                      <MagneticButton strength={0.12} className="inline-block">
+                        <Link
+                          href={`/c/${campaign.slug}/leaf`}
+                          className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-4 px-10 rounded-full text-base transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
+                        >
+                          Add your leaf
+                        </Link>
+                      </MagneticButton>
+                      <MagneticButton strength={0.12} className="inline-block">
+                        <Link
+                          href="#how-it-works"
+                          className="inline-flex items-center justify-center border-2 border-[var(--color-border)] hover:border-[var(--color-text)] text-[var(--color-text)] font-medium py-4 px-10 rounded-full text-base transition-all duration-200"
+                        >
+                          How it works
+                        </Link>
+                      </MagneticButton>
                     </>
                   ) : (
                     <>
-                      <Link
-                        href={`/c/${campaign.slug}/commitment`}
-                        className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-4 px-10 rounded-full text-base transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
-                      >
-                        Join sustaining circle
-                      </Link>
-                      <Link
-                        href="#leaves"
-                        className="inline-flex items-center justify-center border-2 border-[var(--color-border)] hover:border-[var(--color-text)] text-[var(--color-text)] font-medium py-4 px-10 rounded-full text-base transition-all duration-200"
-                      >
-                        View the Tree
-                      </Link>
+                      <MagneticButton strength={0.12} className="inline-block">
+                        <Link
+                          href={`/c/${campaign.slug}/commitment`}
+                          className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-4 px-10 rounded-full text-base transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
+                        >
+                          Join sustaining circle
+                        </Link>
+                      </MagneticButton>
+                      <MagneticButton strength={0.12} className="inline-block">
+                        <Link
+                          href="#leaves"
+                          className="inline-flex items-center justify-center border-2 border-[var(--color-border)] hover:border-[var(--color-text)] text-[var(--color-text)] font-medium py-4 px-10 rounded-full text-base transition-all duration-200"
+                        >
+                          View the Tree
+                        </Link>
+                      </MagneticButton>
                     </>
                   )}
                 </div>
@@ -145,16 +158,16 @@ export default async function CampaignPage({ params }: PageProps) {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-3 divide-x divide-[var(--color-border)]">
               {[
-                { number: isGathering ? `${dayNumber}` : '5', label: isGathering ? 'Day of gathering' : 'Days gathered' },
-                { number: `${leaves.length}`, label: 'Leaves on tree' },
-                { number: `${totalSupporters}`, label: 'Supporters joined' },
+                { number: isGathering ? dayNumber : 5, label: isGathering ? 'Day of gathering' : 'Days gathered' },
+                { number: leaves.length, label: 'Leaves on tree' },
+                { number: totalSupporters, label: 'Supporters joined' },
               ].map((stat) => (
                 <div key={stat.label} className="py-12 md:py-16 px-6 text-center">
                   <div
                     className="text-5xl md:text-6xl font-light text-[var(--color-hope)] mb-2"
                     style={{ fontFamily: 'var(--font-serif)' }}
                   >
-                    {stat.number}
+                    <CountUp end={stat.number} />
                   </div>
                   <div className="text-xs md:text-sm text-[var(--color-text-muted)] font-medium tracking-wide uppercase">
                     {stat.label}
@@ -227,13 +240,13 @@ export default async function CampaignPage({ params }: PageProps) {
               ].map((item) => (
                 <div
                   key={item.step}
-                  className="border-t-2 border-[var(--color-hope)] pt-8 hover:opacity-75 transition-opacity duration-300"
+                  className="group border-t-2 border-[var(--color-hope)] pt-8 hover:opacity-75 transition-opacity duration-300"
                 >
                   <div className="text-xs font-medium tracking-[0.25em] text-[var(--color-hope)] mb-4 uppercase">
-                    Step {item.step}
+                    {item.step}
                   </div>
                   <h3
-                    className="text-2xl md:text-3xl font-light text-[var(--color-text)] mb-4"
+                    className="text-2xl md:text-3xl font-light text-[var(--color-text)] mb-4 group-hover:text-[var(--color-hope)] transition-colors duration-300"
                     style={{ fontFamily: 'var(--font-serif)' }}
                   >
                     {item.title}
@@ -270,7 +283,7 @@ export default async function CampaignPage({ params }: PageProps) {
                     const heights = ['md:row-span-1', 'md:row-span-1', 'md:row-span-2']
                     const heightClass = heights[index % heights.length]
                     return (
-                      <div
+                      <TiltCard
                         key={leaf.id}
                         className={cn(
                           'bg-white rounded-lg border-l-4 border-l-[var(--color-hope)] border border-l-[var(--color-hope)] border-t-[var(--color-border)] border-r-[var(--color-border)] border-b-[var(--color-border)] p-8 hover:shadow-md transition-all duration-300 flex flex-col',
@@ -298,7 +311,7 @@ export default async function CampaignPage({ params }: PageProps) {
                             })}
                           </p>
                         </div>
-                      </div>
+                      </TiltCard>
                     )
                   })}
                 </div>
@@ -315,12 +328,14 @@ export default async function CampaignPage({ params }: PageProps) {
                   Be the first to support {campaign.patient_name}. Your leaf starts the tree.
                 </p>
                 {campaign.status === 'active' && (
-                  <Link
-                    href={`/c/${campaign.slug}/leaf`}
-                    className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-4 px-10 rounded-full text-base transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
-                  >
-                    Add the first leaf
-                  </Link>
+                  <MagneticButton strength={0.12} className="inline-block">
+                    <Link
+                      href={`/c/${campaign.slug}/leaf`}
+                      className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-4 px-10 rounded-full text-base transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
+                    >
+                      Add the first leaf
+                    </Link>
+                  </MagneticButton>
                 )}
               </div>
             )}
@@ -354,26 +369,32 @@ export default async function CampaignPage({ params }: PageProps) {
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               {campaign.status === 'active' && isGathering ? (
-                <Link
-                  href={`/c/${campaign.slug}/leaf`}
-                  className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-4 px-10 rounded-full text-base transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
-                >
-                  Add your leaf
-                </Link>
+                <MagneticButton strength={0.12} className="inline-block">
+                  <Link
+                    href={`/c/${campaign.slug}/leaf`}
+                    className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-4 px-10 rounded-full text-base transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
+                  >
+                    Add your leaf
+                  </Link>
+                </MagneticButton>
               ) : (
-                <Link
-                  href={`/c/${campaign.slug}/commitment`}
-                  className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-4 px-10 rounded-full text-base transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
-                >
-                  Join sustaining circle
-                </Link>
+                <MagneticButton strength={0.12} className="inline-block">
+                  <Link
+                    href={`/c/${campaign.slug}/commitment`}
+                    className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-4 px-10 rounded-full text-base transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
+                  >
+                    Join sustaining circle
+                  </Link>
+                </MagneticButton>
               )}
-              <Link
-                href="/campaigns"
-                className="inline-flex items-center justify-center border-2 border-[var(--color-border)] hover:border-[var(--color-text)] text-[var(--color-text)] font-medium py-4 px-10 rounded-full text-base transition-all duration-200"
-              >
-                Browse campaigns
-              </Link>
+              <MagneticButton strength={0.12} className="inline-block">
+                <Link
+                  href="/campaigns"
+                  className="inline-flex items-center justify-center border-2 border-[var(--color-border)] hover:border-[var(--color-text)] text-[var(--color-text)] font-medium py-4 px-10 rounded-full text-base transition-all duration-200"
+                >
+                  Browse campaigns
+                </Link>
+              </MagneticButton>
             </div>
           </div>
         </section>

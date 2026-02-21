@@ -2,49 +2,58 @@ import Link from 'next/link'
 import Image from 'next/image'
 import ScrollReveal from '@/components/ui/ScrollReveal'
 import { StaggerContainer, StaggerItem } from '@/components/ui/StaggerChildren'
-import HoverLift from '@/components/ui/HoverLift'
+import TiltCard from '@/components/ui/TiltCard'
 import ParallaxImage from '@/components/ui/ParallaxImage'
+import SplitText from '@/components/ui/SplitText'
+import MagneticButton from '@/components/ui/MagneticButton'
+import AnimatedGradient from '@/components/ui/AnimatedGradient'
+import FloatingElements from '@/components/ui/FloatingElements'
+import Marquee from '@/components/ui/Marquee'
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
       {/* ─── HERO ─── Cathedral-like, full viewport, centered silence */}
       <section className="relative min-h-screen overflow-hidden flex items-center justify-center py-32 md:py-48">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <AnimatedGradient colors={['#4A6741', '#66BB6A', '#FFFAF5', '#f0ebe4']} speed={12} />
+        <FloatingElements count={5} />
+
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <ScrollReveal delay={0} direction="down">
-            <p className="text-xs font-semibold tracking-[0.25em] uppercase text-[var(--color-text-muted)] mb-12 md:mb-16">
+            <p className="text-xs font-semibold tracking-[0.3em] uppercase text-[var(--color-hope)] mb-12 md:mb-16">
               A moment that changes everything
             </p>
           </ScrollReveal>
 
-          <ScrollReveal delay={200}>
-            <h1
-              className="text-5xl md:text-6xl lg:text-7xl font-light text-[var(--color-text)] leading-[1.1] mb-8 md:mb-12"
-              style={{ fontFamily: 'var(--font-serif)' }}
-            >
-              When someone you love is diagnosed, the world doesn&apos;t stop. But something inside you does.
-            </h1>
-          </ScrollReveal>
+          <SplitText
+            as="h1"
+            className="text-5xl md:text-6xl lg:text-7xl font-light text-[var(--color-text)] leading-[1.1] mb-8 md:mb-12"
+            delay={200}
+          >
+            When someone you love is diagnosed, the world doesn&apos;t stop. But something inside you does.
+          </SplitText>
 
-          <ScrollReveal delay={400}>
+          <ScrollReveal delay={600}>
             <p className="text-lg md:text-xl text-[var(--color-text-muted)] max-w-2xl mx-auto mb-12 md:mb-16 leading-relaxed">
               Tree of Hope builds a circle of people around one person — for as long as they need it.
             </p>
           </ScrollReveal>
 
-          <ScrollReveal delay={600}>
-            <Link
-              href="#rhythm"
-              className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-semibold py-4 px-8 rounded-full text-base transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
-            >
-              See how it works
-            </Link>
+          <ScrollReveal delay={800}>
+            <MagneticButton strength={0.15} className="inline-block">
+              <Link
+                href="#rhythm"
+                className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-semibold py-4 px-10 rounded-full text-base transition-all duration-300 hover:shadow-lg hover:shadow-[var(--color-hope)]/20"
+              >
+                See how it works
+              </Link>
+            </MagneticButton>
           </ScrollReveal>
 
           {/* Tree image with parallax */}
           <div className="mt-20 md:mt-32 flex justify-center">
             <div className="relative">
-              <div className="absolute inset-0 bg-[var(--color-hope)] opacity-[0.04] rounded-full blur-3xl scale-125" />
+              <div className="absolute inset-0 bg-[var(--color-hope)] opacity-[0.06] rounded-full blur-3xl scale-150" />
               <ParallaxImage
                 src="/tree-hero.png"
                 alt="A bonsai tree growing in a glass dome — the Tree of Hope"
@@ -59,66 +68,84 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ─── TRUST MARQUEE ─── Infinite scroll social proof */}
+      <section className="py-6 bg-white border-y border-[var(--color-border)]/50 overflow-hidden">
+        <Marquee speed={40} pauseOnHover>
+          {[
+            'Built with radical transparency',
+            'Pause anytime for hardship',
+            'Private Sanctuary for patients',
+            '30 days of guided content',
+            'No passwords — magic links only',
+            'Community-funded care',
+            'Built with radical transparency',
+            'Pause anytime for hardship',
+          ].map((text, i) => (
+            <span
+              key={i}
+              className="inline-flex items-center mx-8 text-sm text-[var(--color-text-muted)] whitespace-nowrap"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-hope)] mr-3 opacity-60" />
+              {text}
+            </span>
+          ))}
+        </Marquee>
+      </section>
+
       {/* ─── THE RHYTHM ─── Breathing room, three emotional beats */}
       <section id="rhythm" className="relative py-32 md:py-48 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center mb-16 md:mb-24">
-              <p className="text-xs font-semibold tracking-[0.25em] uppercase text-[var(--color-text-muted)] mb-6">
+              <p className="text-xs font-semibold tracking-[0.3em] uppercase text-[var(--color-hope)] mb-6">
                 The rhythm
               </p>
-              <h2
-                className="text-5xl md:text-6xl font-light text-[var(--color-text)] leading-[1.2]"
-                style={{ fontFamily: 'var(--font-serif)' }}
-              >
-                Five days. One community. A lifetime of support.
-              </h2>
             </div>
           </ScrollReveal>
 
+          <SplitText
+            as="h2"
+            className="text-5xl md:text-6xl font-light text-[var(--color-text)] leading-[1.2] text-center mb-16 md:mb-24"
+          >
+            Five days. One community. A lifetime of support.
+          </SplitText>
+
           {/* Three minimal cards — staggered entrance */}
           <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
-            <StaggerItem>
-              <div className="pt-8 border-t-2 border-[var(--color-hope)]">
-                <h3
-                  className="text-2xl md:text-3xl font-light text-[var(--color-text)] mb-4"
-                  style={{ fontFamily: 'var(--font-serif)' }}
-                >
-                  The Gathering
-                </h3>
-                <p className="text-lg text-[var(--color-text-muted)] leading-relaxed">
-                  For five days, people who care leave messages of hope — their leaves on a growing tree.
-                </p>
-              </div>
-            </StaggerItem>
-
-            <StaggerItem>
-              <div className="pt-8 border-t-2 border-[var(--color-hope)]">
-                <h3
-                  className="text-2xl md:text-3xl font-light text-[var(--color-text)] mb-4"
-                  style={{ fontFamily: 'var(--font-serif)' }}
-                >
-                  The Commitment
-                </h3>
-                <p className="text-lg text-[var(--color-text-muted)] leading-relaxed">
-                  Each person chooses a monthly amount. Small, sustainable, pausable for hardship.
-                </p>
-              </div>
-            </StaggerItem>
-
-            <StaggerItem>
-              <div className="pt-8 border-t-2 border-[var(--color-hope)]">
-                <h3
-                  className="text-2xl md:text-3xl font-light text-[var(--color-text)] mb-4"
-                  style={{ fontFamily: 'var(--font-serif)' }}
-                >
-                  The Sanctuary
-                </h3>
-                <p className="text-lg text-[var(--color-text-muted)] leading-relaxed">
-                  A private space opens for the patient and caregiver. Journal. Tools. Guided content. Held.
-                </p>
-              </div>
-            </StaggerItem>
+            {[
+              {
+                title: 'The Gathering',
+                desc: 'For five days, people who care leave messages of hope — their leaves on a growing tree.',
+                num: '01',
+              },
+              {
+                title: 'The Commitment',
+                desc: 'Each person chooses a monthly amount. Small, sustainable, pausable for hardship.',
+                num: '02',
+              },
+              {
+                title: 'The Sanctuary',
+                desc: 'A private space opens for the patient and caregiver. Journal. Tools. Guided content. Held.',
+                num: '03',
+              },
+            ].map((card) => (
+              <StaggerItem key={card.num}>
+                <div className="pt-8 border-t-2 border-[var(--color-hope)] group">
+                  <span className="text-xs font-medium tracking-[0.2em] text-[var(--color-hope)] uppercase mb-4 block">
+                    {card.num}
+                  </span>
+                  <h3
+                    className="text-2xl md:text-3xl font-light text-[var(--color-text)] mb-4 group-hover:text-[var(--color-hope)] transition-colors duration-500"
+                    style={{ fontFamily: 'var(--font-serif)' }}
+                  >
+                    {card.title}
+                  </h3>
+                  <p className="text-lg text-[var(--color-text-muted)] leading-relaxed">
+                    {card.desc}
+                  </p>
+                </div>
+              </StaggerItem>
+            ))}
           </StaggerContainer>
         </div>
       </section>
@@ -128,103 +155,89 @@ export default function HomePage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <ScrollReveal>
             <blockquote>
+              <div className="mb-8">
+                <span className="text-7xl md:text-8xl text-[var(--color-hope)] opacity-20 leading-none" style={{ fontFamily: 'var(--font-serif)' }}>&ldquo;</span>
+              </div>
               <p
-                className="text-4xl md:text-5xl font-light italic text-[var(--color-text)] leading-[1.3] mb-6"
+                className="text-3xl md:text-4xl lg:text-5xl font-light italic text-[var(--color-text)] leading-[1.3] mb-8"
                 style={{ fontFamily: 'var(--font-serif)' }}
               >
-                &ldquo;I didn&apos;t know how to help. I just knew I wanted to show up. This gave me a way.&rdquo;
+                I didn&apos;t know how to help. I just knew I wanted to show up. This gave me a way.
               </p>
-              <footer className="text-lg text-[var(--color-text-muted)]">
-                — A supporter on Sarah&apos;s tree
+              <footer className="text-base text-[var(--color-text-muted)] tracking-wide">
+                <span className="inline-block w-8 h-px bg-[var(--color-hope)] mr-3 align-middle opacity-50" />
+                A supporter on Sarah&apos;s tree
               </footer>
             </blockquote>
           </ScrollReveal>
         </div>
       </section>
 
-      {/* ─── THREE SURFACES ─── Product overview with hover-lift cards */}
+      {/* ─── THREE SURFACES ─── Product overview with 3D tilt cards */}
       <section className="relative py-32 md:py-48 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
-            <div className="text-center mb-16 md:mb-24">
-              <p className="text-xs font-semibold tracking-[0.25em] uppercase text-[var(--color-text-muted)] mb-6">
+            <div className="text-center mb-6">
+              <p className="text-xs font-semibold tracking-[0.3em] uppercase text-[var(--color-hope)] mb-6">
                 What we build
               </p>
-              <h2
-                className="text-5xl md:text-6xl font-light text-[var(--color-text)] leading-[1.2]"
-                style={{ fontFamily: 'var(--font-serif)' }}
-              >
-                Three surfaces, one purpose.
-              </h2>
             </div>
           </ScrollReveal>
 
+          <SplitText
+            as="h2"
+            className="text-5xl md:text-6xl font-light text-[var(--color-text)] leading-[1.2] text-center mb-16 md:mb-24"
+          >
+            Three surfaces, one purpose.
+          </SplitText>
+
           <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <StaggerItem>
-              <HoverLift>
-                <div className="group relative rounded-2xl overflow-hidden bg-gradient-to-b from-[#f0ebe4] to-[#e8e0d5] p-8 md:p-10 transition-shadow duration-300 hover:shadow-xl">
-                  <h3
-                    className="text-2xl md:text-3xl font-light text-[var(--color-text)] mb-4"
-                    style={{ fontFamily: 'var(--font-serif)' }}
-                  >
-                    Campaign Tree
-                  </h3>
-                  <p className="text-[var(--color-text-muted)] mb-6 leading-relaxed">
-                    A five-day micro-campaign where supporters leave messages and commit to monthly giving.
-                  </p>
-                  <Link
-                    href="/c/sarah"
-                    className="inline-flex items-center text-[var(--color-hope)] font-semibold hover:underline text-sm"
-                  >
-                    View example →
-                  </Link>
-                </div>
-              </HoverLift>
-            </StaggerItem>
-
-            <StaggerItem>
-              <HoverLift>
-                <div className="group relative rounded-2xl overflow-hidden bg-gradient-to-b from-[#e8f0e4] to-[#d5e0d2] p-8 md:p-10 transition-shadow duration-300 hover:shadow-xl">
-                  <h3
-                    className="text-2xl md:text-3xl font-light text-[var(--color-text)] mb-4"
-                    style={{ fontFamily: 'var(--font-serif)' }}
-                  >
-                    Sanctuary
-                  </h3>
-                  <p className="text-[var(--color-text-muted)] mb-6 leading-relaxed">
-                    A private space for the patient and caregiver with guided daily content, journal, and tools.
-                  </p>
-                  <Link
-                    href="/sanctuary"
-                    className="inline-flex items-center text-[var(--color-hope)] font-semibold hover:underline text-sm"
-                  >
-                    Learn more →
-                  </Link>
-                </div>
-              </HoverLift>
-            </StaggerItem>
-
-            <StaggerItem>
-              <HoverLift>
-                <div className="group relative rounded-2xl overflow-hidden bg-gradient-to-b from-[#e4e8f0] to-[#d2d5e0] p-8 md:p-10 transition-shadow duration-300 hover:shadow-xl">
-                  <h3
-                    className="text-2xl md:text-3xl font-light text-[var(--color-text)] mb-4"
-                    style={{ fontFamily: 'var(--font-serif)' }}
-                  >
-                    Bridge
-                  </h3>
-                  <p className="text-[var(--color-text-muted)] mb-6 leading-relaxed">
-                    Connects GoFundMe donors to ongoing monthly support through Tree of Hope.
-                  </p>
-                  <Link
-                    href="/bridge"
-                    className="inline-flex items-center text-[var(--color-hope)] font-semibold hover:underline text-sm"
-                  >
-                    Learn more →
-                  </Link>
-                </div>
-              </HoverLift>
-            </StaggerItem>
+            {[
+              {
+                title: 'Campaign Tree',
+                desc: 'A five-day micro-campaign where supporters leave messages and commit to monthly giving.',
+                href: '/c/sarah',
+                label: 'View example',
+                gradient: 'from-[#f0ebe4] to-[#e8e0d5]',
+              },
+              {
+                title: 'Sanctuary',
+                desc: 'A private space for the patient and caregiver with guided daily content, journal, and tools.',
+                href: '/sanctuary',
+                label: 'Learn more',
+                gradient: 'from-[#e8f0e4] to-[#d5e0d2]',
+              },
+              {
+                title: 'Bridge',
+                desc: 'Connects GoFundMe donors to ongoing monthly support through Tree of Hope.',
+                href: '/bridge',
+                label: 'Learn more',
+                gradient: 'from-[#e4e8f0] to-[#d2d5e0]',
+              },
+            ].map((card) => (
+              <StaggerItem key={card.title}>
+                <TiltCard tiltAmount={6} scale={1.01} glare>
+                  <div className={`relative rounded-2xl overflow-hidden bg-gradient-to-b ${card.gradient} p-8 md:p-10`}>
+                    <h3
+                      className="text-2xl md:text-3xl font-light text-[var(--color-text)] mb-4"
+                      style={{ fontFamily: 'var(--font-serif)' }}
+                    >
+                      {card.title}
+                    </h3>
+                    <p className="text-[var(--color-text-muted)] mb-6 leading-relaxed">
+                      {card.desc}
+                    </p>
+                    <Link
+                      href={card.href}
+                      className="inline-flex items-center text-[var(--color-hope)] font-semibold hover:underline text-sm group/link"
+                    >
+                      {card.label}
+                      <span className="ml-1 group-hover/link:translate-x-1 transition-transform duration-200">→</span>
+                    </Link>
+                  </div>
+                </TiltCard>
+              </StaggerItem>
+            ))}
           </StaggerContainer>
         </div>
       </section>
@@ -233,21 +246,22 @@ export default function HomePage() {
       <section className="relative py-32 md:py-48 bg-[#f9f7f3]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
-            <div className="text-center mb-16 md:mb-24">
-              <p className="text-xs font-semibold tracking-[0.25em] uppercase text-[var(--color-text-muted)] mb-6">
+            <div className="text-center mb-6">
+              <p className="text-xs font-semibold tracking-[0.3em] uppercase text-[var(--color-hope)] mb-6">
                 Built on trust
               </p>
-              <h2
-                className="text-5xl md:text-6xl font-light text-[var(--color-text)] leading-[1.2]"
-                style={{ fontFamily: 'var(--font-serif)' }}
-              >
-                We believe in radical transparency.
-              </h2>
             </div>
           </ScrollReveal>
 
+          <SplitText
+            as="h2"
+            className="text-5xl md:text-6xl font-light text-[var(--color-text)] leading-[1.2] text-center mb-16 md:mb-24"
+          >
+            We believe in radical transparency.
+          </SplitText>
+
           <ScrollReveal delay={150}>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {[
                 {
                   q: 'Where do the funds go?',
@@ -268,11 +282,11 @@ export default function HomePage() {
               ].map((faq) => (
                 <details
                   key={faq.q}
-                  className="group bg-white rounded-lg border border-[var(--color-border)] overflow-hidden transition-all duration-300"
+                  className="group bg-white rounded-xl border border-[var(--color-border)] overflow-hidden transition-all duration-300 hover:border-[var(--color-hope)]/30"
                 >
-                  <summary className="flex items-center justify-between cursor-pointer p-6 font-semibold text-[var(--color-text)] text-lg hover:bg-gray-50 transition-colors duration-200">
+                  <summary className="flex items-center justify-between cursor-pointer p-6 font-semibold text-[var(--color-text)] text-lg hover:bg-gray-50/50 transition-colors duration-200">
                     {faq.q}
-                    <span className="text-[var(--color-text-muted)] group-open:rotate-45 transition-transform duration-300 text-2xl leading-none">
+                    <span className="text-[var(--color-hope)] group-open:rotate-45 transition-transform duration-300 text-2xl leading-none ml-4 flex-shrink-0">
                       +
                     </span>
                   </summary>
@@ -287,12 +301,12 @@ export default function HomePage() {
       </section>
 
       {/* ─── FINAL CTA ─── Last emotional moment */}
-      <section className="relative py-32 md:py-48 bg-white">
+      <section className="relative py-32 md:py-48 bg-white overflow-hidden">
         <ScrollReveal>
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div className="mb-12 md:mb-16 flex justify-center">
               <div className="relative">
-                <div className="absolute inset-0 bg-[var(--color-hope)] opacity-[0.04] rounded-full blur-3xl scale-125" />
+                <div className="absolute inset-0 bg-[var(--color-hope)] opacity-[0.06] rounded-full blur-3xl scale-150" />
                 <Image
                   src="/tree-hero.png"
                   alt="Tree of Hope"
@@ -303,31 +317,39 @@ export default function HomePage() {
               </div>
             </div>
 
-            <h2
+            <SplitText
+              as="h2"
               className="text-5xl md:text-6xl font-light text-[var(--color-text)] mb-6 leading-[1.2]"
-              style={{ fontFamily: 'var(--font-serif)' }}
             >
               Every tree starts with a single leaf.
-            </h2>
+            </SplitText>
 
-            <p className="text-lg md:text-xl text-[var(--color-text-muted)] mb-12 md:mb-16 max-w-2xl mx-auto leading-relaxed">
-              See the rhythm. Feel the community. Join the circle.
-            </p>
+            <ScrollReveal delay={200}>
+              <p className="text-lg md:text-xl text-[var(--color-text-muted)] mb-12 md:mb-16 max-w-2xl mx-auto leading-relaxed">
+                See the rhythm. Feel the community. Join the circle.
+              </p>
+            </ScrollReveal>
 
-            <div className="flex flex-col sm:flex-row justify-center gap-6">
-              <Link
-                href="/c/sarah"
-                className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-semibold py-4 px-8 rounded-full text-base transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
-              >
-                See a live Tree
-              </Link>
-              <Link
-                href="/campaigns"
-                className="inline-flex items-center justify-center border-2 border-[var(--color-border)] hover:border-[var(--color-text)] text-[var(--color-text)] font-semibold py-4 px-8 rounded-full text-base transition-all duration-300"
-              >
-                Start a campaign
-              </Link>
-            </div>
+            <ScrollReveal delay={400}>
+              <div className="flex flex-col sm:flex-row justify-center gap-6">
+                <MagneticButton strength={0.12} className="inline-block">
+                  <Link
+                    href="/c/sarah"
+                    className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-semibold py-4 px-10 rounded-full text-base transition-all duration-300 hover:shadow-lg hover:shadow-[var(--color-hope)]/20"
+                  >
+                    See a live Tree
+                  </Link>
+                </MagneticButton>
+                <MagneticButton strength={0.12} className="inline-block">
+                  <Link
+                    href="/campaigns"
+                    className="inline-flex items-center justify-center border-2 border-[var(--color-border)] hover:border-[var(--color-text)] text-[var(--color-text)] font-semibold py-4 px-10 rounded-full text-base transition-all duration-300"
+                  >
+                    Start a campaign
+                  </Link>
+                </MagneticButton>
+              </div>
+            </ScrollReveal>
           </div>
         </ScrollReveal>
       </section>
