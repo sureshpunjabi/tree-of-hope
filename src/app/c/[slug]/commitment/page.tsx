@@ -21,11 +21,9 @@ export default function CommitmentPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Track page view on mount
   useEffect(() => {
     trackEvent('commitment_viewed', { slug })
 
-    // Fetch campaign data to get patient name
     const fetchCampaign = async () => {
       try {
         const response = await fetch(`/api/public/campaigns/${slug}`)
@@ -48,18 +46,21 @@ export default function CommitmentPage() {
       name: 'Seedling',
       price: 9.99,
       description: 'A seed of support',
+      icon: '🌱',
     },
     {
       id: 'sapling' as const,
       name: 'Sapling',
       price: 24.99,
       description: 'Watch it grow',
+      icon: '🌿',
     },
     {
       id: 'mightyOak' as const,
       name: 'Mighty Oak',
       price: 99.0,
       description: 'Deep roots of care',
+      icon: '🌳',
     },
   ]
 
@@ -69,6 +70,7 @@ export default function CommitmentPage() {
       name: 'Nurture',
       price: 9,
       description: 'Steady presence',
+      icon: '💚',
     },
     {
       id: 'sustain' as const,
@@ -76,12 +78,14 @@ export default function CommitmentPage() {
       price: 19,
       description: 'Growing support',
       featured: true,
+      icon: '🌿',
     },
     {
       id: 'flourish' as const,
       name: 'Flourish',
       price: 35,
       description: 'Full canopy of care',
+      icon: '🌳',
     },
   ]
 
@@ -173,220 +177,239 @@ export default function CommitmentPage() {
 
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
-      {/* Hero Section — PRD design */}
-      <div className="py-12 md:py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <div>
+      {/* ─── HERO ─── */}
+      <section className="relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div className="max-w-xl">
+              <p className="text-sm font-semibold tracking-widest uppercase text-[var(--color-hope)] mb-4">
+                Make a commitment
+              </p>
               <h1
-                className="font-bold text-4xl md:text-5xl text-[var(--color-text)] mb-4"
+                className="text-5xl md:text-[3.5rem] font-bold text-[var(--color-text)] leading-[1.1] mb-6"
                 style={{ fontFamily: 'var(--font-serif)' }}
               >
-                Make a commitment.
+                Support with
+                <br />
+                <span className="text-[var(--color-hope)]">roots that hold.</span>
               </h1>
-              <p className="text-lg text-[var(--color-text-muted)] mb-2">
-                Today is a one-time start. Monthly support continues quietly in the background.
-              </p>
-              <p className="text-[var(--color-text-muted)]">
-                You can pause for hardship at any time.
+              <p className="text-lg md:text-xl text-[var(--color-text-muted)] leading-relaxed">
+                Today is a one-time start. Monthly support continues quietly in the
+                background. You can pause for hardship at any time.
               </p>
             </div>
-            <div className="hidden md:flex justify-end">
-              <Image
-                src="/tree-hero.png"
-                alt="Tree of Hope"
-                width={340}
-                height={352}
-                className="rounded-lg"
-              />
+
+            <div className="relative hidden lg:flex justify-center lg:justify-end">
+              <div className="relative">
+                <div className="absolute inset-0 bg-[var(--color-hope)] opacity-[0.06] rounded-full blur-3xl scale-110" />
+                <Image
+                  src="/tree-hero.png"
+                  alt="Tree of Hope"
+                  width={400}
+                  height={414}
+                  className="relative z-10 drop-shadow-2xl"
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Main Content */}
-      <form onSubmit={handleSubmit} className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Section 1: Joining Gift */}
-        <div className="mb-16">
-          <h2
-            className="font-serif font-bold text-2xl md:text-3xl text-[var(--color-text)] mb-2"
-            style={{ fontFamily: 'var(--font-serif)' }}
-          >
-            Joining Gift (optional)
-          </h2>
-          <p className="text-[var(--color-text-muted)] mb-8">
-            Make an optional one-time contribution to get started
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-            {joiningGiftTiers.map((tier) => (
-              <button
-                key={tier.id}
-                type="button"
-                onClick={() => handleTierSelect(tier.id, 'joining')}
-                className={cn(
-                  'tier-card relative rounded-lg border-2 p-6 text-left transition-all duration-200',
-                  joiningGift === tier.id
-                    ? 'border-[var(--color-hope)] bg-amber-50 ring-2 ring-[var(--color-hope)] ring-opacity-20'
-                    : 'border-[var(--color-border)] hover:border-[var(--color-hope)]'
-                )}
+      {/* ─── COMMITMENT FORM ─── */}
+      <form onSubmit={handleSubmit}>
+        {/* Joining Gift Section */}
+        <section className="py-20 md:py-28 bg-white">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <p className="text-sm font-semibold tracking-widest uppercase text-[var(--color-hope)] mb-3">
+                Optional
+              </p>
+              <h2
+                className="text-4xl md:text-5xl font-bold text-[var(--color-text)] leading-tight"
+                style={{ fontFamily: 'var(--font-serif)' }}
               >
-                {/* Radio indicator */}
-                <div
+                Joining Gift
+              </h2>
+              <p className="text-lg text-[var(--color-text-muted)] mt-4 max-w-lg mx-auto">
+                Make an optional one-time contribution to get started.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {joiningGiftTiers.map((tier) => (
+                <button
+                  key={tier.id}
+                  type="button"
+                  onClick={() => handleTierSelect(tier.id, 'joining')}
                   className={cn(
-                    'absolute top-4 right-4 w-5 h-5 rounded-full border-2 transition-all',
+                    'relative rounded-3xl p-8 text-left transition-all duration-300 hover:-translate-y-1',
                     joiningGift === tier.id
-                      ? 'border-[var(--color-hope)] bg-[var(--color-hope)]'
-                      : 'border-[var(--color-border)]'
+                      ? 'bg-gradient-to-b from-[#e8f0e4] to-[#d5e0d2] ring-2 ring-[var(--color-hope)] shadow-lg'
+                      : 'bg-[var(--color-bg)] hover:shadow-lg border border-[var(--color-border)]'
                   )}
                 >
+                  <div className="text-3xl mb-4">{tier.icon}</div>
+                  <h3
+                    className="text-lg font-bold text-[var(--color-text)] mb-1"
+                    style={{ fontFamily: 'var(--font-serif)' }}
+                  >
+                    {tier.name}
+                  </h3>
+                  <p className="text-sm text-[var(--color-text-muted)] mb-4">
+                    {tier.description}
+                  </p>
+                  <p
+                    className="text-3xl font-bold text-[var(--color-hope)]"
+                    style={{ fontFamily: 'var(--font-serif)' }}
+                  >
+                    ${tier.price.toFixed(2)}
+                  </p>
+
                   {joiningGift === tier.id && (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <div className="w-2 h-2 bg-white rounded-full" />
+                    <div className="absolute top-4 right-4 w-6 h-6 bg-[var(--color-hope)] rounded-full flex items-center justify-center">
+                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
                     </div>
                   )}
-                </div>
-
-                <h3 className="font-serif font-bold text-lg text-[var(--color-text)] mb-1">
-                  {tier.name}
-                </h3>
-                <p className="text-sm text-[var(--color-text-muted)] mb-3">
-                  {tier.description}
-                </p>
-                <p className="font-serif text-3xl font-bold text-[var(--color-hope)]">
-                  ${tier.price.toFixed(2)}
-                </p>
-              </button>
-            ))}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        </section>
 
-        {/* Section 2: Monthly Commitment */}
-        <div className="mb-16">
-          <h2
-            className="font-serif font-bold text-2xl md:text-3xl text-[var(--color-text)] mb-2"
-            style={{ fontFamily: 'var(--font-serif)' }}
-          >
-            Monthly Commitment (required)
-          </h2>
-          <p className="text-[var(--color-text-muted)] mb-8">
-            Choose a monthly contribution. Commit to supporting this patient's journey.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-            {monthlyTiers.map((tier) => (
-              <button
-                key={tier.id}
-                type="button"
-                onClick={() => handleTierSelect(tier.id, 'monthly')}
-                className={cn(
-                  'tier-card relative rounded-lg border-2 p-6 text-left transition-all duration-200',
-                  tier.featured && 'ring-2 ring-[var(--color-hope)] ring-opacity-20',
-                  monthlyTier === tier.id
-                    ? 'border-[var(--color-hope)] bg-amber-50'
-                    : 'border-[var(--color-border)] hover:border-[var(--color-hope)]'
-                )}
-              >
-                {/* Featured badge */}
-                {tier.featured && (
-                  <div className="absolute top-3 right-3 bg-[var(--color-hope)] text-white text-xs font-semibold px-3 py-1 rounded-full">
-                    Most chosen
-                  </div>
-                )}
-
-                {/* Radio indicator */}
-                <div
-                  className={cn(
-                    'absolute bottom-6 right-6 w-5 h-5 rounded-full border-2 transition-all',
-                    monthlyTier === tier.id
-                      ? 'border-[var(--color-hope)] bg-[var(--color-hope)]'
-                      : 'border-[var(--color-border)]'
-                  )}
-                >
-                  {monthlyTier === tier.id && (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <div className="w-2 h-2 bg-white rounded-full" />
-                    </div>
-                  )}
-                </div>
-
-                <h3 className="font-serif font-bold text-lg text-[var(--color-text)] mb-1">
-                  {tier.name}
-                </h3>
-                <p className="text-sm text-[var(--color-text-muted)] mb-3">
-                  {tier.description}
-                </p>
-                <p className="font-serif text-3xl font-bold text-[var(--color-hope)]">
-                  ${tier.price}/mo
-                </p>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Error Message */}
-        {error && (
-          <div className="mb-8 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
-            {error}
-          </div>
-        )}
-
-        {/* Summary Bar */}
-        <div className="bg-white rounded-lg border border-[var(--color-border)] p-6 md:p-8 sticky bottom-0 z-40 shadow-lg">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div className="flex-1">
-              <p className="text-sm text-[var(--color-text-muted)] mb-2">
-                Order summary
+        {/* Monthly Commitment Section */}
+        <section className="py-20 md:py-28">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <p className="text-sm font-semibold tracking-widest uppercase text-[var(--color-hope)] mb-3">
+                Required
               </p>
-              <div className="space-y-1">
-                {joiningGift && (
-                  <div className="text-sm text-[var(--color-text)]">
-                    {joiningGiftTiers.find((t) => t.id === joiningGift)?.name} —{' '}
-                    ${joiningGiftTiers.find((t) => t.id === joiningGift)?.price.toFixed(2)}
-                  </div>
-                )}
-                {monthlyTier && (
-                  <div className="text-sm text-[var(--color-text)]">
-                    {monthlyTiers.find((t) => t.id === monthlyTier)?.name} (monthly) —{' '}
-                    ${monthlyTiers.find((t) => t.id === monthlyTier)?.price}/mo
-                  </div>
-                )}
-              </div>
-              <div className="mt-3 pt-3 border-t border-[var(--color-border)]">
-                <p className="font-semibold text-[var(--color-hope)]">
-                  Total first payment: ${calculateTotal()}
-                </p>
-              </div>
+              <h2
+                className="text-4xl md:text-5xl font-bold text-[var(--color-text)] leading-tight"
+                style={{ fontFamily: 'var(--font-serif)' }}
+              >
+                Monthly Commitment
+              </h2>
+              <p className="text-lg text-[var(--color-text-muted)] mt-4 max-w-lg mx-auto">
+                Choose a monthly contribution. Pause anytime for hardship.
+              </p>
             </div>
 
-            <button
-              type="submit"
-              disabled={!monthlyTier || loading}
-              className={cn(
-                'btn-primary whitespace-nowrap px-8 py-3 rounded-full font-semibold transition-all duration-200',
-                monthlyTier
-                  ? 'bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white cursor-pointer'
-                  : 'bg-[var(--color-border)] text-[var(--color-text-muted)] cursor-not-allowed opacity-50'
-              )}
-            >
-              {loading ? 'Processing...' : 'Continue to checkout'}
-            </button>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {monthlyTiers.map((tier) => (
+                <button
+                  key={tier.id}
+                  type="button"
+                  onClick={() => handleTierSelect(tier.id, 'monthly')}
+                  className={cn(
+                    'relative rounded-3xl p-8 text-left transition-all duration-300 hover:-translate-y-1',
+                    tier.featured && !monthlyTier && 'ring-2 ring-[var(--color-hope)] ring-opacity-40',
+                    monthlyTier === tier.id
+                      ? 'bg-gradient-to-b from-[#e8f0e4] to-[#d5e0d2] ring-2 ring-[var(--color-hope)] shadow-lg'
+                      : 'bg-white hover:shadow-lg border border-[var(--color-border)]'
+                  )}
+                >
+                  {tier.featured && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[var(--color-hope)] text-white text-xs font-bold px-4 py-1 rounded-full tracking-wider uppercase">
+                      Most chosen
+                    </div>
+                  )}
+
+                  <div className="text-3xl mb-4">{tier.icon}</div>
+                  <h3
+                    className="text-lg font-bold text-[var(--color-text)] mb-1"
+                    style={{ fontFamily: 'var(--font-serif)' }}
+                  >
+                    {tier.name}
+                  </h3>
+                  <p className="text-sm text-[var(--color-text-muted)] mb-4">
+                    {tier.description}
+                  </p>
+                  <p
+                    className="text-3xl font-bold text-[var(--color-hope)]"
+                    style={{ fontFamily: 'var(--font-serif)' }}
+                  >
+                    ${tier.price}<span className="text-lg font-normal text-[var(--color-text-muted)]">/mo</span>
+                  </p>
+
+                  {monthlyTier === tier.id && (
+                    <div className="absolute top-4 right-4 w-6 h-6 bg-[var(--color-hope)] rounded-full flex items-center justify-center">
+                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        </section>
+
+        {/* ─── SUMMARY BAR ─── */}
+        <section className="border-t border-[var(--color-border)] bg-white">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-2xl text-sm">
+                {error}
+              </div>
+            )}
+
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              <div className="flex-1">
+                <p className="text-sm font-semibold tracking-widest uppercase text-[var(--color-text-muted)] mb-3">
+                  Order summary
+                </p>
+                <div className="space-y-1">
+                  {joiningGift && (
+                    <div className="text-sm text-[var(--color-text)]">
+                      {joiningGiftTiers.find((t) => t.id === joiningGift)?.name} —{' '}
+                      ${joiningGiftTiers.find((t) => t.id === joiningGift)?.price.toFixed(2)}
+                    </div>
+                  )}
+                  {monthlyTier && (
+                    <div className="text-sm text-[var(--color-text)]">
+                      {monthlyTiers.find((t) => t.id === monthlyTier)?.name} (monthly) —{' '}
+                      ${monthlyTiers.find((t) => t.id === monthlyTier)?.price}/mo
+                    </div>
+                  )}
+                </div>
+                <div className="mt-3 pt-3 border-t border-[var(--color-border)]">
+                  <p
+                    className="text-xl font-bold text-[var(--color-hope)]"
+                    style={{ fontFamily: 'var(--font-serif)' }}
+                  >
+                    Total first payment: ${calculateTotal()}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={!monthlyTier || loading}
+                className={cn(
+                  'whitespace-nowrap py-4 px-10 rounded-full font-semibold text-base transition-all duration-200',
+                  monthlyTier
+                    ? 'bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white cursor-pointer hover:shadow-lg hover:-translate-y-0.5'
+                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                )}
+              >
+                {loading ? 'Processing...' : 'Continue to checkout'}
+              </button>
+            </div>
+          </div>
+        </section>
       </form>
 
-      {/* Trust Language */}
-      <div className="mt-32 py-12 bg-amber-50">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="trust-language">
-            <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
-              Tree of Hope is a for-profit service. Your contribution funds the
-              Sanctuary and ongoing platform operations. It is not sent to the
-              patient.
-            </p>
-          </div>
+      {/* Trust language footer */}
+      <section className="py-8 bg-[var(--color-bg)]">
+        <div className="trust-language">
+          <p>
+            Tree of Hope is a for-profit service. Your contribution funds the Sanctuary
+            and ongoing platform operations. It is not sent to the patient.
+          </p>
         </div>
-      </div>
+      </section>
     </div>
   )
 }
