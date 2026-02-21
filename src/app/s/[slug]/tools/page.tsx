@@ -75,7 +75,7 @@ export default function ToolsPage() {
     return (
       <div className="sanctuary-bg min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-color-text-muted">Loading tools...</p>
+          <p className="text-[var(--color-text-muted)]">Loading tools...</p>
         </div>
       </div>
     )
@@ -84,9 +84,9 @@ export default function ToolsPage() {
   return (
     <div className="sanctuary-bg min-h-screen pb-24">
       {/* Header */}
-      <div className="bg-white border-b border-color-border sticky top-0 z-40">
+      <div className="bg-white border-b border-[var(--color-border)] sticky top-0 z-40">
         <div className="page-container flex justify-between items-center py-4">
-          <h1 className="text-3xl font-bold text-color-text">Your Care Tools</h1>
+          <h1 className="text-3xl font-bold text-[var(--color-text)]">Your Care Tools</h1>
           <Link href={`/s/${slug}`} className="btn-secondary text-sm">
             ← Back
           </Link>
@@ -108,10 +108,10 @@ export default function ToolsPage() {
                   <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">
                     {tool.icon}
                   </div>
-                  <h3 className="text-xl font-bold text-color-text mb-2">
+                  <h3 className="text-xl font-bold text-[var(--color-text)] mb-2">
                     {tool.name}
                   </h3>
-                  <p className="text-color-text-muted">
+                  <p className="text-[var(--color-text-muted)]">
                     {tool.description}
                   </p>
                 </Link>
@@ -123,7 +123,7 @@ export default function ToolsPage() {
         {/* Evolving Tools Section */}
         {evolvingTools.length > 0 && (
           <div>
-            <h2 className="text-2xl font-bold text-color-text mb-6">Coming Soon</h2>
+            <h2 className="text-2xl font-bold text-[var(--color-text)] mb-6">Coming Soon</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {evolvingTools.map((tool) => (
                 <Link
@@ -134,13 +134,13 @@ export default function ToolsPage() {
                   <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">
                     {tool.icon}
                   </div>
-                  <h3 className="text-xl font-bold text-color-text mb-2">
+                  <h3 className="text-xl font-bold text-[var(--color-text)] mb-2">
                     {tool.name}
                   </h3>
-                  <p className="text-color-text-muted mb-4">
+                  <p className="text-[var(--color-text-muted)] mb-4">
                     {tool.description}
                   </p>
-                  <p className="text-sm text-color-leaf-1 font-medium">
+                  <p className="text-sm text-[var(--color-leaf-1)] font-medium">
                     We're growing this tool with our early families. It'll be ready soon — and your experience is helping shape it.
                   </p>
                 </Link>
@@ -151,25 +151,25 @@ export default function ToolsPage() {
       </div>
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-color-border">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[var(--color-border)]">
         <div className="page-container flex justify-around py-4">
           <Link
             href={`/s/${slug}/journal`}
-            className="flex flex-col items-center gap-1 text-color-text-muted hover:text-color-leaf-1 transition-colors"
+            className="flex flex-col items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-leaf-1)] transition-colors"
           >
             <span className="text-xl">📔</span>
             <span className="text-xs font-medium">Journal</span>
           </Link>
           <Link
             href={`/s/${slug}`}
-            className="flex flex-col items-center gap-1 text-color-text-muted hover:text-color-leaf-1 transition-colors"
+            className="flex flex-col items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-leaf-1)] transition-colors"
           >
             <span className="text-xl">🏠</span>
             <span className="text-xs font-medium">Today</span>
           </Link>
           <Link
             href={`/s/${slug}/tools`}
-            className="flex flex-col items-center gap-1 text-color-leaf-1 transition-colors"
+            className="flex flex-col items-center gap-1 text-[var(--color-leaf-1)] transition-colors"
           >
             <span className="text-xl">🛠️</span>
             <span className="text-xs font-medium">Tools</span>

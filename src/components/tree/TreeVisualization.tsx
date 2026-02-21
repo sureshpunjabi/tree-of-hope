@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 
 interface Leaf {
@@ -19,108 +19,63 @@ interface TreeVisualizationProps {
   className?: string;
 }
 
-// Seeded random number generator for consistent positioning
-const seededRandom = (seed: string): number => {
-  let hash = 0;
-  for (let i = 0; i < seed.length; i++) {
-    const char = seed.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash;
+const GOLDEN_RATIO = 1.618033988749895;
+const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5)); // approximately 137.5 degrees
+
+// Generate leaf positions using golden spiral distribution
+const generateLeafPositions = (count: number) => {
+  const positions: Array<{ x: number; y: number }> = [];
+  const maxRadius = 140;
+  const centerX = 200;
+  const centerY = 180;
+
+  for (let i = 0; i < count; i++) {
+    const angle = i * GOLDEN_ANGLE;
+    const radius = Math.sqrt(i) * 12 + 30;
+    
+    // Add slight randomness for organic feel
+    const randomRadius = radius + (Math.random() - 0.5) * 15;
+    const randomAngle = angle + (Math.random() - 0.5) * 0.3;
+    
+    const boundedRadius = Math.min(randomRadius, maxRadius);
+    
+    const x = centerX + Math.cos(randomAngle) * boundedRadius;
+    const y = centerY + Math.sin(randomAngle) * boundedRadius;
+    
+    positions.push({ x, y });
   }
-  return Math.abs(hash % 1000) / 1000;
+
+  return positions;
 };
 
-// Leaf color palette (cycling through 5 colors)
-const LEAF_COLORS = ['#66BB6A', '#81C784', '#A5D6A7', '#C8E6C9', '#FFD54F'];
-
-// SVG constants
-const SVG_WIDTH = 600;
-const SVG_HEIGHT = 500;
-const TRUNK_X = SVG_WIDTH / 2;
-const TRUNK_Y = SVG_HEIGHT * 0.65;
-const TRUNK_WIDTH = 25;
-const TRUNK_HEIGHT = 180;
-const LEAVES_PER_TIER = 8;
-
-interface BranchConfig {
-  startX: number;
-  startY: number;
-  endX: number;
-  endY: number;
-  angle: number;
-}
-
-const getBranchConfigs = (): BranchConfig[] => {
-  return [
-    // Tier 1 (bottom) - wider spread
-    {
-      startX: TRUNK_X,
-      startY: TRUNK_Y,
-      endX: TRUNK_X - 120,
-      endY: TRUNK_Y - 100,
-      angle: 225,
-    },
-    {
-      startX: TRUNK_X,
-      startY: TRUNK_Y,
-      endX: TRUNK_X + 120,
-      endY: TRUNK_Y - 100,
-      angle: 315,
-    },
-    // Tier 2 (middle)
-    {
-      startX: TRUNK_X,
-      startY: TRUNK_Y - 80,
-      endX: TRUNK_X - 110,
-      endY: TRUNK_Y - 160,
-      angle: 220,
-    },
-    {
-      startX: TRUNK_X,
-      startY: TRUNK_Y - 80,
-      endX: TRUNK_X + 110,
-      endY: TRUNK_Y - 160,
-      angle: 320,
-    },
-    // Tier 3 (upper)
-    {
-      startX: TRUNK_X,
-      startY: TRUNK_Y - 160,
-      endX: TRUNK_X - 100,
-      endY: TRUNK_Y - 230,
-      angle: 230,
-    },
-    {
-      startX: TRUNK_X,
-      startY: TRUNK_Y - 160,
-      endX: TRUNK_X + 100,
-      endY: TRUNK_Y - 230,
-      angle: 310,
-    },
-    // Tier 4 (top)
-    {
-      startX: TRUNK_X,
-      startY: TRUNK_Y - 240,
-      endX: TRUNK_X - 80,
-      endY: TRUNK_Y - 290,
-      angle: 240,
-    },
-    {
-      startX: TRUNK_X,
-      startY: TRUNK_Y - 240,
-      endX: TRUNK_X + 80,
-      endY: TRUNK_Y - 290,
-      angle: 300,
-    },
+// Generate smooth curved branch paths
+const generateBranchPaths = () => {
+  const branches = [
+    // Main trunk splits into primary branches
+    'M200,280 Q180,240 170,200 Q165,180 160,160',
+    'M200,280 Q220,240 230,200 Q235,180 240,160',
+    'M200,280 Q190,240 185,180 Q182,160 178,140',
+    'M200,280 Q210,240 215,180 Q218,160 222,140',
   ];
+
+  return branches;
 };
 
-interface PositionedLeaf extends Leaf {
-  x: number;
-  y: number;
-  color: string;
-  isNew: boolean;
-}
+// Generate secondary branches from main branches
+const generateSecondaryBranches = () => {
+  const branches = [
+    'M160,160 Q145,145 135,130',
+    'M160,160 Q155,140 150,120',
+    'M240,160 Q255,145 265,130',
+    'M240,160 Q245,140 250,120',
+    'M178,140 Q165,125 155,110',
+    'M178,140 Q180,120 182,100',
+    'M222,140 Q235,125 245,110',
+    'M222,140 Q220,120 218,100',
+  ];
+
+  return branches;
+};
 
 export const TreeVisualization: React.FC<TreeVisualizationProps> = ({
   leaves,
@@ -129,285 +84,360 @@ export const TreeVisualization: React.FC<TreeVisualizationProps> = ({
   className,
 }) => {
   const [hoveredLeafId, setHoveredLeafId] = useState<string | null>(null);
+  const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
 
-  const positionedLeaves = useMemo<PositionedLeaf[]>(() => {
-    const branchConfigs = getBranchConfigs();
-    
-    return leaves.map((leaf, index) => {
-      let x: number;
-      let y: number;
+  const leafPositions = useMemo(() => generateLeafPositions(leaves.length), [leaves.length]);
 
-      if (leaf.position_x !== null && leaf.position_y !== null) {
-        x = leaf.position_x;
-        y = leaf.position_y;
-      } else {
-        // Calculate branch tier (2 branches per tier)
-        const branchIndex = Math.floor(index / LEAVES_PER_TIER) * 2;
-        const positionOnBranch = (index % LEAVES_PER_TIER) / LEAVES_PER_TIER;
-
-        // Use left or right branch alternately
-        const isBranchLeft = index % 2 === 0;
-        const actualBranchIndex = branchIndex + (isBranchLeft ? 0 : 1);
-
-        if (actualBranchIndex >= branchConfigs.length) {
-          // Fallback for overflow
-          x = SVG_WIDTH / 2;
-          y = SVG_HEIGHT - 100;
-        } else {
-          const branch = branchConfigs[actualBranchIndex];
-          const branchLength = Math.hypot(
-            branch.endX - branch.startX,
-            branch.endY - branch.startY
-          );
-
-          // Interpolate along branch
-          const t = positionOnBranch;
-          x =
-            branch.startX +
-            (branch.endX - branch.startX) * t +
-            (seededRandom(leaf.id) - 0.5) * 20;
-          y =
-            branch.startY +
-            (branch.endY - branch.startY) * t +
-            (seededRandom(leaf.id + '-y') - 0.5) * 20;
-        }
-      }
-
-      return {
-        ...leaf,
-        x,
-        y,
-        color: LEAF_COLORS[index % LEAF_COLORS.length],
-        isNew: false,
-      };
+  const handleLeafHover = (
+    e: React.MouseEvent<SVGElement>,
+    leafId: string
+  ) => {
+    setHoveredLeafId(leafId);
+    const rect = e.currentTarget.getBoundingClientRect();
+    setTooltipPos({
+      x: rect.left,
+      y: rect.top,
     });
-  }, [leaves]);
+  };
 
-  const isEmpty = leaves.length === 0;
+  if (leaves.length === 0) {
+    return (
+      <div
+        className={cn(
+          'flex flex-col items-center justify-center min-h-96 bg-gradient-to-b from-green-50 to-green-100 rounded-lg',
+          className
+        )}
+      >
+        <svg
+          viewBox="0 0 400 400"
+          className="w-32 h-32 mb-4"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <style>{`
+            @keyframes sway {
+              0%, 100% { transform: rotate(0deg); }
+              50% { transform: rotate(1deg); }
+            }
+            .sapling { animation: sway 3s ease-in-out infinite; }
+          `}</style>
+
+          <defs>
+            <linearGradient id="sapling-trunk" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#5D4037" />
+              <stop offset="100%" stopColor="#8D6E63" />
+            </linearGradient>
+            <radialGradient id="sapling-glow">
+              <stop offset="0%" stopColor="#81C784" stopOpacity="0.4" />
+              <stop offset="100%" stopColor="#81C784" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+
+          <circle cx="200" cy="300" r="80" fill="url(#sapling-glow)" />
+
+          <g className="sapling" style={{ transformOrigin: '200px 340px' }}>
+            <path
+              d="M200,340 Q195,300 190,260 Q185,220 180,180"
+              stroke="url(#sapling-trunk)"
+              strokeWidth="8"
+              fill="none"
+              strokeLinecap="round"
+            />
+            <circle cx="150" cy="160" r="12" fill="#66BB6A" />
+            <circle cx="210" cy="150" r="12" fill="#81C784" />
+            <circle cx="180" cy="140" r="12" fill="#A5D6A7" />
+          </g>
+        </svg>
+
+        <h3 className="text-xl font-semibold text-gray-700 mb-2">
+          Be the first to add a leaf
+        </h3>
+        <p className="text-gray-600 text-center max-w-xs">
+          Plant a message of hope and support for {patientName}
+        </p>
+      </div>
+    );
+  }
+
+  const mainBranches = generateBranchPaths();
+  const secondaryBranches = generateSecondaryBranches();
 
   return (
-    <div className={cn('w-full flex flex-col items-center justify-center', className)}>
-      <svg
-        viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
-        className="w-full max-w-2xl h-auto"
-        style={{ aspectRatio: `${SVG_WIDTH}/${SVG_HEIGHT}` }}
-      >
-        {/* Background gradient */}
-        <defs>
-          <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" style={{ stopColor: '#E3F2FD', stopOpacity: 1 }} />
-            <stop offset="100%" style={{ stopColor: '#F1F8E9', stopOpacity: 1 }} />
-          </linearGradient>
-          <linearGradient id="trunkGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" style={{ stopColor: '#6D4C41', stopOpacity: 1 }} />
-            <stop offset="50%" style={{ stopColor: '#5D4037', stopOpacity: 1 }} />
-            <stop offset="100%" style={{ stopColor: '#4E342E', stopOpacity: 1 }} />
-          </linearGradient>
-          <filter id="leafShadow" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow
-              dx="0"
-              dy="1"
-              stdDeviation="1"
-              floodOpacity="0.2"
-            />
-          </filter>
-        </defs>
-
-        {/* Background */}
-        <rect
-          width={SVG_WIDTH}
-          height={SVG_HEIGHT}
-          fill="url(#skyGradient)"
-        />
-
-        {/* Ground/Grass */}
-        <ellipse
-          cx={SVG_WIDTH / 2}
-          cy={SVG_HEIGHT - 20}
-          rx={SVG_WIDTH * 0.6}
-          ry={40}
-          fill="#81C784"
-          opacity="0.4"
-        />
-        <path
-          d={`M 0 ${SVG_HEIGHT - 25} Q ${SVG_WIDTH / 4} ${SVG_HEIGHT - 35} ${SVG_WIDTH / 2} ${SVG_HEIGHT - 25} T ${SVG_WIDTH} ${SVG_HEIGHT - 25}`}
-          fill="none"
-          stroke="#66BB6A"
-          strokeWidth="2"
-          opacity="0.5"
-        />
-
-        {/* Trunk */}
-        <rect
-          x={TRUNK_X - TRUNK_WIDTH / 2}
-          y={TRUNK_Y - TRUNK_HEIGHT}
-          width={TRUNK_WIDTH}
-          height={TRUNK_HEIGHT}
-          fill="url(#trunkGradient)"
-          rx="4"
-        />
-
-        {/* Branches */}
-        {getBranchConfigs().map((branch, idx) => (
-          <g key={`branch-${idx}`}>
-            <line
-              x1={branch.startX}
-              y1={branch.startY}
-              x2={branch.endX}
-              y2={branch.endY}
-              stroke="#5D4037"
-              strokeWidth="6"
-              strokeLinecap="round"
-              opacity="0.8"
-            />
-            {/* Secondary branches */}
-            {[0.3, 0.6].map((t) => (
-              <line
-                key={`secondary-${idx}-${t}`}
-                x1={
-                  branch.startX +
-                  (branch.endX - branch.startX) * t
-                }
-                y1={
-                  branch.startY +
-                  (branch.endY - branch.startY) * t
-                }
-                x2={
-                  branch.startX +
-                  (branch.endX - branch.startX) * t +
-                  Math.cos((branch.angle * Math.PI) / 180 + 0.5) * 25
-                }
-                y2={
-                  branch.startY +
-                  (branch.endY - branch.startY) * t +
-                  Math.sin((branch.angle * Math.PI) / 180 + 0.5) * 25
-                }
-                stroke="#6D4C41"
-                strokeWidth="3"
-                opacity="0.6"
-                strokeLinecap="round"
-              />
-            ))}
-          </g>
-        ))}
-
-        {/* Leaves */}
-        {!isEmpty &&
-          positionedLeaves.map((leaf) => (
-            <g
-              key={leaf.id}
-              onClick={() => onLeafClick(leaf)}
-              onMouseEnter={() => setHoveredLeafId(leaf.id)}
-              onMouseLeave={() => setHoveredLeafId(null)}
-              className="cursor-pointer transition-opacity duration-200"
-              style={{
-                opacity: hoveredLeafId && hoveredLeafId !== leaf.id ? 0.6 : 1,
-              }}
-            >
-              {/* Leaf shape (ellipse rotated) */}
-              <ellipse
-                cx={leaf.x}
-                cy={leaf.y}
-                rx="12"
-                ry="8"
-                fill={leaf.color}
-                stroke="#fff"
-                strokeWidth="1.5"
-                filter="url(#leafShadow)"
-                style={{
-                  transformOrigin: `${leaf.x}px ${leaf.y}px`,
-                  transform: `rotate(${seededRandom(leaf.id + '-rot') * 360}deg)`,
-                }}
-                className="leaf-shape transition-all duration-200 hover:brightness-110"
-              />
-
-              {/* Tooltip on hover */}
-              {hoveredLeafId === leaf.id && (
-                <g>
-                  {/* Tooltip background */}
-                  <rect
-                    x={leaf.x - 80}
-                    y={leaf.y - 50}
-                    width="160"
-                    height="45"
-                    fill="white"
-                    stroke="#5D4037"
-                    strokeWidth="1"
-                    rx="4"
-                    opacity="0.95"
-                  />
-                  {/* Tooltip text */}
-                  <text
-                    x={leaf.x}
-                    y={leaf.y - 35}
-                    textAnchor="middle"
-                    fontSize="12"
-                    fontWeight="600"
-                    fill="#5D4037"
-                    style={{ pointerEvents: 'none' }}
-                  >
-                    {leaf.author_name}
-                  </text>
-                  <text
-                    x={leaf.x}
-                    y={leaf.y - 20}
-                    textAnchor="middle"
-                    fontSize="10"
-                    fill="#666"
-                    style={{
-                      pointerEvents: 'none',
-                      wordWrap: 'break-word',
-                      maxWidth: '140px',
-                    }}
-                  >
-                    {leaf.message.split('\n')[0].substring(0, 40)}
-                    {leaf.message.length > 40 ? '...' : ''}
-                  </text>
-                </g>
-              )}
-            </g>
-          ))}
-      </svg>
-
-      {/* Leaf count and empty state */}
-      <div className="mt-6 text-center">
-        {isEmpty ? (
-          <p className="text-gray-600 text-sm italic">
-            Every tree starts with a single leaf. Be the first to add yours.
-          </p>
-        ) : (
-          <p className="text-gray-700 text-sm font-medium">
-            <span className="text-green-600 font-semibold">
-              {leaves.length}
-            </span>
-            {' '}
-            leaf{leaves.length !== 1 ? 'ves' : ''} on{' '}
-            <span className="font-semibold text-amber-900">{patientName}</span>
-            's Tree
-          </p>
-        )}
-      </div>
-
+    <div className={cn('relative w-full bg-white rounded-lg p-4', className)}>
       <style>{`
-        @keyframes leaf-fade-in {
-          from {
-            opacity: 0;
-            transform: scale(0.5);
+        @keyframes sway {
+          0%, 100% {
+            transform: translateY(0px) rotate(0deg);
           }
-          to {
-            opacity: 1;
-            transform: scale(1);
+          25% {
+            transform: translateY(-2px) rotate(-0.5deg);
+          }
+          50% {
+            transform: translateY(-4px) rotate(0deg);
+          }
+          75% {
+            transform: translateY(-2px) rotate(0.5deg);
           }
         }
 
-        .leaf-shape {
-          animation: leaf-fade-in 0.6s ease-out;
+        @keyframes glow-pulse {
+          0%, 100% {
+            opacity: 0.6;
+          }
+          50% {
+            opacity: 0.9;
+          }
         }
 
-        .leaf-shape:hover {
-          filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        .tree-leaf {
+          animation: sway 6s ease-in-out infinite;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .tree-leaf:hover {
+          filter: brightness(1.2);
+        }
+
+        .leaf-glow {
+          animation: glow-pulse 3s ease-in-out infinite;
+        }
+
+        .tooltip-card {
+          position: fixed;
+          background: white;
+          border: 1px solid #E0E0E0;
+          border-radius: 8px;
+          padding: 12px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          z-index: 50;
+          max-width: 280px;
+          pointer-events: none;
+        }
+
+        .tooltip-card-author {
+          font-weight: 600;
+          color: #333;
+          font-size: 14px;
+          margin-bottom: 4px;
+        }
+
+        .tooltip-card-message {
+          color: #666;
+          font-size: 13px;
+          line-height: 1.4;
+          word-wrap: break-word;
+        }
+
+        .tooltip-card-date {
+          color: #999;
+          font-size: 11px;
+          margin-top: 6px;
         }
       `}</style>
+
+      <svg
+        viewBox="0 0 400 400"
+        className="w-full h-auto max-h-96"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          {/* Trunk gradient */}
+          <linearGradient
+            id="trunk-gradient"
+            x1="0%"
+            y1="0%"
+            x2="100%"
+            y2="0%"
+          >
+            <stop offset="0%" stopColor="#5D4037" />
+            <stop offset="50%" stopColor="#6D4C41" />
+            <stop offset="100%" stopColor="#8D6E63" />
+          </linearGradient>
+
+          {/* Canopy glow */}
+          <radialGradient id="canopy-glow" cx="50%" cy="40%">
+            <stop offset="0%" stopColor="#81C784" stopOpacity="0.3" />
+            <stop offset="50%" stopColor="#66BB6A" stopOpacity="0.15" />
+            <stop offset="100%" stopColor="#A5D6A7" stopOpacity="0" />
+          </radialGradient>
+
+          {/* Leaf glow filter */}
+          <filter id="leaf-glow">
+            <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+            <feMerge>
+              <feMergeNode in="coloredBlur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          {/* Enhanced glow for darker leaves */}
+          <filter id="leaf-glow-bright">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+            <feMerge>
+              <feMergeNode in="coloredBlur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          {/* Leaf gradients */}
+          <linearGradient id="leaf-color-1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#66BB6A" />
+            <stop offset="100%" stopColor="#558B2F" />
+          </linearGradient>
+          <linearGradient id="leaf-color-2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#81C784" />
+            <stop offset="100%" stopColor="#689F38" />
+          </linearGradient>
+          <linearGradient id="leaf-color-3" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#A5D6A7" />
+            <stop offset="100%" stopColor="#7CB342" />
+          </linearGradient>
+          <linearGradient id="leaf-color-4" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#C8E6C9" />
+            <stop offset="100%" stopColor="#9CCC65" />
+          </linearGradient>
+        </defs>
+
+        {/* Background canopy glow */}
+        <circle cx="200" cy="180" r="160" fill="url(#canopy-glow)" />
+
+        {/* Main trunk */}
+        <path
+          d="M200,280 Q198,250 196,220 Q195,190 194,160"
+          stroke="url(#trunk-gradient)"
+          strokeWidth="12"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+
+        {/* Primary branches */}
+        {mainBranches.map((path, idx) => (
+          <path
+            key={`main-branch-${idx}`}
+            d={path}
+            stroke="url(#trunk-gradient)"
+            strokeWidth={8 - idx * 0.5}
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            opacity="0.9"
+          />
+        ))}
+
+        {/* Secondary branches */}
+        {secondaryBranches.map((path, idx) => (
+          <path
+            key={`secondary-branch-${idx}`}
+            d={path}
+            stroke="url(#trunk-gradient)"
+            strokeWidth="4"
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            opacity="0.7"
+          />
+        ))}
+
+        {/* Leaves positioned in golden spiral pattern */}
+        {leaves.map((leaf, index) => {
+          const position = leafPositions[index];
+          const leafColors = [
+            'url(#leaf-color-1)',
+            'url(#leaf-color-2)',
+            'url(#leaf-color-3)',
+            'url(#leaf-color-4)',
+          ];
+          const leafColor = leafColors[index % leafColors.length];
+          const delay = (index * 0.1) % 6;
+
+          return (
+            <g
+              key={leaf.id}
+              className="tree-leaf"
+              style={{
+                animationDelay: `${delay}s`,
+              } as React.CSSProperties}
+            >
+              {/* Leaf glow background */}
+              <ellipse
+                cx={position.x}
+                cy={position.y}
+                rx="7.5"
+                ry="8.5"
+                fill={leafColor}
+                opacity="0.4"
+                className="leaf-glow"
+                filter="url(#leaf-glow-bright)"
+              />
+
+              {/* Main leaf */}
+              <ellipse
+                cx={position.x}
+                cy={position.y}
+                rx="6"
+                ry="7"
+                fill={leafColor}
+                filter="url(#leaf-glow)"
+                onMouseEnter={(e) => handleLeafHover(e, leaf.id)}
+                onMouseLeave={() => setHoveredLeafId(null)}
+                onClick={() => onLeafClick(leaf)}
+                style={{
+                  transform: `rotate(${Math.random() * 360}deg)`,
+                  transformOrigin: `${position.x}px ${position.y}px`,
+                }}
+              />
+
+              {/* Leaf vein detail */}
+              <line
+                x1={position.x}
+                y1={position.y - 6}
+                x2={position.x}
+                y2={position.y + 6}
+                stroke="rgba(255, 255, 255, 0.3)"
+                strokeWidth="0.5"
+              />
+            </g>
+          );
+        })}
+      </svg>
+
+      {/* Tooltip */}
+      {hoveredLeafId && (
+        <div
+          className="tooltip-card"
+          style={{
+            left: `${tooltipPos.x + 10}px`,
+            top: `${tooltipPos.y - 100}px`,
+          }}
+        >
+          {leaves.map((leaf) => {
+            if (leaf.id !== hoveredLeafId) return null;
+            return (
+              <div key={leaf.id}>
+                <div className="tooltip-card-author">{leaf.author_name}</div>
+                <div className="tooltip-card-message">{leaf.message}</div>
+                <div className="tooltip-card-date">
+                  {new Date(leaf.created_at).toLocaleDateString()}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Tree title */}
+      <div className="mt-4 text-center">
+        <h2 className="text-2xl font-semibold text-gray-800">
+          Tree of Hope
+        </h2>
+        <p className="text-gray-600 text-sm mt-1">
+          {leaves.length} {leaves.length === 1 ? 'leaf' : 'leaves'} of support for {patientName}
+        </p>
+      </div>
     </div>
   );
 };

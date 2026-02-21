@@ -52,7 +52,7 @@ export default function SanctuaryClaimPage() {
     return (
       <div className="sanctuary-bg min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-color-text-muted">Loading...</p>
+          <p className="text-[var(--color-text-muted)]">Loading...</p>
         </div>
       </div>
     )
@@ -62,11 +62,11 @@ export default function SanctuaryClaimPage() {
     <div className="sanctuary-bg min-h-screen flex flex-col items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <div className="card">
-          <h1 className="text-4xl font-bold text-center mb-4 text-color-text">
+          <h1 className="text-4xl font-bold text-center mb-4 text-[var(--color-text)]">
             A Sanctuary has been prepared for you
           </h1>
 
-          <p className="text-center text-color-text-muted mb-8 leading-relaxed">
+          <p className="text-center text-[var(--color-text-muted)] mb-8 leading-relaxed">
             Welcome to your Sanctuary. This is a private space — just for you and anyone you choose to invite. Over the next 30 days, we'll walk with you. One day at a time.
           </p>
 
@@ -79,7 +79,7 @@ export default function SanctuaryClaimPage() {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-color-text mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-[var(--color-text)] mb-2">
                   Email
                 </label>
                 <input
@@ -90,7 +90,7 @@ export default function SanctuaryClaimPage() {
                   placeholder="you@example.com"
                   required
                   disabled={loading}
-                  className="w-full px-4 py-3 border border-color-border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-hope bg-white text-color-text placeholder-color-text-muted disabled:opacity-50"
+                  className="w-full px-4 py-3 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] disabled:opacity-50"
                 />
               </div>
 

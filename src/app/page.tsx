@@ -9,22 +9,22 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div className="max-w-xl">
-              <p className="text-sm font-semibold tracking-widest uppercase text-[var(--color-hope)] mb-4">
+              <p className="text-sm font-semibold tracking-widest uppercase text-[var(--color-hope)] mb-4 animate-fade-in-up stagger-1">
                 Micro-campaign fundraising
               </p>
               <h1
-                className="text-5xl md:text-[3.5rem] lg:text-[4rem] font-bold text-[var(--color-text)] leading-[1.1] mb-6"
+                className="text-5xl md:text-[3.5rem] lg:text-[4rem] font-bold text-[var(--color-text)] leading-[1.1] mb-6 animate-fade-in-up stagger-2"
                 style={{ fontFamily: 'var(--font-serif)' }}
               >
                 Care with roots.
                 <br />
                 <span className="text-[var(--color-hope)]">Kindness in motion.</span>
               </h1>
-              <p className="text-lg md:text-xl text-[var(--color-text-muted)] mb-10 leading-relaxed">
+              <p className="text-lg md:text-xl text-[var(--color-text-muted)] mb-10 leading-relaxed animate-fade-in-up stagger-3">
                 A five-day gathering builds a circle of support. Then a private
                 Sanctuary holds what matters — for as long as it&apos;s needed.
               </p>
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-4 animate-fade-in-up stagger-4">
                 <Link
                   href="/c/sarah"
                   className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-semibold py-4 px-10 rounded-full text-base transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
@@ -49,7 +49,7 @@ export default function HomePage() {
                   alt="A bonsai tree growing in a glass dome — the Tree of Hope"
                   width={500}
                   height={518}
-                  className="relative z-10 drop-shadow-2xl"
+                  className="relative z-10 drop-shadow-2xl animate-float"
                   priority
                 />
               </div>
@@ -70,7 +70,7 @@ export default function HomePage() {
             ].map((stat) => (
               <div key={stat.label} className="py-8 md:py-10 px-6 text-center">
                 <div
-                  className="text-3xl md:text-4xl font-bold text-[var(--color-hope)] mb-1"
+                  className="text-4xl md:text-5xl font-bold text-[var(--color-hope)] mb-1"
                   style={{ fontFamily: 'var(--font-serif)' }}
                 >
                   {stat.number}
@@ -134,7 +134,7 @@ export default function HomePage() {
             ].map((item) => (
               <div
                 key={item.step}
-                className="bg-white rounded-2xl border border-[var(--color-border)] p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                className="bg-white rounded-2xl border border-[var(--color-border)] p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 card-shine"
               >
                 <div className="text-3xl mb-4">{item.icon}</div>
                 <div className="text-xs font-bold tracking-widest text-[var(--color-hope)] mb-2 uppercase">
@@ -172,7 +172,7 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Campaign Tree */}
-            <div className="group relative rounded-3xl overflow-hidden bg-gradient-to-b from-[#f0ebe4] to-[#e8e0d5] p-8 md:p-10 hover:shadow-xl transition-all duration-300">
+            <div className="group relative rounded-3xl overflow-hidden bg-gradient-to-b from-[#f0ebe4] to-[#e8e0d5] p-8 md:p-10 hover:shadow-xl transition-all duration-300 card-shine">
               <div className="text-4xl mb-6">🌿</div>
               <h3
                 className="text-2xl font-bold text-[var(--color-text)] mb-3"
@@ -192,7 +192,7 @@ export default function HomePage() {
             </div>
 
             {/* Sanctuary */}
-            <div className="group relative rounded-3xl overflow-hidden bg-gradient-to-b from-[#e8f0e4] to-[#d5e0d2] p-8 md:p-10 hover:shadow-xl transition-all duration-300">
+            <div className="group relative rounded-3xl overflow-hidden bg-gradient-to-b from-[#e8f0e4] to-[#d5e0d2] p-8 md:p-10 hover:shadow-xl transition-all duration-300 card-shine">
               <div className="text-4xl mb-6">🏡</div>
               <h3
                 className="text-2xl font-bold text-[var(--color-text)] mb-3"
@@ -212,7 +212,7 @@ export default function HomePage() {
             </div>
 
             {/* Bridge */}
-            <div className="group relative rounded-3xl overflow-hidden bg-gradient-to-b from-[#e4e8f0] to-[#d2d5e0] p-8 md:p-10 hover:shadow-xl transition-all duration-300">
+            <div className="group relative rounded-3xl overflow-hidden bg-gradient-to-b from-[#e4e8f0] to-[#d2d5e0] p-8 md:p-10 hover:shadow-xl transition-all duration-300 card-shine">
               <div className="text-4xl mb-6">🌉</div>
               <h3
                 className="text-2xl font-bold text-[var(--color-text)] mb-3"
@@ -268,11 +268,11 @@ export default function HomePage() {
             ].map((faq) => (
               <details
                 key={faq.q}
-                className="group bg-white rounded-2xl border border-[var(--color-border)] overflow-hidden"
+                className="group bg-white rounded-2xl border border-[var(--color-border)] overflow-hidden transition-all duration-300"
               >
-                <summary className="flex items-center justify-between cursor-pointer p-6 font-semibold text-[var(--color-text)] text-lg hover:bg-gray-50 transition-colors">
+                <summary className="flex items-center justify-between cursor-pointer p-6 font-semibold text-[var(--color-text)] text-lg hover:bg-gray-50 transition-colors duration-200">
                   {faq.q}
-                  <span className="text-[var(--color-text-muted)] group-open:rotate-45 transition-transform text-2xl leading-none">
+                  <span className="text-[var(--color-text-muted)] group-open:rotate-45 transition-transform duration-300 text-2xl leading-none">
                     +
                   </span>
                 </summary>
@@ -293,7 +293,7 @@ export default function HomePage() {
             alt="Tree of Hope"
             width={200}
             height={207}
-            className="mx-auto mb-10 drop-shadow-lg"
+            className="mx-auto mb-10 drop-shadow-lg animate-float"
           />
           <h2
             className="text-4xl md:text-5xl font-bold text-[var(--color-text)] mb-6 leading-tight"

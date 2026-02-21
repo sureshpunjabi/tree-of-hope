@@ -142,7 +142,7 @@ export default function TasksPage() {
     return (
       <div className="sanctuary-bg min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-color-text-muted">Loading tasks...</p>
+          <p className="text-[var(--color-text-muted)]">Loading tasks...</p>
         </div>
       </div>
     )
@@ -154,9 +154,9 @@ export default function TasksPage() {
   return (
     <div className="sanctuary-bg min-h-screen pb-24">
       {/* Header */}
-      <div className="bg-white border-b border-color-border sticky top-0 z-40">
+      <div className="bg-white border-b border-[var(--color-border)] sticky top-0 z-40">
         <div className="page-container flex justify-between items-center py-4">
-          <h1 className="text-3xl font-bold text-color-text">Tasks</h1>
+          <h1 className="text-3xl font-bold text-[var(--color-text)]">Tasks</h1>
           <Link href={`/s/${slug}/tools`} className="btn-secondary text-sm">
             ← Back
           </Link>
@@ -167,10 +167,10 @@ export default function TasksPage() {
       <div className="page-container py-8">
         {/* Evolving State Message */}
         <div className="evolving-state mb-8">
-          <p className="text-lg text-color-text mb-2 font-semibold">
+          <p className="text-lg text-[var(--color-text)] mb-2 font-semibold">
             Growing with our families
           </p>
-          <p className="text-color-text-muted">
+          <p className="text-[var(--color-text-muted)]">
             We're building this tool with our early families. It'll be ready soon — and your experience is helping shape it.
           </p>
         </div>
@@ -193,10 +193,10 @@ export default function TasksPage() {
 
         {showForm && (
           <form onSubmit={handleSubmit} className="card mb-8 space-y-4">
-            <h2 className="text-xl font-bold text-color-text">Add a new task</h2>
+            <h2 className="text-xl font-bold text-[var(--color-text)]">Add a new task</h2>
 
             <div>
-              <label htmlFor="title" className="block text-sm font-medium text-color-text mb-2">
+              <label htmlFor="title" className="block text-sm font-medium text-[var(--color-text)] mb-2">
                 Task
               </label>
               <input
@@ -206,12 +206,12 @@ export default function TasksPage() {
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="e.g., Call doctor for test results"
                 required
-                className="w-full px-4 py-2 border border-color-border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-hope bg-white text-color-text placeholder-color-text-muted"
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
               />
             </div>
 
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-color-text mb-2">
+              <label htmlFor="description" className="block text-sm font-medium text-[var(--color-text)] mb-2">
                 Description
               </label>
               <textarea
@@ -220,12 +220,12 @@ export default function TasksPage() {
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="Add any details..."
                 rows={3}
-                className="w-full px-4 py-2 border border-color-border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-hope bg-white text-color-text placeholder-color-text-muted resize-none"
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] resize-none"
               />
             </div>
 
             <div>
-              <label htmlFor="due_date" className="block text-sm font-medium text-color-text mb-2">
+              <label htmlFor="due_date" className="block text-sm font-medium text-[var(--color-text)] mb-2">
                 Due Date
               </label>
               <input
@@ -233,7 +233,7 @@ export default function TasksPage() {
                 type="date"
                 value={formData.due_date}
                 onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
-                className="w-full px-4 py-2 border border-color-border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-hope bg-white text-color-text placeholder-color-text-muted"
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
               />
             </div>
 
@@ -262,7 +262,7 @@ export default function TasksPage() {
             {/* Incomplete Tasks */}
             {incompleteTasks.length > 0 && (
               <div>
-                <h2 className="text-lg font-semibold text-color-text mb-4">To Do</h2>
+                <h2 className="text-lg font-semibold text-[var(--color-text)] mb-4">To Do</h2>
                 <div className="space-y-3">
                   {incompleteTasks.map((task) => (
                     <div
@@ -271,23 +271,23 @@ export default function TasksPage() {
                     >
                       <button
                         onClick={() => handleToggleComplete(task.id, task.completed)}
-                        className="mt-1 flex-shrink-0 w-6 h-6 rounded-lg border-2 border-color-border hover:border-color-leaf-1 transition-colors flex items-center justify-center"
+                        className="mt-1 flex-shrink-0 w-6 h-6 rounded-lg border-2 border-[var(--color-border)] hover:border-[var(--color-leaf-1)] transition-colors flex items-center justify-center"
                       >
                         {task.completed && (
-                          <span className="text-color-leaf-1 font-bold">✓</span>
+                          <span className="text-[var(--color-leaf-1)] font-bold">✓</span>
                         )}
                       </button>
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-color-text">
+                        <h3 className="text-lg font-semibold text-[var(--color-text)]">
                           {task.title}
                         </h3>
                         {task.description && (
-                          <p className="text-sm text-color-text-muted mt-1">
+                          <p className="text-sm text-[var(--color-text-muted)] mt-1">
                             {task.description}
                           </p>
                         )}
                         {task.due_date && (
-                          <p className="text-xs text-color-text-muted mt-2">
+                          <p className="text-xs text-[var(--color-text-muted)] mt-2">
                             Due: {new Date(task.due_date).toLocaleDateString('en-US', {
                               weekday: 'short',
                               month: 'short',
@@ -311,7 +311,7 @@ export default function TasksPage() {
             {/* Completed Tasks */}
             {completedTasks.length > 0 && (
               <div>
-                <h2 className="text-lg font-semibold text-color-text-muted mb-4">Done</h2>
+                <h2 className="text-lg font-semibold text-[var(--color-text-muted)] mb-4">Done</h2>
                 <div className="space-y-3">
                   {completedTasks.map((task) => (
                     <div
@@ -320,16 +320,16 @@ export default function TasksPage() {
                     >
                       <button
                         onClick={() => handleToggleComplete(task.id, task.completed)}
-                        className="mt-1 flex-shrink-0 w-6 h-6 rounded-lg bg-color-leaf-1 border-2 border-color-leaf-1 hover:bg-color-leaf-2 transition-colors flex items-center justify-center"
+                        className="mt-1 flex-shrink-0 w-6 h-6 rounded-lg bg-[var(--color-leaf-1)] border-2 border-[var(--color-leaf-1)] hover:bg-[var(--color-leaf-2)] transition-colors flex items-center justify-center"
                       >
                         <span className="text-white font-bold">✓</span>
                       </button>
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-color-text line-through">
+                        <h3 className="text-lg font-semibold text-[var(--color-text)] line-through">
                           {task.title}
                         </h3>
                         {task.description && (
-                          <p className="text-sm text-color-text-muted mt-1 line-through">
+                          <p className="text-sm text-[var(--color-text-muted)] mt-1 line-through">
                             {task.description}
                           </p>
                         )}
@@ -348,7 +348,7 @@ export default function TasksPage() {
           </div>
         ) : !showForm ? (
           <div className="card text-center py-12">
-            <p className="text-color-text-muted mb-4 text-lg">
+            <p className="text-[var(--color-text-muted)] mb-4 text-lg">
               No tasks yet. Create one to stay organized.
             </p>
             <button
@@ -362,25 +362,25 @@ export default function TasksPage() {
       </div>
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-color-border">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[var(--color-border)]">
         <div className="page-container flex justify-around py-4">
           <Link
             href={`/s/${slug}/journal`}
-            className="flex flex-col items-center gap-1 text-color-text-muted hover:text-color-leaf-1 transition-colors"
+            className="flex flex-col items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-leaf-1)] transition-colors"
           >
             <span className="text-xl">📔</span>
             <span className="text-xs font-medium">Journal</span>
           </Link>
           <Link
             href={`/s/${slug}`}
-            className="flex flex-col items-center gap-1 text-color-text-muted hover:text-color-leaf-1 transition-colors"
+            className="flex flex-col items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-leaf-1)] transition-colors"
           >
             <span className="text-xl">🏠</span>
             <span className="text-xs font-medium">Today</span>
           </Link>
           <Link
             href={`/s/${slug}/tools`}
-            className="flex flex-col items-center gap-1 text-color-leaf-1 transition-colors"
+            className="flex flex-col items-center gap-1 text-[var(--color-leaf-1)] transition-colors"
           >
             <span className="text-xl">🛠️</span>
             <span className="text-xs font-medium">Tools</span>

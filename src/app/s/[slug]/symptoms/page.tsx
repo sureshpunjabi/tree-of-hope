@@ -113,7 +113,7 @@ export default function SymptomsPage() {
     return (
       <div className="sanctuary-bg min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-color-text-muted">Loading symptoms...</p>
+          <p className="text-[var(--color-text-muted)]">Loading symptoms...</p>
         </div>
       </div>
     )
@@ -122,9 +122,9 @@ export default function SymptomsPage() {
   return (
     <div className="sanctuary-bg min-h-screen pb-24">
       {/* Header */}
-      <div className="bg-white border-b border-color-border sticky top-0 z-40">
+      <div className="bg-white border-b border-[var(--color-border)] sticky top-0 z-40">
         <div className="page-container flex justify-between items-center py-4">
-          <h1 className="text-3xl font-bold text-color-text">Symptoms</h1>
+          <h1 className="text-3xl font-bold text-[var(--color-text)]">Symptoms</h1>
           <Link href={`/s/${slug}/tools`} className="btn-secondary text-sm">
             ← Back
           </Link>
@@ -135,10 +135,10 @@ export default function SymptomsPage() {
       <div className="page-container py-8">
         {/* Evolving State Message */}
         <div className="evolving-state mb-8">
-          <p className="text-lg text-color-text mb-2 font-semibold">
+          <p className="text-lg text-[var(--color-text)] mb-2 font-semibold">
             Growing with our families
           </p>
-          <p className="text-color-text-muted">
+          <p className="text-[var(--color-text-muted)]">
             We're building this tool with our early families. It'll be ready soon — and your experience is helping shape it.
           </p>
         </div>
@@ -161,10 +161,10 @@ export default function SymptomsPage() {
 
         {showForm && (
           <form onSubmit={handleSubmit} className="card mb-8 space-y-4">
-            <h2 className="text-xl font-bold text-color-text">Log your symptom</h2>
+            <h2 className="text-xl font-bold text-[var(--color-text)]">Log your symptom</h2>
 
             <div>
-              <label htmlFor="symptom" className="block text-sm font-medium text-color-text mb-2">
+              <label htmlFor="symptom" className="block text-sm font-medium text-[var(--color-text)] mb-2">
                 Symptom
               </label>
               <input
@@ -174,12 +174,12 @@ export default function SymptomsPage() {
                 onChange={(e) => setFormData({ ...formData, symptom: e.target.value })}
                 placeholder="e.g., Headache, nausea, fatigue"
                 required
-                className="w-full px-4 py-2 border border-color-border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-hope bg-white text-color-text placeholder-color-text-muted"
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
               />
             </div>
 
             <div>
-              <label htmlFor="severity" className="block text-sm font-medium text-color-text mb-3">
+              <label htmlFor="severity" className="block text-sm font-medium text-[var(--color-text)] mb-3">
                 Severity (1-10)
               </label>
               <div className="flex items-center gap-4">
@@ -192,14 +192,14 @@ export default function SymptomsPage() {
                   onChange={(e) => setFormData({ ...formData, severity: parseInt(e.target.value) })}
                   className="flex-1"
                 />
-                <span className="text-2xl font-bold text-color-hope w-12 text-center">
+                <span className="text-2xl font-bold text-[var(--color-hope)] w-12 text-center">
                   {formData.severity}
                 </span>
               </div>
             </div>
 
             <div>
-              <label htmlFor="notes" className="block text-sm font-medium text-color-text mb-2">
+              <label htmlFor="notes" className="block text-sm font-medium text-[var(--color-text)] mb-2">
                 Notes
               </label>
               <textarea
@@ -208,7 +208,7 @@ export default function SymptomsPage() {
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 placeholder="Any additional details..."
                 rows={3}
-                className="w-full px-4 py-2 border border-color-border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-hope bg-white text-color-text placeholder-color-text-muted resize-none"
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] resize-none"
               />
             </div>
 
@@ -238,10 +238,10 @@ export default function SymptomsPage() {
               <div key={log.id} className="card">
                 <div className="flex justify-between items-start gap-4 mb-2">
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-color-text">
+                    <h3 className="text-lg font-semibold text-[var(--color-text)]">
                       {log.symptom}
                     </h3>
-                    <p className="text-sm text-color-text-muted">
+                    <p className="text-sm text-[var(--color-text-muted)]">
                       {new Date(log.created_at).toLocaleDateString('en-US', {
                         weekday: 'long',
                         year: 'numeric',
@@ -260,7 +260,7 @@ export default function SymptomsPage() {
                   </button>
                 </div>
                 <div className="mb-2">
-                  <p className="text-sm text-color-text-muted mb-1">Severity</p>
+                  <p className="text-sm text-[var(--color-text-muted)] mb-1">Severity</p>
                   <div className="flex gap-1">
                     {Array.from({ length: 10 }).map((_, i) => (
                       <div
@@ -273,10 +273,10 @@ export default function SymptomsPage() {
                       />
                     ))}
                   </div>
-                  <p className="text-sm text-color-text-muted mt-1">{log.severity}/10</p>
+                  <p className="text-sm text-[var(--color-text-muted)] mt-1">{log.severity}/10</p>
                 </div>
                 {log.notes && (
-                  <p className="text-sm text-color-text">
+                  <p className="text-sm text-[var(--color-text)]">
                     {log.notes}
                   </p>
                 )}
@@ -285,7 +285,7 @@ export default function SymptomsPage() {
           </div>
         ) : !showForm ? (
           <div className="card text-center py-12">
-            <p className="text-color-text-muted mb-4 text-lg">
+            <p className="text-[var(--color-text-muted)] mb-4 text-lg">
               No symptoms logged yet. Track them to understand your patterns.
             </p>
             <button
@@ -299,25 +299,25 @@ export default function SymptomsPage() {
       </div>
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-color-border">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[var(--color-border)]">
         <div className="page-container flex justify-around py-4">
           <Link
             href={`/s/${slug}/journal`}
-            className="flex flex-col items-center gap-1 text-color-text-muted hover:text-color-leaf-1 transition-colors"
+            className="flex flex-col items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-leaf-1)] transition-colors"
           >
             <span className="text-xl">📔</span>
             <span className="text-xs font-medium">Journal</span>
           </Link>
           <Link
             href={`/s/${slug}`}
-            className="flex flex-col items-center gap-1 text-color-text-muted hover:text-color-leaf-1 transition-colors"
+            className="flex flex-col items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-leaf-1)] transition-colors"
           >
             <span className="text-xl">🏠</span>
             <span className="text-xs font-medium">Today</span>
           </Link>
           <Link
             href={`/s/${slug}/tools`}
-            className="flex flex-col items-center gap-1 text-color-leaf-1 transition-colors"
+            className="flex flex-col items-center gap-1 text-[var(--color-leaf-1)] transition-colors"
           >
             <span className="text-xl">🛠️</span>
             <span className="text-xs font-medium">Tools</span>

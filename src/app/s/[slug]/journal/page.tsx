@@ -96,7 +96,7 @@ export default function JournalPage() {
     return (
       <div className="sanctuary-bg min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-color-text-muted">Loading your journal...</p>
+          <p className="text-[var(--color-text-muted)]">Loading your journal...</p>
         </div>
       </div>
     )
@@ -105,9 +105,9 @@ export default function JournalPage() {
   return (
     <div className="sanctuary-bg min-h-screen pb-24">
       {/* Header */}
-      <div className="bg-white border-b border-color-border sticky top-0 z-40">
+      <div className="bg-white border-b border-[var(--color-border)] sticky top-0 z-40">
         <div className="page-container flex justify-between items-center py-4">
-          <h1 className="text-3xl font-bold text-color-text">Your Journal</h1>
+          <h1 className="text-3xl font-bold text-[var(--color-text)]">Your Journal</h1>
           <Link href={`/s/${slug}`} className="btn-secondary text-sm">
             ← Back
           </Link>
@@ -134,10 +134,10 @@ export default function JournalPage() {
 
         {showForm && (
           <form onSubmit={handleSubmit} className="card mb-8 space-y-4">
-            <h2 className="text-xl font-bold text-color-text">Write a new entry</h2>
+            <h2 className="text-xl font-bold text-[var(--color-text)]">Write a new entry</h2>
 
             <div>
-              <label htmlFor="title" className="block text-sm font-medium text-color-text mb-2">
+              <label htmlFor="title" className="block text-sm font-medium text-[var(--color-text)] mb-2">
                 Title (optional)
               </label>
               <input
@@ -146,12 +146,12 @@ export default function JournalPage() {
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="Give your entry a title..."
-                className="w-full px-4 py-2 border border-color-border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-hope bg-white text-color-text placeholder-color-text-muted"
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
               />
             </div>
 
             <div>
-              <label htmlFor="content" className="block text-sm font-medium text-color-text mb-2">
+              <label htmlFor="content" className="block text-sm font-medium text-[var(--color-text)] mb-2">
                 How are you feeling today?
               </label>
               <textarea
@@ -160,12 +160,12 @@ export default function JournalPage() {
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                 placeholder="Your thoughts, feelings, and reflections..."
                 rows={6}
-                className="w-full px-4 py-2 border border-color-border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-hope bg-white text-color-text placeholder-color-text-muted resize-none"
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] resize-none"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-color-text mb-3">
+              <label className="block text-sm font-medium text-[var(--color-text)] mb-3">
                 Mood
               </label>
               <div className="flex justify-between gap-2">
@@ -176,7 +176,7 @@ export default function JournalPage() {
                     onClick={() => setFormData({ ...formData, mood_score: index + 1 })}
                     className={`flex-1 text-3xl p-3 rounded-lg transition-all ${
                       formData.mood_score === index + 1
-                        ? 'bg-color-leaf-2 ring-2 ring-color-leaf-1 scale-110'
+                        ? 'bg-[var(--color-leaf-2)] ring-2 ring-[var(--color-leaf-1)] scale-110'
                         : 'bg-gray-100 hover:bg-gray-200'
                     }`}
                   >
@@ -212,10 +212,10 @@ export default function JournalPage() {
               <div key={entry.id} className="card hover:shadow-lg transition-shadow cursor-pointer">
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <h3 className="text-lg font-semibold text-color-text">
+                    <h3 className="text-lg font-semibold text-[var(--color-text)]">
                       {entry.title}
                     </h3>
-                    <p className="text-sm text-color-text-muted">
+                    <p className="text-sm text-[var(--color-text-muted)]">
                       {new Date(entry.created_at).toLocaleDateString('en-US', {
                         weekday: 'long',
                         year: 'numeric',
@@ -230,7 +230,7 @@ export default function JournalPage() {
                     </div>
                   )}
                 </div>
-                <p className="text-color-text line-clamp-3">
+                <p className="text-[var(--color-text)] line-clamp-3">
                   {entry.content}
                 </p>
               </div>
@@ -238,7 +238,7 @@ export default function JournalPage() {
           </div>
         ) : !showForm ? (
           <div className="card text-center py-12">
-            <p className="text-color-text-muted mb-4 text-lg">
+            <p className="text-[var(--color-text-muted)] mb-4 text-lg">
               Your journal is waiting. Start writing whenever you're ready.
             </p>
             <button
@@ -252,25 +252,25 @@ export default function JournalPage() {
       </div>
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-color-border">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[var(--color-border)]">
         <div className="page-container flex justify-around py-4">
           <Link
             href={`/s/${slug}/journal`}
-            className="flex flex-col items-center gap-1 text-color-leaf-1 transition-colors"
+            className="flex flex-col items-center gap-1 text-[var(--color-leaf-1)] transition-colors"
           >
             <span className="text-xl">📔</span>
             <span className="text-xs font-medium">Journal</span>
           </Link>
           <Link
             href={`/s/${slug}`}
-            className="flex flex-col items-center gap-1 text-color-text-muted hover:text-color-leaf-1 transition-colors"
+            className="flex flex-col items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-leaf-1)] transition-colors"
           >
             <span className="text-xl">🏠</span>
             <span className="text-xs font-medium">Today</span>
           </Link>
           <Link
             href={`/s/${slug}/tools`}
-            className="flex flex-col items-center gap-1 text-color-text-muted hover:text-color-leaf-1 transition-colors"
+            className="flex flex-col items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-leaf-1)] transition-colors"
           >
             <span className="text-xl">🛠️</span>
             <span className="text-xs font-medium">Tools</span>

@@ -124,7 +124,7 @@ export default function AppointmentsPage() {
     return (
       <div className="sanctuary-bg min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-color-text-muted">Loading appointments...</p>
+          <p className="text-[var(--color-text-muted)]">Loading appointments...</p>
         </div>
       </div>
     )
@@ -133,9 +133,9 @@ export default function AppointmentsPage() {
   return (
     <div className="sanctuary-bg min-h-screen pb-24">
       {/* Header */}
-      <div className="bg-white border-b border-color-border sticky top-0 z-40">
+      <div className="bg-white border-b border-[var(--color-border)] sticky top-0 z-40">
         <div className="page-container flex justify-between items-center py-4">
-          <h1 className="text-3xl font-bold text-color-text">Appointments</h1>
+          <h1 className="text-3xl font-bold text-[var(--color-text)]">Appointments</h1>
           <Link href={`/s/${slug}/tools`} className="btn-secondary text-sm">
             ← Back
           </Link>
@@ -162,10 +162,10 @@ export default function AppointmentsPage() {
 
         {showForm && (
           <form onSubmit={handleSubmit} className="card mb-8 space-y-4">
-            <h2 className="text-xl font-bold text-color-text">Add appointment</h2>
+            <h2 className="text-xl font-bold text-[var(--color-text)]">Add appointment</h2>
 
             <div>
-              <label htmlFor="title" className="block text-sm font-medium text-color-text mb-2">
+              <label htmlFor="title" className="block text-sm font-medium text-[var(--color-text)] mb-2">
                 Appointment Title
               </label>
               <input
@@ -175,13 +175,13 @@ export default function AppointmentsPage() {
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="e.g., Therapy session"
                 required
-                className="w-full px-4 py-2 border border-color-border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-hope bg-white text-color-text placeholder-color-text-muted"
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="provider" className="block text-sm font-medium text-color-text mb-2">
+                <label htmlFor="provider" className="block text-sm font-medium text-[var(--color-text)] mb-2">
                   Provider
                 </label>
                 <input
@@ -190,12 +190,12 @@ export default function AppointmentsPage() {
                   value={formData.provider}
                   onChange={(e) => setFormData({ ...formData, provider: e.target.value })}
                   placeholder="Dr. Smith"
-                  className="w-full px-4 py-2 border border-color-border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-hope bg-white text-color-text placeholder-color-text-muted"
+                  className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
                 />
               </div>
 
               <div>
-                <label htmlFor="location" className="block text-sm font-medium text-color-text mb-2">
+                <label htmlFor="location" className="block text-sm font-medium text-[var(--color-text)] mb-2">
                   Location
                 </label>
                 <input
@@ -204,13 +204,13 @@ export default function AppointmentsPage() {
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                   placeholder="Office address"
-                  className="w-full px-4 py-2 border border-color-border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-hope bg-white text-color-text placeholder-color-text-muted"
+                  className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="date_time" className="block text-sm font-medium text-color-text mb-2">
+              <label htmlFor="date_time" className="block text-sm font-medium text-[var(--color-text)] mb-2">
                 Date & Time
               </label>
               <input
@@ -219,12 +219,12 @@ export default function AppointmentsPage() {
                 value={formData.date_time}
                 onChange={(e) => setFormData({ ...formData, date_time: e.target.value })}
                 required
-                className="w-full px-4 py-2 border border-color-border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-hope bg-white text-color-text placeholder-color-text-muted"
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
               />
             </div>
 
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-color-text mb-2">
+              <label htmlFor="description" className="block text-sm font-medium text-[var(--color-text)] mb-2">
                 Notes
               </label>
               <textarea
@@ -233,7 +233,7 @@ export default function AppointmentsPage() {
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="Any additional notes..."
                 rows={3}
-                className="w-full px-4 py-2 border border-color-border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-hope bg-white text-color-text placeholder-color-text-muted resize-none"
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] resize-none"
               />
             </div>
 
@@ -263,10 +263,10 @@ export default function AppointmentsPage() {
               <div key={apt.id} className="card">
                 <div className="flex justify-between items-start gap-4 mb-2">
                   <div>
-                    <h3 className="text-lg font-semibold text-color-text">
+                    <h3 className="text-lg font-semibold text-[var(--color-text)]">
                       {apt.title}
                     </h3>
-                    <p className="text-sm text-color-text-muted">
+                    <p className="text-sm text-[var(--color-text-muted)]">
                       {new Date(apt.date_time).toLocaleDateString('en-US', {
                         weekday: 'long',
                         year: 'numeric',
@@ -285,17 +285,17 @@ export default function AppointmentsPage() {
                   </button>
                 </div>
                 {apt.provider && (
-                  <p className="text-sm text-color-text-muted">
+                  <p className="text-sm text-[var(--color-text-muted)]">
                     Provider: {apt.provider}
                   </p>
                 )}
                 {apt.location && (
-                  <p className="text-sm text-color-text-muted">
+                  <p className="text-sm text-[var(--color-text-muted)]">
                     Location: {apt.location}
                   </p>
                 )}
                 {apt.description && (
-                  <p className="text-sm text-color-text mt-2">
+                  <p className="text-sm text-[var(--color-text)] mt-2">
                     {apt.description}
                   </p>
                 )}
@@ -304,7 +304,7 @@ export default function AppointmentsPage() {
           </div>
         ) : !showForm ? (
           <div className="card text-center py-12">
-            <p className="text-color-text-muted mb-4 text-lg">
+            <p className="text-[var(--color-text-muted)] mb-4 text-lg">
               No appointments yet. Add one to stay organized.
             </p>
             <button
@@ -318,25 +318,25 @@ export default function AppointmentsPage() {
       </div>
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-color-border">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[var(--color-border)]">
         <div className="page-container flex justify-around py-4">
           <Link
             href={`/s/${slug}/journal`}
-            className="flex flex-col items-center gap-1 text-color-text-muted hover:text-color-leaf-1 transition-colors"
+            className="flex flex-col items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-leaf-1)] transition-colors"
           >
             <span className="text-xl">📔</span>
             <span className="text-xs font-medium">Journal</span>
           </Link>
           <Link
             href={`/s/${slug}`}
-            className="flex flex-col items-center gap-1 text-color-text-muted hover:text-color-leaf-1 transition-colors"
+            className="flex flex-col items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-leaf-1)] transition-colors"
           >
             <span className="text-xl">🏠</span>
             <span className="text-xs font-medium">Today</span>
           </Link>
           <Link
             href={`/s/${slug}/tools`}
-            className="flex flex-col items-center gap-1 text-color-leaf-1 transition-colors"
+            className="flex flex-col items-center gap-1 text-[var(--color-leaf-1)] transition-colors"
           >
             <span className="text-xl">🛠️</span>
             <span className="text-xs font-medium">Tools</span>

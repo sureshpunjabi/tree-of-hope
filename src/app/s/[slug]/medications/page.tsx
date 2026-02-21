@@ -147,7 +147,7 @@ export default function MedicationsPage() {
     return (
       <div className="sanctuary-bg min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-color-text-muted">Loading medications...</p>
+          <p className="text-[var(--color-text-muted)]">Loading medications...</p>
         </div>
       </div>
     )
@@ -159,9 +159,9 @@ export default function MedicationsPage() {
   return (
     <div className="sanctuary-bg min-h-screen pb-24">
       {/* Header */}
-      <div className="bg-white border-b border-color-border sticky top-0 z-40">
+      <div className="bg-white border-b border-[var(--color-border)] sticky top-0 z-40">
         <div className="page-container flex justify-between items-center py-4">
-          <h1 className="text-3xl font-bold text-color-text">Medications</h1>
+          <h1 className="text-3xl font-bold text-[var(--color-text)]">Medications</h1>
           <Link href={`/s/${slug}/tools`} className="btn-secondary text-sm">
             ← Back
           </Link>
@@ -188,10 +188,10 @@ export default function MedicationsPage() {
 
         {showForm && (
           <form onSubmit={handleSubmit} className="card mb-8 space-y-4">
-            <h2 className="text-xl font-bold text-color-text">Add medication</h2>
+            <h2 className="text-xl font-bold text-[var(--color-text)]">Add medication</h2>
 
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-color-text mb-2">
+              <label htmlFor="name" className="block text-sm font-medium text-[var(--color-text)] mb-2">
                 Medication Name
               </label>
               <input
@@ -201,13 +201,13 @@ export default function MedicationsPage() {
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="e.g., Aspirin"
                 required
-                className="w-full px-4 py-2 border border-color-border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-hope bg-white text-color-text placeholder-color-text-muted"
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="dosage" className="block text-sm font-medium text-color-text mb-2">
+                <label htmlFor="dosage" className="block text-sm font-medium text-[var(--color-text)] mb-2">
                   Dosage
                 </label>
                 <input
@@ -216,12 +216,12 @@ export default function MedicationsPage() {
                   value={formData.dosage}
                   onChange={(e) => setFormData({ ...formData, dosage: e.target.value })}
                   placeholder="e.g., 10mg"
-                  className="w-full px-4 py-2 border border-color-border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-hope bg-white text-color-text placeholder-color-text-muted"
+                  className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
                 />
               </div>
 
               <div>
-                <label htmlFor="frequency" className="block text-sm font-medium text-color-text mb-2">
+                <label htmlFor="frequency" className="block text-sm font-medium text-[var(--color-text)] mb-2">
                   Frequency
                 </label>
                 <input
@@ -230,13 +230,13 @@ export default function MedicationsPage() {
                   value={formData.frequency}
                   onChange={(e) => setFormData({ ...formData, frequency: e.target.value })}
                   placeholder="e.g., Once daily"
-                  className="w-full px-4 py-2 border border-color-border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-hope bg-white text-color-text placeholder-color-text-muted"
+                  className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="reason" className="block text-sm font-medium text-color-text mb-2">
+              <label htmlFor="reason" className="block text-sm font-medium text-[var(--color-text)] mb-2">
                 Reason / Condition
               </label>
               <input
@@ -245,12 +245,12 @@ export default function MedicationsPage() {
                 value={formData.reason}
                 onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
                 placeholder="e.g., High blood pressure"
-                className="w-full px-4 py-2 border border-color-border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-hope bg-white text-color-text placeholder-color-text-muted"
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
               />
             </div>
 
             <div>
-              <label htmlFor="notes" className="block text-sm font-medium text-color-text mb-2">
+              <label htmlFor="notes" className="block text-sm font-medium text-[var(--color-text)] mb-2">
                 Notes
               </label>
               <textarea
@@ -259,7 +259,7 @@ export default function MedicationsPage() {
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 placeholder="Any additional notes..."
                 rows={3}
-                className="w-full px-4 py-2 border border-color-border rounded-lg focus:outline-none focus:ring-2 focus:ring-color-hope bg-white text-color-text placeholder-color-text-muted resize-none"
+                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] resize-none"
               />
             </div>
 
@@ -288,17 +288,17 @@ export default function MedicationsPage() {
             {/* Active Medications */}
             {activeMedications.length > 0 && (
               <div>
-                <h2 className="text-lg font-semibold text-color-text mb-4">Active</h2>
+                <h2 className="text-lg font-semibold text-[var(--color-text)] mb-4">Active</h2>
                 <div className="space-y-4">
                   {activeMedications.map((med) => (
                     <div key={med.id} className="card">
                       <div className="flex justify-between items-start gap-4 mb-2">
                         <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-color-text">
+                          <h3 className="text-lg font-semibold text-[var(--color-text)]">
                             {med.name}
                           </h3>
                           {med.dosage && (
-                            <p className="text-sm text-color-text-muted">
+                            <p className="text-sm text-[var(--color-text-muted)]">
                               {med.dosage}
                             </p>
                           )}
@@ -306,7 +306,7 @@ export default function MedicationsPage() {
                         <div className="flex gap-2">
                           <button
                             onClick={() => handleToggleActive(med.id, med.active)}
-                            className="text-sm text-color-text-muted hover:text-color-hope font-medium"
+                            className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-hope)] font-medium"
                           >
                             Mark inactive
                           </button>
@@ -319,17 +319,17 @@ export default function MedicationsPage() {
                         </div>
                       </div>
                       {med.frequency && (
-                        <p className="text-sm text-color-text-muted">
+                        <p className="text-sm text-[var(--color-text-muted)]">
                           Frequency: {med.frequency}
                         </p>
                       )}
                       {med.reason && (
-                        <p className="text-sm text-color-text-muted">
+                        <p className="text-sm text-[var(--color-text-muted)]">
                           For: {med.reason}
                         </p>
                       )}
                       {med.notes && (
-                        <p className="text-sm text-color-text mt-2">
+                        <p className="text-sm text-[var(--color-text)] mt-2">
                           {med.notes}
                         </p>
                       )}
@@ -342,17 +342,17 @@ export default function MedicationsPage() {
             {/* Inactive Medications */}
             {inactiveMedications.length > 0 && (
               <div>
-                <h2 className="text-lg font-semibold text-color-text-muted mb-4">Inactive</h2>
+                <h2 className="text-lg font-semibold text-[var(--color-text-muted)] mb-4">Inactive</h2>
                 <div className="space-y-4">
                   {inactiveMedications.map((med) => (
                     <div key={med.id} className="card opacity-75">
                       <div className="flex justify-between items-start gap-4 mb-2">
                         <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-color-text line-through">
+                          <h3 className="text-lg font-semibold text-[var(--color-text)] line-through">
                             {med.name}
                           </h3>
                           {med.dosage && (
-                            <p className="text-sm text-color-text-muted">
+                            <p className="text-sm text-[var(--color-text-muted)]">
                               {med.dosage}
                             </p>
                           )}
@@ -360,7 +360,7 @@ export default function MedicationsPage() {
                         <div className="flex gap-2">
                           <button
                             onClick={() => handleToggleActive(med.id, med.active)}
-                            className="text-sm text-color-leaf-1 hover:text-color-leaf-2 font-medium"
+                            className="text-sm text-[var(--color-leaf-1)] hover:text-color-leaf-2 font-medium"
                           >
                             Mark active
                           </button>
@@ -380,7 +380,7 @@ export default function MedicationsPage() {
           </div>
         ) : !showForm ? (
           <div className="card text-center py-12">
-            <p className="text-color-text-muted mb-4 text-lg">
+            <p className="text-[var(--color-text-muted)] mb-4 text-lg">
               No medications yet. Add one to stay on track.
             </p>
             <button
@@ -394,25 +394,25 @@ export default function MedicationsPage() {
       </div>
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-color-border">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[var(--color-border)]">
         <div className="page-container flex justify-around py-4">
           <Link
             href={`/s/${slug}/journal`}
-            className="flex flex-col items-center gap-1 text-color-text-muted hover:text-color-leaf-1 transition-colors"
+            className="flex flex-col items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-leaf-1)] transition-colors"
           >
             <span className="text-xl">📔</span>
             <span className="text-xs font-medium">Journal</span>
           </Link>
           <Link
             href={`/s/${slug}`}
-            className="flex flex-col items-center gap-1 text-color-text-muted hover:text-color-leaf-1 transition-colors"
+            className="flex flex-col items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-leaf-1)] transition-colors"
           >
             <span className="text-xl">🏠</span>
             <span className="text-xs font-medium">Today</span>
           </Link>
           <Link
             href={`/s/${slug}/tools`}
-            className="flex flex-col items-center gap-1 text-color-leaf-1 transition-colors"
+            className="flex flex-col items-center gap-1 text-[var(--color-leaf-1)] transition-colors"
           >
             <span className="text-xl">🛠️</span>
             <span className="text-xs font-medium">Tools</span>
