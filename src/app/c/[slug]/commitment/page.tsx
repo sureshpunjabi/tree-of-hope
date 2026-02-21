@@ -45,22 +45,19 @@ export default function CommitmentPage() {
       id: 'seedling' as const,
       name: 'Seedling',
       price: 9.99,
-      description: 'A seed of support',
-      icon: '🌱',
+      description: 'A modest gift of support',
     },
     {
       id: 'sapling' as const,
       name: 'Sapling',
       price: 24.99,
-      description: 'Watch it grow',
-      icon: '🌿',
+      description: 'A meaningful contribution',
     },
     {
       id: 'mightyOak' as const,
       name: 'Mighty Oak',
       price: 99.0,
-      description: 'Deep roots of care',
-      icon: '🌳',
+      description: 'A generous foundation of care',
     },
   ]
 
@@ -69,23 +66,20 @@ export default function CommitmentPage() {
       id: 'nurture' as const,
       name: 'Nurture',
       price: 9,
-      description: 'Steady presence',
-      icon: '💚',
+      description: 'A quiet, steady presence',
     },
     {
       id: 'sustain' as const,
       name: 'Sustain',
       price: 19,
-      description: 'Growing support',
+      description: 'Sustained, growing support',
       featured: true,
-      icon: '🌿',
     },
     {
       id: 'flourish' as const,
       name: 'Flourish',
       price: 35,
-      description: 'Full canopy of care',
-      icon: '🌳',
+      description: 'Deep, full commitment to care',
     },
   ]
 
@@ -178,22 +172,21 @@ export default function CommitmentPage() {
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
       {/* ─── HERO ─── */}
-      <section className="relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+      <section className="relative overflow-hidden bg-[var(--color-bg)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 md:py-48">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <div className="max-w-xl">
-              <p className="text-sm font-semibold tracking-widest uppercase text-[var(--color-hope)] mb-4">
+            <div className="max-w-2xl">
+              <p className="text-xs font-light tracking-[0.25em] uppercase text-[var(--color-hope)] mb-8">
                 Make a commitment
               </p>
               <h1
-                className="text-5xl md:text-[3.5rem] font-bold text-[var(--color-text)] leading-[1.1] mb-6"
+                className="text-5xl md:text-6xl font-light text-[var(--color-text)] leading-[1.15] mb-8"
                 style={{ fontFamily: 'var(--font-serif)' }}
               >
-                Support with
-                <br />
+                Support with<br />
                 <span className="text-[var(--color-hope)]">roots that hold.</span>
               </h1>
-              <p className="text-lg md:text-xl text-[var(--color-text-muted)] leading-relaxed">
+              <p className="text-base md:text-lg text-[var(--color-text-muted)] leading-relaxed max-w-lg">
                 Today is a one-time start. Monthly support continues quietly in the
                 background. You can pause for hardship at any time.
               </p>
@@ -201,13 +194,13 @@ export default function CommitmentPage() {
 
             <div className="relative hidden lg:flex justify-center lg:justify-end">
               <div className="relative">
-                <div className="absolute inset-0 bg-[var(--color-hope)] opacity-[0.06] rounded-full blur-3xl scale-110" />
+                <div className="absolute inset-0 bg-[var(--color-hope)] opacity-[0.04] rounded-full blur-3xl scale-110" />
                 <Image
                   src="/tree-hero.png"
                   alt="Tree of Hope"
                   width={400}
                   height={414}
-                  className="relative z-10 drop-shadow-2xl"
+                  className="relative z-10 drop-shadow-xl"
                 />
               </div>
             </div>
@@ -220,126 +213,135 @@ export default function CommitmentPage() {
         {/* Joining Gift Section */}
         <section className="py-20 md:py-28 bg-white">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <p className="text-sm font-semibold tracking-widest uppercase text-[var(--color-hope)] mb-3">
+            <div className="text-center mb-16">
+              <p className="text-xs font-light tracking-[0.25em] uppercase text-[var(--color-hope)] mb-6">
                 Optional
               </p>
               <h2
-                className="text-4xl md:text-5xl font-bold text-[var(--color-text)] leading-tight"
+                className="text-5xl md:text-6xl font-light text-[var(--color-text)] leading-tight"
                 style={{ fontFamily: 'var(--font-serif)' }}
               >
                 Joining Gift
               </h2>
-              <p className="text-lg text-[var(--color-text-muted)] mt-4 max-w-lg mx-auto">
+              <p className="text-base text-[var(--color-text-muted)] mt-6 max-w-xl mx-auto leading-relaxed">
                 Make an optional one-time contribution to get started.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {joiningGiftTiers.map((tier) => (
                 <button
                   key={tier.id}
                   type="button"
                   onClick={() => handleTierSelect(tier.id, 'joining')}
                   className={cn(
-                    'relative rounded-3xl p-8 text-left transition-all duration-300 hover:-translate-y-1',
+                    'group relative rounded-lg p-8 text-left transition-all duration-300',
                     joiningGift === tier.id
-                      ? 'bg-gradient-to-b from-[#e8f0e4] to-[#d5e0d2] ring-2 ring-[var(--color-hope)] shadow-lg'
-                      : 'bg-[var(--color-bg)] hover:shadow-lg border border-[var(--color-border)]'
+                      ? 'border-l-4 border-[var(--color-hope)]'
+                      : 'border-l-4 border-transparent'
                   )}
                 >
-                  <div className="text-3xl mb-4">{tier.icon}</div>
-                  <h3
-                    className="text-lg font-bold text-[var(--color-text)] mb-1"
-                    style={{ fontFamily: 'var(--font-serif)' }}
-                  >
-                    {tier.name}
-                  </h3>
-                  <p className="text-sm text-[var(--color-text-muted)] mb-4">
-                    {tier.description}
-                  </p>
-                  <p
-                    className="text-3xl font-bold text-[var(--color-hope)]"
-                    style={{ fontFamily: 'var(--font-serif)' }}
-                  >
-                    ${tier.price.toFixed(2)}
-                  </p>
+                  {/* Top border */}
+                  <div className="absolute top-0 left-0 right-0 h-px bg-[var(--color-hope)] opacity-100" />
 
-                  {joiningGift === tier.id && (
-                    <div className="absolute top-4 right-4 w-6 h-6 bg-[var(--color-hope)] rounded-full flex items-center justify-center">
-                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                  )}
+                  <div className="relative z-10">
+                    <p
+                      className="text-4xl font-light text-[var(--color-hope)] mb-6"
+                      style={{ fontFamily: 'var(--font-serif)' }}
+                    >
+                      ${tier.price.toFixed(2)}
+                    </p>
+                    <h3
+                      className="text-lg font-light text-[var(--color-text)] mb-2"
+                      style={{ fontFamily: 'var(--font-serif)' }}
+                    >
+                      {tier.name}
+                    </h3>
+                    <p className="text-sm text-[var(--color-text-muted)]">
+                      {tier.description}
+                    </p>
+                  </div>
                 </button>
               ))}
             </div>
           </div>
         </section>
 
+        {/* Testimonial Section */}
+        <section className="py-20 md:py-28 bg-[var(--color-bg)]">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <blockquote>
+              <p
+                className="text-2xl md:text-3xl font-light text-[var(--color-text)] leading-relaxed mb-6"
+                style={{ fontFamily: 'var(--font-serif)' }}
+              >
+                "I chose $19 a month. It's less than my streaming subscription, but it means Sarah knows I'm here."
+              </p>
+              <footer className="text-sm tracking-[0.15em] uppercase text-[var(--color-text-muted)]">
+                — A supporter
+              </footer>
+            </blockquote>
+          </div>
+        </section>
+
         {/* Monthly Commitment Section */}
-        <section className="py-20 md:py-28">
+        <section className="py-20 md:py-28 bg-white">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <p className="text-sm font-semibold tracking-widest uppercase text-[var(--color-hope)] mb-3">
+            <div className="text-center mb-16">
+              <p className="text-xs font-light tracking-[0.25em] uppercase text-[var(--color-hope)] mb-6">
                 Required
               </p>
               <h2
-                className="text-4xl md:text-5xl font-bold text-[var(--color-text)] leading-tight"
+                className="text-5xl md:text-6xl font-light text-[var(--color-text)] leading-tight"
                 style={{ fontFamily: 'var(--font-serif)' }}
               >
                 Monthly Commitment
               </h2>
-              <p className="text-lg text-[var(--color-text-muted)] mt-4 max-w-lg mx-auto">
+              <p className="text-base text-[var(--color-text-muted)] mt-6 max-w-xl mx-auto leading-relaxed">
                 Choose a monthly contribution. Pause anytime for hardship.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {monthlyTiers.map((tier) => (
                 <button
                   key={tier.id}
                   type="button"
                   onClick={() => handleTierSelect(tier.id, 'monthly')}
                   className={cn(
-                    'relative rounded-3xl p-8 text-left transition-all duration-300 hover:-translate-y-1',
-                    tier.featured && !monthlyTier && 'ring-2 ring-[var(--color-hope)] ring-opacity-40',
+                    'group relative rounded-lg p-8 text-left transition-all duration-300',
                     monthlyTier === tier.id
-                      ? 'bg-gradient-to-b from-[#e8f0e4] to-[#d5e0d2] ring-2 ring-[var(--color-hope)] shadow-lg'
-                      : 'bg-white hover:shadow-lg border border-[var(--color-border)]'
+                      ? 'border-l-4 border-[var(--color-hope)]'
+                      : 'border-l-4 border-transparent'
                   )}
                 >
-                  {tier.featured && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[var(--color-hope)] text-white text-xs font-bold px-4 py-1 rounded-full tracking-wider uppercase">
-                      Most chosen
-                    </div>
-                  )}
+                  {/* Top border */}
+                  <div className="absolute top-0 left-0 right-0 h-px bg-[var(--color-hope)] opacity-100" />
 
-                  <div className="text-3xl mb-4">{tier.icon}</div>
-                  <h3
-                    className="text-lg font-bold text-[var(--color-text)] mb-1"
-                    style={{ fontFamily: 'var(--font-serif)' }}
-                  >
-                    {tier.name}
-                  </h3>
-                  <p className="text-sm text-[var(--color-text-muted)] mb-4">
-                    {tier.description}
-                  </p>
-                  <p
-                    className="text-3xl font-bold text-[var(--color-hope)]"
-                    style={{ fontFamily: 'var(--font-serif)' }}
-                  >
-                    ${tier.price}<span className="text-lg font-normal text-[var(--color-text-muted)]">/mo</span>
-                  </p>
+                  <div className="relative z-10">
+                    <p
+                      className="text-4xl font-light text-[var(--color-hope)] mb-1"
+                      style={{ fontFamily: 'var(--font-serif)' }}
+                    >
+                      ${tier.price}<span className="text-lg font-light text-[var(--color-text-muted)]">/mo</span>
+                    </p>
 
-                  {monthlyTier === tier.id && (
-                    <div className="absolute top-4 right-4 w-6 h-6 bg-[var(--color-hope)] rounded-full flex items-center justify-center">
-                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                  )}
+                    {tier.featured && (
+                      <p className="text-xs tracking-[0.15em] uppercase text-[var(--color-hope)] mb-4">
+                        Most chosen
+                      </p>
+                    )}
+
+                    <h3
+                      className="text-lg font-light text-[var(--color-text)] mb-2"
+                      style={{ fontFamily: 'var(--font-serif)' }}
+                    >
+                      {tier.name}
+                    </h3>
+                    <p className="text-sm text-[var(--color-text-muted)]">
+                      {tier.description}
+                    </p>
+                  </div>
                 </button>
               ))}
             </div>
@@ -350,94 +352,58 @@ export default function CommitmentPage() {
         <section className="border-t border-[var(--color-border)] bg-white sticky bottom-0 z-40 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
             {error && (
-              <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-2xl text-sm">
+              <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
                 {error}
               </div>
             )}
 
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6">
-              <div className="flex-1 hidden md:block">
-                <p className="text-sm font-semibold tracking-widest uppercase text-[var(--color-text-muted)] mb-3">
-                  Order summary
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-8">
+              {/* Total amount - desktop */}
+              <div className="hidden md:flex items-baseline gap-2">
+                <p
+                  className="text-4xl font-light text-[var(--color-hope)]"
+                  style={{ fontFamily: 'var(--font-serif)' }}
+                >
+                  ${calculateTotal()}
                 </p>
-                <div className="space-y-1">
-                  {joiningGift && (
-                    <div className="text-sm text-[var(--color-text)]">
-                      {joiningGiftTiers.find((t) => t.id === joiningGift)?.name} —{' '}
-                      ${joiningGiftTiers.find((t) => t.id === joiningGift)?.price.toFixed(2)}
-                    </div>
-                  )}
-                  {monthlyTier && (
-                    <div className="text-sm text-[var(--color-text)]">
-                      {monthlyTiers.find((t) => t.id === monthlyTier)?.name} (monthly) —{' '}
-                      ${monthlyTiers.find((t) => t.id === monthlyTier)?.price}/mo
-                    </div>
-                  )}
-                </div>
-                <div className="mt-3 pt-3 border-t border-[var(--color-border)]">
-                  <p
-                    className="text-xl font-bold text-[var(--color-hope)]"
-                    style={{ fontFamily: 'var(--font-serif)' }}
-                  >
-                    Total first payment: ${calculateTotal()}
-                  </p>
-                </div>
+                <p className="text-xs tracking-[0.15em] uppercase text-[var(--color-text-muted)]">
+                  First payment
+                </p>
               </div>
 
-              {/* Mobile: compact summary + button */}
-              <div className="flex md:hidden items-center justify-between w-full gap-4">
-                <div>
-                  <p className="text-xs text-[var(--color-text-muted)]">First payment</p>
-                  <p
-                    className="text-xl font-bold text-[var(--color-hope)]"
-                    style={{ fontFamily: 'var(--font-serif)' }}
-                  >
-                    ${calculateTotal()}
-                  </p>
-                </div>
+              {/* Mobile: compact total */}
+              <div className="flex md:hidden items-baseline gap-2">
+                <p
+                  className="text-2xl font-light text-[var(--color-hope)]"
+                  style={{ fontFamily: 'var(--font-serif)' }}
+                >
+                  ${calculateTotal()}
+                </p>
+                <p className="text-xs text-[var(--color-text-muted)]">First payment</p>
+              </div>
+
+              {/* Buttons */}
+              <div className="w-full md:w-auto flex gap-3">
                 <button
                   type="submit"
                   disabled={!monthlyTier || loading}
                   className={cn(
-                    'whitespace-nowrap py-3 px-8 rounded-full font-semibold text-sm transition-all duration-200',
+                    'flex-1 md:flex-none whitespace-nowrap py-3 md:py-4 px-6 md:px-8 rounded-lg font-light text-sm md:text-base transition-all duration-200',
                     monthlyTier
                       ? 'bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white cursor-pointer hover:shadow-lg'
-                      : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                   )}
                 >
-                  {loading ? 'Processing...' : 'Checkout'}
+                  {loading ? 'Processing...' : 'Continue'}
                 </button>
               </div>
-
-              {/* Desktop button */}
-              <button
-                type="submit"
-                disabled={!monthlyTier || loading}
-                className={cn(
-                  'hidden md:block whitespace-nowrap py-4 px-10 rounded-full font-semibold text-base transition-all duration-200',
-                  monthlyTier
-                    ? 'bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white cursor-pointer hover:shadow-lg hover:-translate-y-0.5 pulse-cta'
-                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                )}
-              >
-                {loading ? 'Processing...' : 'Continue to checkout'}
-              </button>
             </div>
 
-            {/* Trust signals */}
-            <div className="mt-4 pt-4 border-t border-[var(--color-border)] flex flex-wrap items-center justify-center gap-4 md:gap-8 text-xs text-[var(--color-text-muted)]">
-              <span className="flex items-center gap-1.5">
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                Secure checkout via Stripe
-              </span>
-              <span className="flex items-center gap-1.5">
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                Pause anytime for hardship
-              </span>
-              <span className="flex items-center gap-1.5">
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                Your data stays private
-              </span>
+            {/* Trust signals - minimal text only */}
+            <div className="mt-6 pt-6 border-t border-[var(--color-border)] flex flex-wrap justify-center gap-6 md:gap-10 text-xs text-[var(--color-text-muted)]">
+              <span>Secure checkout via Stripe</span>
+              <span>Pause anytime for hardship</span>
+              <span>Your data stays private</span>
             </div>
           </div>
         </section>

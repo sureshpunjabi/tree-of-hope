@@ -40,18 +40,17 @@ export default function Header() {
       className={cn(
         'sticky top-0 z-50 transition-all duration-300',
         scrolled
-          ? 'bg-[var(--color-bg)]/90 backdrop-blur-md border-b border-[var(--color-border)]/50'
+          ? 'bg-[var(--color-bg)]/90 backdrop-blur-lg border-b border-[var(--color-border)]/50'
           : 'bg-[var(--color-bg)] border-b border-[var(--color-border)]'
       )}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo with leaf icon */}
+          {/* Logo - Clean text, serif font */}
           <Link
             href="/"
-            className="flex items-center gap-2.5 no-underline hover:opacity-90 transition-opacity duration-200"
+            className="flex items-center no-underline hover:opacity-90 transition-opacity duration-200"
           >
-            <span className="text-2xl">🌿</span>
             <span
               className="text-lg font-semibold tracking-tight text-[var(--color-text)]"
               style={{ fontFamily: 'var(--font-serif)' }}
@@ -70,27 +69,9 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="relative px-4 py-2 text-[var(--color-text)] hover:text-[var(--color-hope)] transition-colors duration-200 font-medium text-sm"
+                className="nav-link px-4 py-2 text-[var(--color-text)] text-sm font-medium"
               >
-                <span className="relative">
-                  {link.label}
-                  <span
-                    className={cn(
-                      'absolute bottom-0 left-0 w-0 h-0.5 bg-[var(--color-hope)] transition-all duration-300',
-                      'group-hover:w-full'
-                    )}
-                    style={{
-                      content: '""',
-                      position: 'absolute',
-                      bottom: '-2px',
-                      left: '0',
-                      width: '0',
-                      height: '2px',
-                      backgroundColor: 'var(--color-hope)',
-                      transition: 'width 0.3s ease',
-                    }}
-                  />
-                </span>
+                {link.label}
               </Link>
             ))}
           </nav>
@@ -128,10 +109,7 @@ export default function Header() {
                 </Link>
                 <Link
                   href="/auth/signin"
-                  className={cn(
-                    'btn-primary text-sm font-medium relative',
-                    'after:absolute after:inset-0 after:rounded-lg after:bg-white after:opacity-0 after:animate-pulse after:[animation-duration:2s]'
-                  )}
+                  className="bg-[var(--color-hope)] text-white text-sm font-medium py-2 px-5 rounded-full hover:bg-[var(--color-hope-hover)] transition-colors duration-200"
                 >
                   Get Started
                 </Link>
@@ -215,7 +193,7 @@ export default function Header() {
                   <Link
                     href="/auth/signin"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="block btn-primary text-sm text-center font-medium"
+                    className="block bg-[var(--color-hope)] text-white text-sm font-medium text-center py-2 px-5 rounded-full hover:bg-[var(--color-hope-hover)] transition-colors duration-200"
                   >
                     Get Started
                   </Link>
@@ -225,26 +203,6 @@ export default function Header() {
           </div>
         </nav>
       </div>
-
-      <style jsx>{`
-        a:hover span::after {
-          width: 100%;
-        }
-
-        @keyframes pulse {
-          0%,
-          100% {
-            opacity: 0;
-          }
-          50% {
-            opacity: 0.1;
-          }
-        }
-
-        .animate-pulse {
-          animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-      `}</style>
     </header>
   )
 }

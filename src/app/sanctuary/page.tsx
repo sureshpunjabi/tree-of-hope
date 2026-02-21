@@ -1,19 +1,20 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import ScrollReveal from '@/components/ui/ScrollReveal'
 
 export default function SanctuaryPage() {
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
       {/* ─── HERO ─── */}
-      <section className="relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+      <section className="relative overflow-hidden py-32 md:py-48">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div className="max-w-xl">
-              <p className="text-sm font-semibold tracking-widest uppercase text-[var(--color-hope)] mb-4">
+              <p className="text-sm font-semibold tracking-[0.25em] uppercase text-[var(--color-hope)] mb-4">
                 Private space
               </p>
               <h1
-                className="text-5xl md:text-[3.5rem] font-bold text-[var(--color-text)] leading-[1.1] mb-6"
+                className="text-6xl md:text-7xl font-light text-[var(--color-text)] leading-[1.1] mb-6"
                 style={{ fontFamily: 'var(--font-serif)' }}
               >
                 Your
@@ -59,15 +60,34 @@ export default function SanctuaryPage() {
         </div>
       </section>
 
+      {/* ─── TESTIMONIAL BLOCKQUOTE ─── */}
+      <section className="py-24 md:py-32 bg-[#f9f7f3]">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ScrollReveal>
+            <blockquote className="text-center">
+              <p
+                className="text-4xl md:text-5xl font-light italic text-[var(--color-text)] leading-[1.3] mb-6"
+                style={{ fontFamily: 'var(--font-serif)' }}
+              >
+                "The Sanctuary didn't fix anything. But for the first time in weeks, I felt held."
+              </p>
+              <footer className="text-[var(--color-text-muted)] font-light">
+                — A caregiver, day 12
+              </footer>
+            </blockquote>
+          </ScrollReveal>
+        </div>
+      </section>
+
       {/* ─── FEATURES ─── */}
-      <section className="py-20 md:py-28 bg-white">
+      <section className="py-32 md:py-48 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <p className="text-sm font-semibold tracking-widest uppercase text-[var(--color-hope)] mb-3">
+          <div className="text-center mb-20">
+            <p className="text-sm font-semibold tracking-[0.25em] uppercase text-[var(--color-hope)] mb-3">
               What&apos;s inside
             </p>
             <h2
-              className="text-4xl md:text-5xl font-bold text-[var(--color-text)] leading-tight"
+              className="text-5xl md:text-6xl font-light text-[var(--color-text)] leading-tight"
               style={{ fontFamily: 'var(--font-serif)' }}
             >
               Everything the Sanctuary holds.
@@ -77,52 +97,103 @@ export default function SanctuaryPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {[
               {
-                icon: '📖',
                 title: 'Daily Guided Content',
                 desc: '30 days of gentle, curated guidance — from breathing exercises to care coordination.',
-                gradient: 'from-[#f0ebe4] to-[#e8e0d5]',
               },
               {
-                icon: '📝',
                 title: 'Private Journal',
                 desc: 'A space to write what you need to. Mood tracking, daily reflections, entirely private.',
-                gradient: 'from-[#e8f0e4] to-[#d5e0d2]',
               },
               {
-                icon: '🍃',
                 title: 'Leaves of Hope',
                 desc: 'Read the messages people have written for you, whenever you need them.',
-                gradient: 'from-[#e4e8f0] to-[#d2d5e0]',
               },
               {
-                icon: '🛠️',
                 title: 'Care Tools',
                 desc: 'Track appointments, medications, symptoms, and tasks. Simple tools that grow with you.',
-                gradient: 'from-[#f0e4e8] to-[#e0d2d5]',
               },
             ].map((item) => (
-              <div
-                key={item.title}
-                className={`bg-gradient-to-b ${item.gradient} rounded-3xl p-8 md:p-10 hover:shadow-xl transition-all duration-300 hover:-translate-y-1`}
-              >
-                <div className="text-4xl mb-4">{item.icon}</div>
-                <h3
-                  className="text-2xl font-bold text-[var(--color-text)] mb-3"
-                  style={{ fontFamily: 'var(--font-serif)' }}
+              <ScrollReveal key={item.title}>
+                <div
+                  className="border-t-2 border-[var(--color-hope)] bg-white p-8 md:p-10 hover:shadow-lg transition-all duration-300"
                 >
-                  {item.title}
-                </h3>
-                <p className="text-[var(--color-text-muted)] leading-relaxed">
-                  {item.desc}
-                </p>
-              </div>
+                  <h3
+                    className="text-2xl font-light text-[var(--color-text)] mb-3"
+                    style={{ fontFamily: 'var(--font-serif)' }}
+                  >
+                    {item.title}
+                  </h3>
+                  <p className="text-[var(--color-text-muted)] leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 30 DAYS OF GUIDED CONTENT ─── */}
+      <section className="py-32 md:py-48 bg-[var(--color-bg)]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-20">
+            <p className="text-sm font-semibold tracking-[0.25em] uppercase text-[var(--color-hope)] mb-3">
+              Your journey
+            </p>
+            <h2
+              className="text-5xl md:text-6xl font-light text-[var(--color-text)] leading-tight"
+              style={{ fontFamily: 'var(--font-serif)' }}
+            >
+              30 days of guided content.
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                week: 'Week 1',
+                title: 'Breathing room',
+                desc: 'Gentle arrival, no pressure',
+              },
+              {
+                week: 'Week 2',
+                title: 'Finding footing',
+                desc: 'Care coordination basics',
+              },
+              {
+                week: 'Week 3',
+                title: 'Deepening',
+                desc: 'Emotional processing, journaling',
+              },
+              {
+                week: 'Week 4',
+                title: 'Looking ahead',
+                desc: 'Building ongoing rhythms',
+              },
+            ].map((item) => (
+              <ScrollReveal key={item.week}>
+                <div className="border border-[var(--color-border)] rounded-lg p-8 bg-white hover:shadow-md transition-all duration-300">
+                  <p className="text-xs font-semibold tracking-widest uppercase text-[var(--color-hope)] mb-3">
+                    {item.week}
+                  </p>
+                  <h3
+                    className="text-xl font-light text-[var(--color-text)] mb-2"
+                    style={{ fontFamily: 'var(--font-serif)' }}
+                  >
+                    {item.title}
+                  </h3>
+                  <p className="text-sm text-[var(--color-text-muted)]">
+                    {item.desc}
+                  </p>
+                </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
       </section>
 
       {/* Privacy notice */}
-      <section className="py-8 bg-[var(--color-bg)]">
+      <section className="py-12 bg-[var(--color-bg)]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-sm text-[var(--color-text-muted)] text-center leading-relaxed">
             The Sanctuary is entirely private. Only the patient and caregiver can access it.

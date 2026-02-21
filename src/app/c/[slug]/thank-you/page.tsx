@@ -70,50 +70,47 @@ export default function ThankYouPage() {
     <div className="min-h-screen bg-[var(--color-bg)]">
       {/* ─── HERO ─── */}
       <section className="relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <div className="max-w-xl">
-              <p className="text-sm font-semibold tracking-widest uppercase text-[var(--color-hope)] mb-4">
-                You did it
-              </p>
-              <h1
-                className="text-5xl md:text-[3.5rem] lg:text-[4rem] font-bold text-[var(--color-text)] leading-[1.1] mb-6"
-                style={{ fontFamily: 'var(--font-serif)' }}
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-32 md:py-48 lg:py-56">
+          <div className="text-center max-w-3xl mx-auto">
+            <p className="text-sm font-light tracking-wide text-[var(--color-hope)] mb-6">
+              A moment of gratitude
+            </p>
+            <h1
+              className="text-6xl md:text-7xl font-light text-[var(--color-text)] leading-[1.2] mb-8"
+              style={{ fontFamily: 'var(--font-serif)' }}
+            >
+              You showed up. That&apos;s everything.
+            </h1>
+            <p className="text-base md:text-lg text-[var(--color-text-muted)] mb-12 leading-relaxed font-light italic max-w-2xl mx-auto">
+              "One person can't change everything. But one person showing up can change everything for one person."
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <button
+                onClick={handleCopyLink}
+                className="inline-flex items-center justify-center gap-2 bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-3 px-8 rounded-full text-sm transition-all duration-200 hover:shadow-md"
               >
-                Thank you.
-              </h1>
-              <p className="text-lg md:text-xl text-[var(--color-text-muted)] mb-10 leading-relaxed">
-                Your leaf is now part of the Tree. If you&apos;d like, share this page
-                with someone else in the circle.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <button
-                  onClick={handleCopyLink}
-                  className="inline-flex items-center justify-center gap-2 bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-semibold py-4 px-10 rounded-full text-base transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
-                >
-                  <Share2 className="w-4 h-4" />
-                  {copySuccess ? 'Copied!' : 'Share the tree'}
-                </button>
-                <Link
-                  href={`/c/${slug}`}
-                  className="inline-flex items-center justify-center border-2 border-[var(--color-border)] hover:border-[var(--color-text)] text-[var(--color-text)] font-semibold py-4 px-10 rounded-full text-base transition-all duration-200"
-                >
-                  View the Tree
-                </Link>
-              </div>
+                <Share2 className="w-4 h-4" />
+                {copySuccess ? 'Copied!' : 'Share the tree'}
+              </button>
+              <Link
+                href={`/c/${slug}`}
+                className="inline-flex items-center justify-center text-[var(--color-text)] hover:text-[var(--color-hope)] font-medium py-3 px-8 rounded-full text-sm transition-colors duration-200"
+              >
+                View the Tree
+              </Link>
             </div>
+          </div>
 
-            <div className="relative hidden lg:flex justify-center lg:justify-end">
-              <div className="relative">
-                <div className="absolute inset-0 bg-[var(--color-hope)] opacity-[0.06] rounded-full blur-3xl scale-110" />
-                <Image
-                  src="/tree-hero.png"
-                  alt="Tree of Hope"
-                  width={500}
-                  height={518}
-                  className="relative z-10 drop-shadow-2xl"
-                />
-              </div>
+          <div className="relative hidden lg:flex justify-center mt-20">
+            <div className="relative">
+              <div className="absolute inset-0 bg-[var(--color-hope)] opacity-[0.06] rounded-full blur-3xl scale-110" />
+              <Image
+                src="/tree-hero.png"
+                alt="Tree of Hope"
+                width={400}
+                height={414}
+                className="relative z-10 drop-shadow-xl"
+              />
             </div>
           </div>
         </div>
@@ -123,11 +120,11 @@ export default function ThankYouPage() {
       <section className="py-20 md:py-28 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <p className="text-sm font-semibold tracking-widest uppercase text-[var(--color-hope)] mb-3">
+            <p className="text-sm font-light tracking-wide text-[var(--color-hope)] mb-3">
               Your commitment
             </p>
             <h2
-              className="text-4xl md:text-5xl font-bold text-[var(--color-text)] leading-tight"
+              className="text-5xl md:text-6xl font-light text-[var(--color-text)] leading-tight"
               style={{ fontFamily: 'var(--font-serif)' }}
             >
               You&apos;re in the circle.
@@ -135,32 +132,32 @@ export default function ThankYouPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-[var(--color-bg)] rounded-3xl p-8">
-              <p className="text-sm font-semibold tracking-widest uppercase text-[var(--color-text-muted)] mb-3">
+            <div className="bg-[var(--color-bg)] rounded-2xl p-8">
+              <p className="text-xs font-semibold tracking-widest uppercase text-[var(--color-text-muted)] mb-3">
                 Status
               </p>
               <p
-                className="text-3xl font-bold text-[var(--color-hope)]"
+                className="text-3xl font-semibold text-[var(--color-hope)]"
                 style={{ fontFamily: 'var(--font-serif)' }}
               >
                 Active
               </p>
-              <p className="text-[var(--color-text-muted)] mt-2 text-sm">
+              <p className="text-[var(--color-text-muted)] mt-3 text-sm">
                 Your monthly support renews automatically
               </p>
             </div>
 
-            <div className="bg-[var(--color-bg)] rounded-3xl p-8">
-              <p className="text-sm font-semibold tracking-widest uppercase text-[var(--color-text-muted)] mb-3">
+            <div className="bg-[var(--color-bg)] rounded-2xl p-8">
+              <p className="text-xs font-semibold tracking-widest uppercase text-[var(--color-text-muted)] mb-3">
                 Next renewal
               </p>
               <p
-                className="text-3xl font-bold text-[var(--color-text)]"
+                className="text-3xl font-semibold text-[var(--color-text)]"
                 style={{ fontFamily: 'var(--font-serif)' }}
               >
                 {new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
               </p>
-              <p className="text-[var(--color-text-muted)] mt-2 text-sm">
+              <p className="text-[var(--color-text-muted)] mt-3 text-sm">
                 Manage anytime at your account settings
               </p>
             </div>
@@ -171,49 +168,49 @@ export default function ThankYouPage() {
       {/* ─── SHARE ─── */}
       <section className="py-20 md:py-28">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <p className="text-sm font-semibold tracking-widest uppercase text-[var(--color-hope)] mb-3">
-              Spread the word
-            </p>
+          <div className="text-center mb-16">
             <h2
-              className="text-4xl md:text-5xl font-bold text-[var(--color-text)] leading-tight"
+              className="text-5xl md:text-6xl font-light text-[var(--color-text)] leading-tight mb-4"
               style={{ fontFamily: 'var(--font-serif)' }}
             >
-              Invite others to join.
+              The most powerful thing you can do now
             </h2>
+            <p className="text-base text-[var(--color-text-muted)] font-light">
+              is invite one more person into the circle.
+            </p>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3">
             <button
               onClick={handleCopyLink}
               className={cn(
-                'w-full flex items-center justify-between p-5 rounded-2xl border-2 transition-all duration-300 hover:-translate-y-0.5',
+                'w-full flex items-center justify-between p-4 rounded-lg transition-all duration-200',
                 copySuccess
-                  ? 'border-green-400 bg-green-50 text-green-700'
-                  : 'border-[var(--color-border)] hover:border-[var(--color-hope)] hover:shadow-md'
+                  ? 'bg-[var(--color-hope)]/10 text-[var(--color-hope)]'
+                  : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-card)]'
               )}
             >
               <div className="flex items-center gap-3">
-                <Copy className="w-5 h-5" />
-                <span className="font-medium">{copySuccess ? 'Copied!' : 'Copy campaign link'}</span>
+                <Copy className="w-4 h-4" />
+                <span className="text-sm font-medium">{copySuccess ? 'Copied!' : 'Copy campaign link'}</span>
               </div>
-              {copySuccess && <span className="text-green-600 font-bold">✓</span>}
+              {copySuccess && <span className="text-[var(--color-hope)]">✓</span>}
             </button>
 
             <button
               onClick={handleWhatsAppShare}
-              className="w-full flex items-center gap-3 p-5 rounded-2xl border-2 border-[var(--color-border)] hover:border-green-400 hover:bg-green-50 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+              className="w-full flex items-center gap-3 p-4 rounded-lg text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-card)] transition-all duration-200"
             >
-              <Share2 className="w-5 h-5" />
-              <span className="font-medium">Share on WhatsApp</span>
+              <Share2 className="w-4 h-4" />
+              <span className="text-sm font-medium">Share on WhatsApp</span>
             </button>
 
             <button
               onClick={handleSMSShare}
-              className="w-full flex items-center gap-3 p-5 rounded-2xl border-2 border-[var(--color-border)] hover:border-blue-400 hover:bg-blue-50 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+              className="w-full flex items-center gap-3 p-4 rounded-lg text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-card)] transition-all duration-200"
             >
-              <MessageCircle className="w-5 h-5" />
-              <span className="font-medium">Share via SMS</span>
+              <MessageCircle className="w-4 h-4" />
+              <span className="text-sm font-medium">Share via SMS</span>
             </button>
           </div>
         </div>
@@ -222,16 +219,16 @@ export default function ThankYouPage() {
       {/* ─── FINAL CTA ─── */}
       <section className="py-16 md:py-20 bg-white border-t border-[var(--color-border)]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
               href="/me/commitment"
-              className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-semibold py-4 px-10 rounded-full text-base transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-3 px-8 rounded-full text-sm transition-all duration-200 hover:shadow-md"
             >
               View your commitment
             </Link>
             <Link
               href={`/c/${slug}`}
-              className="inline-flex items-center justify-center border-2 border-[var(--color-border)] hover:border-[var(--color-text)] text-[var(--color-text)] font-semibold py-4 px-10 rounded-full text-base transition-all duration-200"
+              className="inline-flex items-center justify-center text-[var(--color-text)] hover:text-[var(--color-hope)] font-medium py-3 px-8 rounded-full text-sm transition-colors duration-200"
             >
               Back to the Tree
             </Link>
@@ -241,10 +238,9 @@ export default function ThankYouPage() {
 
       {/* Trust language footer */}
       <section className="py-8 bg-[var(--color-bg)]">
-        <div className="trust-language">
-          <p>
-            Tree of Hope is a for-profit service. Your contribution funds the Sanctuary
-            and ongoing platform operations. It is not sent to the patient.
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-xs text-[var(--color-text-muted)]">
+            Tree of Hope is a for-profit service. Your contribution funds the Sanctuary and ongoing platform operations. We are committed to transparency and responsible stewardship.
           </p>
         </div>
       </section>

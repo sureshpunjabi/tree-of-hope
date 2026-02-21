@@ -1,19 +1,20 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import ScrollReveal from '@/components/ui/ScrollReveal'
 
 export default function BridgePage() {
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
       {/* ─── HERO ─── */}
-      <section className="relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+      <section className="relative overflow-hidden py-32 md:py-48">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div className="max-w-xl">
-              <p className="text-sm font-semibold tracking-widest uppercase text-[var(--color-hope)] mb-4">
+              <p className="text-sm font-semibold tracking-[0.25em] uppercase text-[var(--color-hope)] mb-4">
                 GoFundMe + Tree of Hope
               </p>
               <h1
-                className="text-5xl md:text-[3.5rem] font-bold text-[var(--color-text)] leading-[1.1] mb-6"
+                className="text-6xl md:text-7xl font-light text-[var(--color-text)] leading-[1.1] mb-6"
                 style={{ fontFamily: 'var(--font-serif)' }}
               >
                 The
@@ -21,8 +22,7 @@ export default function BridgePage() {
                 <span className="text-[var(--color-hope)]">Bridge.</span>
               </h1>
               <p className="text-lg md:text-xl text-[var(--color-text-muted)] mb-10 leading-relaxed">
-                GoFundMe gives the money. Tree of Hope gives the community.
-                One-time gifts help in the moment. A Tree of Hope sustains what comes after.
+                One-time generosity is beautiful. Sustained care is transformational.
               </p>
               <Link
                 href="/campaigns"
@@ -51,64 +51,143 @@ export default function BridgePage() {
       </section>
 
       {/* ─── COMPARISON ─── */}
-      <section className="py-20 md:py-28 bg-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <p className="text-sm font-semibold tracking-widest uppercase text-[var(--color-hope)] mb-3">
-              Compare
+      <section className="py-32 md:py-48 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-20">
+            <p className="text-sm font-semibold tracking-[0.25em] uppercase text-[var(--color-hope)] mb-3">
+              Two kinds of giving
             </p>
             <h2
-              className="text-4xl md:text-5xl font-bold text-[var(--color-text)] leading-tight"
+              className="text-5xl md:text-6xl font-light text-[var(--color-text)] leading-tight"
               style={{ fontFamily: 'var(--font-serif)' }}
             >
-              Two kinds of giving.
+              Different paths. Same heart.
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-[var(--color-bg)] rounded-3xl p-8 md:p-10 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-              <h3
-                className="text-2xl font-bold text-[var(--color-text)] mb-6"
-                style={{ fontFamily: 'var(--font-serif)' }}
-              >
-                GoFundMe
-              </h3>
-              <div className="space-y-3 text-[var(--color-text-muted)]">
-                <p>One-time gift</p>
-                <p>Immediate financial help</p>
-                <p>Wide reach</p>
-                <p>Funds go directly to organiser</p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <ScrollReveal>
+              <div>
+                <h3
+                  className="text-3xl font-light text-[var(--color-text)] mb-8"
+                  style={{ fontFamily: 'var(--font-serif)' }}
+                >
+                  GoFundMe
+                </h3>
+                <div className="space-y-4">
+                  <div className="pb-4 border-b border-[var(--color-border)]">
+                    <p className="text-[var(--color-text-muted)]">One-time gift</p>
+                  </div>
+                  <div className="pb-4 border-b border-[var(--color-border)]">
+                    <p className="text-[var(--color-text-muted)]">Immediate financial help</p>
+                  </div>
+                  <div className="pb-4 border-b border-[var(--color-border)]">
+                    <p className="text-[var(--color-text-muted)]">Wide reach</p>
+                  </div>
+                  <div className="pb-4">
+                    <p className="text-[var(--color-text-muted)]">Funds go directly to organiser</p>
+                  </div>
+                </div>
               </div>
-              <p className="mt-6 text-sm text-[var(--color-text-muted)] italic border-t border-[var(--color-border)] pt-6">
-                Keep giving. It matters.
-              </p>
-            </div>
+            </ScrollReveal>
 
-            <div className="bg-gradient-to-b from-[#e8f0e4] to-[#d5e0d2] rounded-3xl p-8 md:p-10 ring-2 ring-[var(--color-hope)] hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-              <h3
-                className="text-2xl font-bold text-[var(--color-text)] mb-6"
-                style={{ fontFamily: 'var(--font-serif)' }}
-              >
-                Tree of Hope
-              </h3>
-              <div className="space-y-3 text-[var(--color-text-muted)]">
-                <p>Monthly commitment</p>
-                <p>Ongoing emotional support</p>
-                <p>Close circle of care</p>
-                <p>Private Sanctuary for patient</p>
-                <p>Care tools for 30+ days</p>
-                <p>Pause anytime for hardship</p>
+            <div className="relative lg:flex lg:justify-center">
+              <div className="hidden lg:block absolute left-1/2 top-1/2 transform -translate-y-1/2 -translate-x-1/2 w-16 h-16 flex items-center justify-center text-2xl font-light text-[var(--color-hope)]">
+                →
               </div>
-              <p className="mt-6 text-sm text-[var(--color-text-muted)] italic border-t border-[var(--color-hope)] border-opacity-30 pt-6">
-                Start growing. It stays.
-              </p>
+              <ScrollReveal>
+                <div className="bg-gradient-to-b from-[#e8f0e4] to-[#d5e0d2] rounded-2xl p-10 md:p-12">
+                  <h3
+                    className="text-3xl font-light text-[var(--color-text)] mb-8"
+                    style={{ fontFamily: 'var(--font-serif)' }}
+                  >
+                    Tree of Hope
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="pb-4 border-b border-[var(--color-hope)] border-opacity-40">
+                      <p className="text-[var(--color-text)]">Monthly commitment</p>
+                    </div>
+                    <div className="pb-4 border-b border-[var(--color-hope)] border-opacity-40">
+                      <p className="text-[var(--color-text)]">Ongoing emotional support</p>
+                    </div>
+                    <div className="pb-4 border-b border-[var(--color-hope)] border-opacity-40">
+                      <p className="text-[var(--color-text)]">Close circle of care</p>
+                    </div>
+                    <div className="pb-4 border-b border-[var(--color-hope)] border-opacity-40">
+                      <p className="text-[var(--color-text)]">Private Sanctuary for patient</p>
+                    </div>
+                    <div className="pb-4 border-b border-[var(--color-hope)] border-opacity-40">
+                      <p className="text-[var(--color-text)]">Care tools for 30+ days</p>
+                    </div>
+                    <div className="pb-4">
+                      <p className="text-[var(--color-text)]">Pause anytime for hardship</p>
+                    </div>
+                  </div>
+                </div>
+              </ScrollReveal>
             </div>
           </div>
         </div>
       </section>
 
+      {/* ─── HOW THE BRIDGE WORKS ─── */}
+      <section className="py-32 md:py-48 bg-[var(--color-bg)]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-20">
+            <p className="text-sm font-semibold tracking-[0.25em] uppercase text-[var(--color-hope)] mb-3">
+              The journey
+            </p>
+            <h2
+              className="text-5xl md:text-6xl font-light text-[var(--color-text)] leading-tight"
+              style={{ fontFamily: 'var(--font-serif)' }}
+            >
+              How the Bridge works.
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                num: '1',
+                title: 'We find',
+                desc: 'We discover GoFundMe campaigns in the health space — people facing real struggles.',
+              },
+              {
+                num: '2',
+                title: 'We invite',
+                desc: 'We reach out to organisers with a gentle invitation to build something lasting.',
+              },
+              {
+                num: '3',
+                title: 'We connect',
+                desc: 'Their supporters discover Tree of Hope and become part of an ongoing circle of care.',
+              },
+            ].map((item, idx) => (
+              <ScrollReveal key={idx}>
+                <div className="relative">
+                  <div className="mb-6">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[var(--color-hope)] text-white font-light text-lg" style={{ fontFamily: 'var(--font-serif)' }}>
+                      {item.num}
+                    </div>
+                  </div>
+                  <h3
+                    className="text-2xl font-light text-[var(--color-text)] mb-3"
+                    style={{ fontFamily: 'var(--font-serif)' }}
+                  >
+                    {item.title}
+                  </h3>
+                  <p className="text-[var(--color-text-muted)] leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Trust */}
-      <section className="py-8 bg-[var(--color-bg)]">
+      <section className="py-12 bg-[var(--color-bg)]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-sm text-[var(--color-text-muted)] text-center leading-relaxed">
             Tree of Hope is a for-profit service. Your contribution funds the Sanctuary
