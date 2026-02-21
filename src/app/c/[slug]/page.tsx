@@ -67,7 +67,6 @@ export default async function CampaignPage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
       {/* ─── HERO ─── Cathedral-like, emotionally immersive */}
-      <ScrollReveal>
         <section className="relative overflow-hidden bg-[var(--color-bg)]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 md:py-48">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 lg:gap-32 items-center">
@@ -139,7 +138,6 @@ export default async function CampaignPage({ params }: PageProps) {
             </div>
           </div>
         </section>
-      </ScrollReveal>
 
       {/* ─── STATS BAR ─── Elegant, large numbers */}
       <ScrollReveal>
