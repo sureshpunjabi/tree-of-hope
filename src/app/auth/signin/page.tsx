@@ -46,7 +46,7 @@ export default function SignInPage() {
       } else {
         setStatus('error')
         setErrorMessage(data.error || 'Failed to send magic link')
-        trackEvent('magic_link_failed', { source: 'signin', error: data.error })
+        trackEvent('magic_link_sent_failed', { source: 'signin', error: data.error })
       }
     } catch {
       setStatus('error')
