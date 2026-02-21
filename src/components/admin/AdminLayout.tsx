@@ -16,70 +16,73 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     return pathname?.startsWith(path)
   }
 
+  const navItems = [
+    { href: '/admin', label: 'Dashboard', icon: '📊', isRoot: true },
+    { href: '/admin/campaigns', label: 'Campaigns', icon: '🌿' },
+    { href: '/admin/bridge', label: 'Bridge Scanner', icon: '🌉' },
+  ]
+
   return (
     <div className="flex min-h-screen bg-[var(--color-bg)]">
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-[var(--color-border)] transition-transform duration-300 md:relative md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#3E2723] transition-transform duration-300 md:relative md:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="flex flex-col h-full">
           {/* Logo / Title */}
-          <div className="p-6 border-b border-[var(--color-border)]">
-            <Link href="/admin" className="flex items-center gap-2 text-xl font-serif font-bold text-[var(--color-text)] hover:text-[var(--color-hope)] transition">
-              <span>🌳</span>
-              <span>Admin</span>
+          <div className="p-6 border-b border-white/10">
+            <Link
+              href="/admin"
+              className="flex items-center gap-3 font-serif text-xl font-bold text-white hover:text-[var(--color-hope)] transition duration-200"
+            >
+              <span className="text-2xl">🌳</span>
+              <span>Tree of Hope</span>
             </Link>
           </div>
 
           {/* Navigation */}
           <nav className="flex-1 p-4 space-y-2">
-            <Link
-              href="/admin"
-              onClick={() => setSidebarOpen(false)}
-              className={`block px-4 py-3 rounded-lg font-medium transition ${
-                isActive('/admin') && !isActive('/admin/campaigns') && !isActive('/admin/bridge')
-                  ? 'bg-[var(--color-hope)] text-white'
-                  : 'text-[var(--color-text)] hover:bg-gray-100'
-              }`}
-            >
-              Dashboard
-            </Link>
+            {navItems.map((item) => {
+              const active = item.isRoot
+                ? isActive('/admin') && !isActive('/admin/campaigns') && !isActive('/admin/bridge')
+                : isActive(item.href)
 
-            <Link
-              href="/admin/campaigns"
-              onClick={() => setSidebarOpen(false)}
-              className={`block px-4 py-3 rounded-lg font-medium transition ${
-                isActive('/admin/campaigns')
-                  ? 'bg-[var(--color-hope)] text-white'
-                  : 'text-[var(--color-text)] hover:bg-gray-100'
-              }`}
-            >
-              Campaigns
-            </Link>
-
-            <Link
-              href="/admin/bridge"
-              onClick={() => setSidebarOpen(false)}
-              className={`block px-4 py-3 rounded-lg font-medium transition ${
-                isActive('/admin/bridge')
-                  ? 'bg-[var(--color-hope)] text-white'
-                  : 'text-[var(--color-text)] hover:bg-gray-100'
-              }`}
-            >
-              Bridge Scanner
-            </Link>
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setSidebarOpen(false)}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-full font-medium transition duration-200 ${
+                    active
+                      ? 'bg-[var(--color-hope)] text-white shadow-md'
+                      : 'text-white/80 hover:bg-white/10 hover:text-white'
+                  }`}
+                >
+                  <span className="text-lg">{item.icon}</span>
+                  <span>{item.label}</span>
+                </Link>
+              )
+            })}
           </nav>
 
+          {/* Divider */}
+          <div className="px-4 py-2">
+            <div className="h-px bg-white/10"></div>
+          </div>
+
           {/* Footer */}
-          <div className="p-4 border-t border-[var(--color-border)] text-xs text-[var(--color-text-muted)]">
-            <p className="mb-2">Tree of Hope Admin</p>
+          <div className="p-4 space-y-3">
+            <p className="text-xs text-white/60 uppercase tracking-wide font-medium">
+              Admin Panel
+            </p>
             <Link
               href="/"
-              className="text-[var(--color-hope)] hover:text-[var(--color-hope-hover)] font-medium"
+              className="flex items-center gap-2 text-white/80 hover:text-[var(--color-hope)] font-medium text-sm transition duration-200"
             >
-              Back to Site →
+              <span>←</span>
+              <span>Back to Site</span>
             </Link>
           </div>
         </div>
@@ -88,7 +91,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       {/* Overlay for mobile */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/20 z-40 md:hidden"
+          className="fixed inset-0 bg-black/40 z-40 md:hidden backdrop-blur-sm"
           onClick={() => setSidebarOpen(false)}
         ></div>
       )}
@@ -96,13 +99,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Top Bar for Mobile */}
-        <div className="md:hidden bg-white border-b border-[var(--color-border)] px-4 py-4 flex items-center justify-between">
-          <h1 className="font-serif font-bold text-[var(--color-text)]">
-            Tree of Hope Admin
+        <div className="md:hidden bg-white border-b border-[var(--color-border)] px-4 py-4 flex items-center justify-between shadow-sm">
+          <h1 className="font-serif font-bold text-[var(--color-text)] flex items-center gap-2">
+            <span>🌳</span>
+            Admin
           </h1>
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 hover:bg-gray-100 rounded-lg transition"
+            className="p-2 hover:bg-[var(--color-bg)] rounded-lg transition duration-200 text-[var(--color-text)]"
           >
             <svg
               className="w-6 h-6"
@@ -126,7 +130,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </main>
 
         {/* Footer */}
-        <div className="bg-white border-t border-[var(--color-border)] px-4 md:px-8 py-4 text-center text-sm text-[var(--color-text-muted)]">
+        <div className="bg-white border-t border-[var(--color-border)] px-4 md:px-8 py-6 text-center text-sm text-[var(--color-text-muted)]">
           <p>Tree of Hope Admin Panel</p>
         </div>
       </div>

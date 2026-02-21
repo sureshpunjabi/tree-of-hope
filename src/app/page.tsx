@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import ScrollReveal from '@/components/ui/ScrollReveal'
 
 export default function HomePage() {
   return (
@@ -60,28 +61,30 @@ export default function HomePage() {
 
       {/* ─── STATS BAR ─── Inspired by charity:water's impact numbers */}
       <section className="border-y border-[var(--color-border)] bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-[var(--color-border)]">
-            {[
-              { number: '5', label: 'Day gathering' },
-              { number: '30', label: 'Day Sanctuary' },
-              { number: '3', label: 'Monthly tiers' },
-              { number: '∞', label: 'Kindness' },
-            ].map((stat) => (
-              <div key={stat.label} className="py-8 md:py-10 px-6 text-center">
-                <div
-                  className="text-4xl md:text-5xl font-bold text-[var(--color-hope)] mb-1"
-                  style={{ fontFamily: 'var(--font-serif)' }}
-                >
-                  {stat.number}
+        <ScrollReveal direction="up">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-[var(--color-border)]">
+              {[
+                { number: '5', label: 'Day gathering' },
+                { number: '30', label: 'Day Sanctuary' },
+                { number: '3', label: 'Monthly tiers' },
+                { number: '∞', label: 'Kindness' },
+              ].map((stat) => (
+                <div key={stat.label} className="py-8 md:py-10 px-6 text-center">
+                  <div
+                    className="text-4xl md:text-5xl font-bold text-[var(--color-hope)] mb-1"
+                    style={{ fontFamily: 'var(--font-serif)' }}
+                  >
+                    {stat.number}
+                  </div>
+                  <div className="text-sm text-[var(--color-text-muted)] font-medium">
+                    {stat.label}
+                  </div>
                 </div>
-                <div className="text-sm text-[var(--color-text-muted)] font-medium">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* ─── HOW IT WORKS ─── Horizontal card grid inspired by Headspace */}
@@ -131,25 +134,24 @@ export default function HomePage() {
                 desc: 'A private space with guided content, journal, and care tools.',
                 icon: '🏡',
               },
-            ].map((item) => (
-              <div
-                key={item.step}
-                className="bg-white rounded-2xl border border-[var(--color-border)] p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 card-shine"
-              >
-                <div className="text-3xl mb-4">{item.icon}</div>
-                <div className="text-xs font-bold tracking-widest text-[var(--color-hope)] mb-2 uppercase">
-                  Step {item.step}
+            ].map((item, index) => (
+              <ScrollReveal key={item.step} delay={index * 100}>
+                <div className="bg-white rounded-2xl border border-[var(--color-border)] p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 card-shine">
+                  <div className="text-3xl mb-4">{item.icon}</div>
+                  <div className="text-xs font-bold tracking-widest text-[var(--color-hope)] mb-2 uppercase">
+                    Step {item.step}
+                  </div>
+                  <h3
+                    className="text-lg font-bold text-[var(--color-text)] mb-2"
+                    style={{ fontFamily: 'var(--font-serif)' }}
+                  >
+                    {item.title}
+                  </h3>
+                  <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
+                    {item.desc}
+                  </p>
                 </div>
-                <h3
-                  className="text-lg font-bold text-[var(--color-text)] mb-2"
-                  style={{ fontFamily: 'var(--font-serif)' }}
-                >
-                  {item.title}
-                </h3>
-                <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
-                  {item.desc}
-                </p>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -172,64 +174,70 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Campaign Tree */}
-            <div className="group relative rounded-3xl overflow-hidden bg-gradient-to-b from-[#f0ebe4] to-[#e8e0d5] p-8 md:p-10 hover:shadow-xl transition-all duration-300 card-shine">
-              <div className="text-4xl mb-6">🌿</div>
-              <h3
-                className="text-2xl font-bold text-[var(--color-text)] mb-3"
-                style={{ fontFamily: 'var(--font-serif)' }}
-              >
-                Campaign Tree
-              </h3>
-              <p className="text-[var(--color-text-muted)] mb-6 leading-relaxed">
-                A five-day micro-campaign where supporters leave messages and commit to monthly giving.
-              </p>
-              <Link
-                href="/c/sarah"
-                className="inline-flex items-center text-[var(--color-hope)] font-semibold hover:underline"
-              >
-                View example →
-              </Link>
-            </div>
+            <ScrollReveal delay={0}>
+              <div className="group relative rounded-3xl overflow-hidden bg-gradient-to-b from-[#f0ebe4] to-[#e8e0d5] p-8 md:p-10 hover:shadow-xl transition-all duration-300 card-shine">
+                <div className="text-4xl mb-6">🌿</div>
+                <h3
+                  className="text-2xl font-bold text-[var(--color-text)] mb-3"
+                  style={{ fontFamily: 'var(--font-serif)' }}
+                >
+                  Campaign Tree
+                </h3>
+                <p className="text-[var(--color-text-muted)] mb-6 leading-relaxed">
+                  A five-day micro-campaign where supporters leave messages and commit to monthly giving.
+                </p>
+                <Link
+                  href="/c/sarah"
+                  className="inline-flex items-center text-[var(--color-hope)] font-semibold hover:underline"
+                >
+                  View example →
+                </Link>
+              </div>
+            </ScrollReveal>
 
             {/* Sanctuary */}
-            <div className="group relative rounded-3xl overflow-hidden bg-gradient-to-b from-[#e8f0e4] to-[#d5e0d2] p-8 md:p-10 hover:shadow-xl transition-all duration-300 card-shine">
-              <div className="text-4xl mb-6">🏡</div>
-              <h3
-                className="text-2xl font-bold text-[var(--color-text)] mb-3"
-                style={{ fontFamily: 'var(--font-serif)' }}
-              >
-                Sanctuary
-              </h3>
-              <p className="text-[var(--color-text-muted)] mb-6 leading-relaxed">
-                A private space for the patient and caregiver with guided daily content, journal, and tools.
-              </p>
-              <Link
-                href="/sanctuary"
-                className="inline-flex items-center text-[var(--color-hope)] font-semibold hover:underline"
-              >
-                Learn more →
-              </Link>
-            </div>
+            <ScrollReveal delay={150}>
+              <div className="group relative rounded-3xl overflow-hidden bg-gradient-to-b from-[#e8f0e4] to-[#d5e0d2] p-8 md:p-10 hover:shadow-xl transition-all duration-300 card-shine">
+                <div className="text-4xl mb-6">🏡</div>
+                <h3
+                  className="text-2xl font-bold text-[var(--color-text)] mb-3"
+                  style={{ fontFamily: 'var(--font-serif)' }}
+                >
+                  Sanctuary
+                </h3>
+                <p className="text-[var(--color-text-muted)] mb-6 leading-relaxed">
+                  A private space for the patient and caregiver with guided daily content, journal, and tools.
+                </p>
+                <Link
+                  href="/sanctuary"
+                  className="inline-flex items-center text-[var(--color-hope)] font-semibold hover:underline"
+                >
+                  Learn more →
+                </Link>
+              </div>
+            </ScrollReveal>
 
             {/* Bridge */}
-            <div className="group relative rounded-3xl overflow-hidden bg-gradient-to-b from-[#e4e8f0] to-[#d2d5e0] p-8 md:p-10 hover:shadow-xl transition-all duration-300 card-shine">
-              <div className="text-4xl mb-6">🌉</div>
-              <h3
-                className="text-2xl font-bold text-[var(--color-text)] mb-3"
-                style={{ fontFamily: 'var(--font-serif)' }}
-              >
-                Bridge
-              </h3>
-              <p className="text-[var(--color-text-muted)] mb-6 leading-relaxed">
-                Connects GoFundMe donors to ongoing monthly support through Tree of Hope.
-              </p>
-              <Link
-                href="/bridge"
-                className="inline-flex items-center text-[var(--color-hope)] font-semibold hover:underline"
-              >
-                Learn more →
-              </Link>
-            </div>
+            <ScrollReveal delay={300}>
+              <div className="group relative rounded-3xl overflow-hidden bg-gradient-to-b from-[#e4e8f0] to-[#d2d5e0] p-8 md:p-10 hover:shadow-xl transition-all duration-300 card-shine">
+                <div className="text-4xl mb-6">🌉</div>
+                <h3
+                  className="text-2xl font-bold text-[var(--color-text)] mb-3"
+                  style={{ fontFamily: 'var(--font-serif)' }}
+                >
+                  Bridge
+                </h3>
+                <p className="text-[var(--color-text-muted)] mb-6 leading-relaxed">
+                  Connects GoFundMe donors to ongoing monthly support through Tree of Hope.
+                </p>
+                <Link
+                  href="/bridge"
+                  className="inline-flex items-center text-[var(--color-hope)] font-semibold hover:underline"
+                >
+                  Learn more →
+                </Link>
+              </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>
@@ -237,17 +245,21 @@ export default function HomePage() {
       {/* ─── TRUST ─── Clean centered section inspired by CaringBridge */}
       <section id="trust" className="py-20 md:py-28">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-sm font-semibold tracking-widest uppercase text-[var(--color-hope)] mb-3">
-            Transparency
-          </p>
-          <h2
-            className="text-4xl md:text-5xl font-bold text-[var(--color-text)] mb-8 leading-tight"
-            style={{ fontFamily: 'var(--font-serif)' }}
-          >
-            Clear, calm answers.
-          </h2>
+          <ScrollReveal>
+            <div>
+              <p className="text-sm font-semibold tracking-widest uppercase text-[var(--color-hope)] mb-3">
+                Transparency
+              </p>
+              <h2
+                className="text-4xl md:text-5xl font-bold text-[var(--color-text)] mb-8 leading-tight"
+                style={{ fontFamily: 'var(--font-serif)' }}
+              >
+                Clear, calm answers.
+              </h2>
+            </div>
+          </ScrollReveal>
 
-          <div className="space-y-6 text-left">
+          <div className="space-y-6 text-left mt-8">
             {[
               {
                 q: 'Where do the funds go?',
@@ -287,38 +299,40 @@ export default function HomePage() {
 
       {/* ─── FINAL CTA ─── Centered call-to-action with tree */}
       <section className="py-20 md:py-28 bg-white border-t border-[var(--color-border)]">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Image
-            src="/tree-hero.png"
-            alt="Tree of Hope"
-            width={200}
-            height={207}
-            className="mx-auto mb-10 drop-shadow-lg animate-float"
-          />
-          <h2
-            className="text-4xl md:text-5xl font-bold text-[var(--color-text)] mb-6 leading-tight"
-            style={{ fontFamily: 'var(--font-serif)' }}
-          >
-            Every tree starts with a single leaf.
-          </h2>
-          <p className="text-lg text-[var(--color-text-muted)] mb-10 max-w-xl mx-auto leading-relaxed">
-            See the rhythm: a five-day gathering, then a Sanctuary that holds what matters.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link
-              href="/c/sarah"
-              className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-semibold py-4 px-10 rounded-full text-base transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
+        <ScrollReveal>
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <Image
+              src="/tree-hero.png"
+              alt="Tree of Hope"
+              width={200}
+              height={207}
+              className="mx-auto mb-10 drop-shadow-lg animate-float"
+            />
+            <h2
+              className="text-4xl md:text-5xl font-bold text-[var(--color-text)] mb-6 leading-tight"
+              style={{ fontFamily: 'var(--font-serif)' }}
             >
-              View a live Tree
-            </Link>
-            <Link
-              href="/campaigns"
-              className="inline-flex items-center justify-center border-2 border-[var(--color-border)] hover:border-[var(--color-text)] text-[var(--color-text)] font-semibold py-4 px-10 rounded-full text-base transition-all duration-200"
-            >
-              Browse campaigns
-            </Link>
+              Every tree starts with a single leaf.
+            </h2>
+            <p className="text-lg text-[var(--color-text-muted)] mb-10 max-w-xl mx-auto leading-relaxed">
+              See the rhythm: a five-day gathering, then a Sanctuary that holds what matters.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link
+                href="/c/sarah"
+                className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-semibold py-4 px-10 rounded-full text-base transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
+              >
+                View a live Tree
+              </Link>
+              <Link
+                href="/campaigns"
+                className="inline-flex items-center justify-center border-2 border-[var(--color-border)] hover:border-[var(--color-text)] text-[var(--color-text)] font-semibold py-4 px-10 rounded-full text-base transition-all duration-200"
+              >
+                Browse campaigns
+              </Link>
+            </div>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* Trust language footer */}

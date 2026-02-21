@@ -1,11 +1,22 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import { AuthProvider } from '@/lib/auth-context'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: '#4A6741',
+}
+
 export const metadata: Metadata = {
-  title: 'Tree of Hope',
+  metadataBase: new URL('https://tree-of-hope-olive.vercel.app'),
+  title: {
+    default: 'Tree of Hope',
+    template: '%s | Tree of Hope',
+  },
   description:
     'Tree of Hope is a micro-campaign fundraising platform where supporters plant leaves of hope and commit to monthly support, funding a private Sanctuary for patients and caregivers.',
   keywords: [
@@ -17,11 +28,36 @@ export const metadata: Metadata = {
     'sanctuary',
   ],
   authors: [{ name: 'Tree of Hope' }],
+  robots: {
+    index: true,
+    follow: true,
+  },
+  icons: {
+    icon: '/favicon.ico',
+  },
   openGraph: {
     title: 'Tree of Hope',
     description:
       'Every tree starts with a single leaf. Turn community support into lasting care.',
     type: 'website',
+    url: 'https://tree-of-hope-olive.vercel.app',
+    siteName: 'Tree of Hope',
+    locale: 'en_US',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Tree of Hope - Community Fundraising Platform',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Tree of Hope',
+    description:
+      'Every tree starts with a single leaf. Turn community support into lasting care.',
+    images: ['/og-image.png'],
   },
 }
 
@@ -32,6 +68,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+      </head>
       <body className="flex flex-col min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
         <AuthProvider>
           <Header />

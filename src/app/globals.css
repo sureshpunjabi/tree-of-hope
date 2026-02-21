@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @theme inline {
   --color-background: #FFFAF5;
@@ -174,6 +173,30 @@ h1, h2, h3, h4, h5, h6 {
   .page-container { padding: 16px 12px; }
   h1 { font-size: 28px; }
   h2 { font-size: 22px; }
+
+  /* Mobile-specific improvements */
+  .btn-primary, .btn-secondary {
+    padding: 10px 24px;
+    font-size: 14px;
+    width: 100%;
+    text-align: center;
+  }
+
+  section {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  h1 { font-size: 24px; }
+  h2 { font-size: 20px; }
+
+  .btn-primary, .btn-secondary {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
 }
 
 /* ===== Enhanced Animations and Polish ===== */
@@ -309,4 +332,20 @@ h1, h2, h3, h4, h5, h6 {
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
   background-size: 200px 100%;
   animation: shimmer 1.5s infinite;
+}
+
+/* Accessibility: Focus visible */
+*:focus-visible {
+  outline: 2px solid var(--color-hope);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

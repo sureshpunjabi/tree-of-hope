@@ -26,6 +26,13 @@ interface AdminStats {
   bridge_pipeline_count: number
 }
 
+const getGreeting = () => {
+  const hour = new Date().getHours()
+  if (hour < 12) return 'Good morning'
+  if (hour < 18) return 'Good afternoon'
+  return 'Good evening'
+}
+
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState<AdminStats | null>(null)
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
@@ -101,105 +108,115 @@ export default function AdminDashboardPage() {
     fetchData()
   }, [])
 
+  const statCards = [
+    {
+      icon: '🌿',
+      label: 'Total Campaigns',
+      value: stats ? stats.total_active + stats.total_draft + stats.total_paused : 0,
+      subtext: `${stats?.total_active || 0} active`,
+      gradient: 'from-emerald-50 to-green-50',
+    },
+    {
+      icon: '👥',
+      label: 'Total Supporters',
+      value: stats?.total_supporters.toLocaleString() || 0,
+      subtext: 'Across all campaigns',
+      gradient: 'from-blue-50 to-cyan-50',
+    },
+    {
+      icon: '💳',
+      label: 'Monthly Revenue',
+      value: stats ? formatCurrency(stats.total_monthly_revenue) : '$0',
+      subtext: 'From recurring commitments',
+      gradient: 'from-amber-50 to-orange-50',
+    },
+    {
+      icon: '🌉',
+      label: 'Bridge Pipeline',
+      value: stats?.bridge_pipeline_count || 0,
+      subtext: 'Campaigns scouted',
+      gradient: 'from-purple-50 to-pink-50',
+    },
+  ]
+
   return (
     <AdminLayout>
       <div className="space-y-8">
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-[var(--color-text)]" style={{ fontFamily: 'var(--font-serif)' }}>
-            Tree of Hope Admin
+        <div className="space-y-2">
+          <h1
+            className="text-4xl font-bold text-[var(--color-text)]"
+            style={{ fontFamily: 'var(--font-serif)' }}
+          >
+            {getGreeting()}
           </h1>
-          <p className="text-[var(--color-text-muted)] mt-2">
+          <p className="text-lg text-[var(--color-text-muted)]">
             Dashboard & campaign management
           </p>
         </div>
 
         {/* Error Display */}
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
             {error}
           </div>
         )}
 
         {/* Quick Actions */}
-        <div className="flex gap-4 flex-wrap">
+        <div className="flex gap-3 flex-wrap">
           <Link
             href="/admin/campaigns/new"
-            className="bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-semibold py-2 px-6 rounded-lg transition-all duration-200 hover:shadow-md inline-block"
+            className="inline-flex items-center gap-2 bg-[var(--color-hope)] hover:shadow-lg text-white font-semibold py-3 px-6 rounded-full transition-all duration-200 hover:-translate-y-0.5"
           >
-            + New Campaign
+            <span>+</span>
+            <span>New Campaign</span>
           </Link>
           <Link
             href="/admin/bridge"
-            className="border-2 border-[var(--color-hope)] text-[var(--color-hope)] hover:bg-[var(--color-hope)] hover:text-white font-semibold py-2 px-6 rounded-lg transition-all duration-200 inline-block"
+            className="inline-flex items-center gap-2 border-2 border-[var(--color-hope)] text-[var(--color-hope)] hover:bg-[var(--color-hope)] hover:text-white font-semibold py-3 px-6 rounded-full transition-all duration-200 hover:-translate-y-0.5"
           >
-            Bridge Scanner
+            <span>🌉</span>
+            <span>Bridge Scanner</span>
           </Link>
         </div>
 
         {/* Stats Cards */}
         {stats && !loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Total Campaigns */}
-            <div className="bg-white border border-[var(--color-border)] rounded-lg p-6 shadow-sm hover:shadow-md transition">
-              <div className="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wide">
-                Total Campaigns
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {statCards.map((card, index) => (
+              <div
+                key={index}
+                className={`bg-gradient-to-br ${card.gradient} rounded-2xl p-6 border border-white/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-default`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wide mb-3">
+                      {card.label}
+                    </div>
+                    <div
+                      className="text-3xl font-bold text-[var(--color-text)] mb-2"
+                      style={{ fontFamily: 'var(--font-serif)' }}
+                    >
+                      {card.value}
+                    </div>
+                    <div className="text-xs text-[var(--color-text-muted)]">
+                      {card.subtext}
+                    </div>
+                  </div>
+                  <div className="text-3xl opacity-50">{card.icon}</div>
+                </div>
               </div>
-              <div className="text-4xl font-bold text-[var(--color-text)] mt-2" style={{ fontFamily: 'var(--font-serif)' }}>
-                {stats.total_active + stats.total_draft + stats.total_paused}
-              </div>
-              <div className="text-xs text-[var(--color-text-muted)] mt-3 space-y-1">
-                <div>Active: <span className="font-semibold">{stats.total_active}</span></div>
-                <div>Draft: <span className="font-semibold">{stats.total_draft}</span></div>
-                <div>Paused: <span className="font-semibold">{stats.total_paused}</span></div>
-              </div>
-            </div>
-
-            {/* Total Supporters */}
-            <div className="bg-white border border-[var(--color-border)] rounded-lg p-6 shadow-sm hover:shadow-md transition">
-              <div className="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wide">
-                Total Supporters
-              </div>
-              <div className="text-4xl font-bold text-[var(--color-text)] mt-2" style={{ fontFamily: 'var(--font-serif)' }}>
-                {stats.total_supporters.toLocaleString()}
-              </div>
-              <div className="text-xs text-[var(--color-text-muted)] mt-3">
-                Across all campaigns
-              </div>
-            </div>
-
-            {/* Monthly Revenue */}
-            <div className="bg-white border border-[var(--color-border)] rounded-lg p-6 shadow-sm hover:shadow-md transition">
-              <div className="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wide">
-                Monthly Revenue
-              </div>
-              <div className="text-4xl font-bold text-[var(--color-text)] mt-2" style={{ fontFamily: 'var(--font-serif)' }}>
-                {formatCurrency(stats.total_monthly_revenue)}
-              </div>
-              <div className="text-xs text-[var(--color-text-muted)] mt-3">
-                From recurring commitments
-              </div>
-            </div>
-
-            {/* Bridge Pipeline */}
-            <div className="bg-white border border-[var(--color-border)] rounded-lg p-6 shadow-sm hover:shadow-md transition">
-              <div className="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wide">
-                Bridge Pipeline
-              </div>
-              <div className="text-4xl font-bold text-[var(--color-text)] mt-2" style={{ fontFamily: 'var(--font-serif)' }}>
-                {stats.bridge_pipeline_count}
-              </div>
-              <div className="text-xs text-[var(--color-text-muted)] mt-3">
-                Campaigns scouted
-              </div>
-            </div>
+            ))}
           </div>
         ) : loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-white border border-[var(--color-border)] rounded-lg p-6 animate-pulse">
-                <div className="h-4 bg-gray-200 rounded w-24 mb-4"></div>
-                <div className="h-12 bg-gray-200 rounded w-16 mb-4"></div>
+              <div
+                key={i}
+                className="bg-white rounded-2xl p-6 border border-[var(--color-border)] animate-pulse"
+              >
+                <div className="h-4 bg-gray-200 rounded w-32 mb-4"></div>
+                <div className="h-8 bg-gray-200 rounded w-20 mb-4"></div>
                 <div className="h-3 bg-gray-200 rounded w-full"></div>
               </div>
             ))}
@@ -207,9 +224,12 @@ export default function AdminDashboardPage() {
         ) : null}
 
         {/* Recent Campaigns */}
-        <div className="bg-white border border-[var(--color-border)] rounded-lg shadow-sm">
-          <div className="px-6 py-4 border-b border-[var(--color-border)]">
-            <h2 className="text-lg font-bold text-[var(--color-text)]" style={{ fontFamily: 'var(--font-serif)' }}>
+        <div className="bg-white rounded-2xl border border-[var(--color-border)] shadow-sm overflow-hidden">
+          <div className="px-6 py-6 border-b border-[var(--color-border)]">
+            <h2
+              className="text-2xl font-bold text-[var(--color-text)]"
+              style={{ fontFamily: 'var(--font-serif)' }}
+            >
               Recent Campaigns
             </h2>
           </div>
@@ -217,39 +237,46 @@ export default function AdminDashboardPage() {
           {loading ? (
             <div className="p-6 space-y-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-12 bg-gray-100 rounded animate-pulse"></div>
+                <div
+                  key={i}
+                  className="h-12 bg-gray-100 rounded-lg animate-pulse"
+                ></div>
               ))}
             </div>
           ) : campaigns.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-[var(--color-border)]">
+                <thead className="bg-[var(--color-bg)] border-b border-[var(--color-border)]">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wider">
                       Campaign
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wider">
                       Leaves
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wider">
                       Supporters
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wider">
                       Monthly
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wider">
                       Action
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {campaigns.slice(0, 10).map((campaign) => (
+                  {campaigns.slice(0, 10).map((campaign, index) => (
                     <tr
                       key={campaign.id}
-                      className="border-b border-[var(--color-border)] hover:bg-gray-50 transition"
+                      className={`transition-colors duration-200 ${
+                        index !== campaigns.length - 1
+                          ? 'border-b border-[var(--color-border)]'
+                          : ''
+                      } hover:bg-[var(--color-bg)]`}
                     >
                       <td className="px-6 py-4">
                         <div>
@@ -266,30 +293,30 @@ export default function AdminDashboardPage() {
                       </td>
                       <td className="px-6 py-4">
                         <span
-                          className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
+                          className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold transition-colors duration-200 ${
                             campaign.status === 'active'
-                              ? 'bg-green-100 text-green-800'
+                              ? 'bg-emerald-100 text-emerald-700'
                               : campaign.status === 'draft'
-                                ? 'bg-yellow-100 text-yellow-800'
-                                : 'bg-gray-100 text-gray-800'
+                                ? 'bg-amber-100 text-amber-700'
+                                : 'bg-gray-100 text-gray-700'
                           }`}
                         >
                           {campaign.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-[var(--color-text)]">
+                      <td className="px-6 py-4 text-[var(--color-text)] font-medium">
                         {campaign.leaf_count}
                       </td>
-                      <td className="px-6 py-4 text-[var(--color-text)]">
+                      <td className="px-6 py-4 text-[var(--color-text)] font-medium">
                         {campaign.supporter_count}
                       </td>
-                      <td className="px-6 py-4 text-[var(--color-text)]">
+                      <td className="px-6 py-4 text-[var(--color-text)] font-medium">
                         {formatCurrency(campaign.monthly_total_cents)}
                       </td>
                       <td className="px-6 py-4">
                         <Link
                           href={`/admin/campaigns/${campaign.id}`}
-                          className="text-[var(--color-hope)] hover:text-[var(--color-hope-hover)] font-medium text-sm"
+                          className="text-[var(--color-hope)] hover:text-[var(--color-hope)] font-semibold text-sm transition-colors duration-200 hover:underline"
                         >
                           Edit
                         </Link>
@@ -300,8 +327,11 @@ export default function AdminDashboardPage() {
               </table>
             </div>
           ) : (
-            <div className="p-6 text-center text-[var(--color-text-muted)]">
-              No campaigns yet. Create one to get started.
+            <div className="p-12 text-center">
+              <div className="text-5xl mb-4">🌳</div>
+              <p className="text-[var(--color-text-muted)]">
+                No campaigns yet. Create one to get started.
+              </p>
             </div>
           )}
         </div>
