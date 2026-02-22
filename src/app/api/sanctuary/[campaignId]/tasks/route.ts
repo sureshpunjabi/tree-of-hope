@@ -7,8 +7,7 @@ interface CreateTaskRequest {
   title: string;
   description?: string;
   due_date?: string;
-  priority?: 'low' | 'medium' | 'high';
-  completed?: boolean;
+  is_completed?: boolean;
 }
 
 interface Task {
@@ -18,8 +17,8 @@ interface Task {
   title: string;
   description?: string;
   due_date?: string;
-  priority?: 'low' | 'medium' | 'high';
-  completed: boolean;
+  is_completed: boolean;
+  completed_at?: string;
   created_at: string;
 }
 
@@ -117,8 +116,7 @@ export async function POST(
       title,
       description,
       due_date,
-      priority,
-      completed = false,
+      is_completed = false,
     } = body;
 
     if (!user_id || !title) {
@@ -170,8 +168,7 @@ export async function POST(
         title,
         description,
         due_date,
-        priority,
-        completed,
+        is_completed,
       })
       .select()
       .single();

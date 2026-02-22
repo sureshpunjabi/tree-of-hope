@@ -25,7 +25,7 @@ export async function PATCH(
     const supabase = getServiceSupabase();
 
     // Only allow updating specific fields
-    const allowedFields = ['active', 'name', 'dosage', 'frequency', 'reason', 'notes'];
+    const allowedFields = ['is_active', 'name', 'dosage', 'frequency', 'time_of_day', 'notes'];
     const updateData: Record<string, unknown> = {};
 
     allowedFields.forEach((field) => {

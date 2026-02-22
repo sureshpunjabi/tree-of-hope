@@ -25,7 +25,7 @@ export async function PATCH(
     const supabase = getServiceSupabase();
 
     // Only allow updating specific fields
-    const allowedFields = ['completed', 'title', 'description', 'due_date'];
+    const allowedFields = ['is_completed', 'completed_at', 'title', 'description', 'due_date'];
     const updateData: Record<string, unknown> = {};
 
     allowedFields.forEach((field) => {

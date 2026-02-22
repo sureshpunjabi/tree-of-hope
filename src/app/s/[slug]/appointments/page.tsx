@@ -12,8 +12,8 @@ interface Appointment {
   title: string
   provider?: string
   location?: string
-  date_time: string
-  description?: string
+  scheduled_at: string
+  notes?: string
 }
 
 export default function AppointmentsPage() {
@@ -25,7 +25,7 @@ export default function AppointmentsPage() {
   const [error, setError] = useState('')
   const [showForm, setShowForm] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  const [formData, setFormData] = useState({ title: '', provider: '', location: '', date_time: '', description: '' })
+  const [formData, setFormData] = useState({ title: '', provider: '', location: '', scheduled_at: '', notes: '' })
 
   const slug = params?.slug as string
 
@@ -40,7 +40,7 @@ export default function AppointmentsPage() {
         const result = await response.json()
         setAppointments(
           (result.appointments || []).sort((a: Appointment, b: Appointment) =>
-            new Date(a.date_time).getTime() - new Date(b.date_time).getTime()
+            new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime()
           )
         )
         trackEvent('tool_used', { tool: 'appointments' }, slug, user.id)
@@ -55,7 +55,7 @@ export default function AppointmentsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!user || !formData.title.trim() || !formData.date_time) return
+    if (!user || !formData.title.trim() || !formData.scheduled_at) return
     setSubmitting(true)
     try {
       const response = await fetch(`/api/sanctuary/${slug}/appointments`, {
@@ -67,10 +67,10 @@ export default function AppointmentsPage() {
       const result = await response.json()
       setAppointments(
         [...appointments, result.appointment].sort((a, b) =>
-          new Date(a.date_time).getTime() - new Date(b.date_time).getTime()
+          new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime()
         )
       )
-      setFormData({ title: '', provider: '', location: '', date_time: '', description: '' })
+      setFormData({ title: '', provider: '', location: '', scheduled_at: '', notes: '' })
       setShowForm(false)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save')
@@ -87,8 +87,8 @@ export default function AppointmentsPage() {
   }
 
   const isUpcoming = (dt: string) => new Date(dt) > new Date()
-  const upcoming = appointments.filter((a) => isUpcoming(a.date_time))
-  const past = appointments.filter((a) => !isUpcoming(a.date_time))
+  const upcoming = appointments.filter((a) => isUpcoming(a.scheduled_at))
+  const past = appointments.filter((a) => !isUpcoming(a.scheduled_at))
 
   return (
     <SanctuaryShell title="My Calendar" subtitle="Keep track of visits" showBack backHref={`/s/${slug}/tools`}>
@@ -119,14 +119,14 @@ export default function AppointmentsPage() {
                   className="px-4 py-3 rounded-xl border border-black/[0.06] bg-white text-[var(--color-text)] text-[15px] placeholder:text-[var(--color-text-muted)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)]/30 transition-all" />
               </div>
 
-              <input type="datetime-local" value={formData.date_time} onChange={(e) => setFormData({ ...formData, date_time: e.target.value })} required
+              <input type="datetime-local" value={formData.scheduled_at} onChange={(e) => setFormData({ ...formData, scheduled_at: e.target.value })} required
                 className="w-full px-4 py-3 rounded-xl border border-black/[0.06] bg-white text-[var(--color-text)] text-[15px] focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)]/30 transition-all" />
 
-              <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} placeholder="Notes (optional)" rows={2}
+              <textarea value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} placeholder="Notes (optional)" rows={2}
                 className="w-full px-4 py-3 rounded-xl border border-black/[0.06] bg-white text-[var(--color-text)] text-[15px] placeholder:text-[var(--color-text-muted)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)]/30 transition-all resize-none" />
 
               <div className="flex gap-3">
-                <button type="submit" disabled={submitting || !formData.title.trim() || !formData.date_time} className="flex-1 py-3 rounded-full bg-[var(--color-hope)] text-white font-medium text-[15px] transition-all hover:bg-[var(--color-hope-hover)] disabled:opacity-40">
+                <button type="submit" disabled={submitting || !formData.title.trim() || !formData.scheduled_at} className="flex-1 py-3 rounded-full bg-[var(--color-hope)] text-white font-medium text-[15px] transition-all hover:bg-[var(--color-hope-hover)] disabled:opacity-40">
                   {submitting ? 'Saving...' : 'Save'}
                 </button>
                 <button type="button" onClick={() => setShowForm(false)} className="py-3 px-6 rounded-full text-[var(--color-text-muted)] font-medium text-[15px] border border-black/[0.06] hover:bg-black/[0.02] transition-all">Cancel</button>
@@ -146,9 +146,9 @@ export default function AppointmentsPage() {
                           <div>
                             <h3 className="text-[15px] font-semibold text-[var(--color-text)]">{apt.title}</h3>
                             <p className="text-[13px] text-[var(--color-hope)] font-medium mt-0.5">
-                              {new Date(apt.date_time).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                              {new Date(apt.scheduled_at).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
                               {' at '}
-                              {new Date(apt.date_time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                              {new Date(apt.scheduled_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
                             </p>
                           </div>
                           <button onClick={() => handleDelete(apt.id)} className="p-1.5 text-[var(--color-text-muted)] hover:text-red-500 transition-colors">
@@ -159,7 +159,7 @@ export default function AppointmentsPage() {
                           {apt.provider && <span className="flex items-center gap-1"><User className="w-3 h-3" />{apt.provider}</span>}
                           {apt.location && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{apt.location}</span>}
                         </div>
-                        {apt.description && <p className="text-[13px] text-[var(--color-text-muted)] mt-2">{apt.description}</p>}
+                        {apt.notes && <p className="text-[13px] text-[var(--color-text-muted)] mt-2">{apt.notes}</p>}
                       </div>
                     ))}
                   </div>
@@ -176,7 +176,7 @@ export default function AppointmentsPage() {
                           <div>
                             <h3 className="text-[15px] font-semibold text-[var(--color-text)]">{apt.title}</h3>
                             <p className="text-[12px] text-[var(--color-text-muted)] mt-0.5">
-                              {new Date(apt.date_time).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                              {new Date(apt.scheduled_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                             </p>
                           </div>
                           <button onClick={() => handleDelete(apt.id)} className="p-1.5 text-[var(--color-text-muted)] hover:text-red-500 transition-colors">

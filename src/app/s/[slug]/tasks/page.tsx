@@ -12,7 +12,7 @@ interface Task {
   title: string
   description?: string
   due_date?: string
-  completed: boolean
+  is_completed: boolean
   created_at: string
 }
 
@@ -40,7 +40,7 @@ export default function TasksPage() {
         const result = await response.json()
         setTasks(
           (result.tasks || []).sort((a: Task, b: Task) => {
-            if (a.completed !== b.completed) return a.completed ? 1 : -1
+            if (a.is_completed !== b.is_completed) return a.is_completed ? 1 : -1
             return new Date(a.due_date || '9999').getTime() - new Date(b.due_date || '9999').getTime()
           })
         )
@@ -87,7 +87,7 @@ export default function TasksPage() {
       const result = await response.json()
       setTasks(
         tasks.map((t) => (t.id === id ? result.task : t))
-          .sort((a, b) => { if (a.completed !== b.completed) return a.completed ? 1 : -1; return 0 })
+          .sort((a, b) => { if (a.is_completed !== b.is_completed) return a.is_completed ? 1 : -1; return 0 })
       )
     } catch { setError('Failed to update') }
   }
@@ -99,8 +99,8 @@ export default function TasksPage() {
     } catch { setError('Failed to delete') }
   }
 
-  const incomplete = tasks.filter((t) => !t.completed)
-  const completed = tasks.filter((t) => t.completed)
+  const incomplete = tasks.filter((t) => !t.is_completed)
+  const completed = tasks.filter((t) => t.is_completed)
 
   return (
     <SanctuaryShell title="My Goals" subtitle="One step at a time" showBack backHref={`/s/${slug}/tools`}>
@@ -147,7 +147,7 @@ export default function TasksPage() {
                   <div className="space-y-2">
                     {incomplete.map((task) => (
                       <div key={task.id} className="rounded-2xl p-5 border border-black/[0.04] flex items-start gap-4" style={{ backgroundColor: 'rgba(255, 255, 255, 0.6)' }}>
-                        <button onClick={() => handleToggle(task.id, task.completed)} className="mt-0.5 text-[var(--color-text-muted)] hover:text-[var(--color-hope)] transition-colors">
+                        <button onClick={() => handleToggle(task.id, task.is_completed)} className="mt-0.5 text-[var(--color-text-muted)] hover:text-[var(--color-hope)] transition-colors">
                           <Circle className="w-5 h-5" />
                         </button>
                         <div className="flex-1 min-w-0">
@@ -174,7 +174,7 @@ export default function TasksPage() {
                   <div className="space-y-2">
                     {completed.map((task) => (
                       <div key={task.id} className="rounded-2xl p-5 border border-black/[0.04] flex items-start gap-4 opacity-60" style={{ backgroundColor: 'rgba(255, 255, 255, 0.4)' }}>
-                        <button onClick={() => handleToggle(task.id, task.completed)} className="mt-0.5 text-[var(--color-hope)]">
+                        <button onClick={() => handleToggle(task.id, task.is_completed)} className="mt-0.5 text-[var(--color-hope)]">
                           <CheckCircle2 className="w-5 h-5" />
                         </button>
                         <div className="flex-1 min-w-0">

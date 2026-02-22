@@ -7,7 +7,7 @@ interface CreateJournalRequest {
   title: string;
   content: string;
   mood_score?: number;
-  sanctuary_day?: number;
+  is_private?: boolean;
 }
 
 interface JournalEntry {
@@ -17,8 +17,9 @@ interface JournalEntry {
   title: string;
   content: string;
   mood_score?: number;
-  sanctuary_day?: number;
+  is_private: boolean;
   created_at: string;
+  updated_at: string;
 }
 
 interface JournalResponse {
@@ -110,7 +111,7 @@ export async function POST(
   try {
     const body: CreateJournalRequest = await request.json();
     const { campaignId } = await params;
-    const { user_id, title, content, mood_score, sanctuary_day } = body;
+    const { user_id, title, content, mood_score, is_private = true } = body;
 
     if (!user_id || !title || !content) {
       return NextResponse.json(
@@ -161,7 +162,7 @@ export async function POST(
         title,
         content,
         mood_score,
-        sanctuary_day,
+        is_private,
       })
       .select()
       .single();

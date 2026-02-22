@@ -7,10 +7,9 @@ interface CreateMedicationRequest {
   name: string;
   dosage?: string;
   frequency?: string;
-  reason?: string;
-  start_date?: string;
-  end_date?: string;
-  prescriber?: string;
+  time_of_day?: string;
+  notes?: string;
+  is_active?: boolean;
 }
 
 interface Medication {
@@ -20,10 +19,9 @@ interface Medication {
   name: string;
   dosage?: string;
   frequency?: string;
-  reason?: string;
-  start_date?: string;
-  end_date?: string;
-  prescriber?: string;
+  time_of_day?: string;
+  notes?: string;
+  is_active: boolean;
   created_at: string;
 }
 
@@ -121,10 +119,9 @@ export async function POST(
       name,
       dosage,
       frequency,
-      reason,
-      start_date,
-      end_date,
-      prescriber,
+      time_of_day,
+      notes,
+      is_active = true,
     } = body;
 
     if (!user_id || !name) {
@@ -176,10 +173,9 @@ export async function POST(
         name,
         dosage,
         frequency,
-        reason,
-        start_date,
-        end_date,
-        prescriber,
+        time_of_day,
+        notes,
+        is_active,
       })
       .select()
       .single();

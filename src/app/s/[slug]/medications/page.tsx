@@ -12,9 +12,8 @@ interface Medication {
   name: string
   dosage?: string
   frequency?: string
-  reason?: string
   notes?: string
-  active: boolean
+  is_active: boolean
 }
 
 export default function MedicationsPage() {
@@ -26,7 +25,7 @@ export default function MedicationsPage() {
   const [error, setError] = useState('')
   const [showForm, setShowForm] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  const [formData, setFormData] = useState({ name: '', dosage: '', frequency: '', reason: '', notes: '' })
+  const [formData, setFormData] = useState({ name: '', dosage: '', frequency: '', notes: '' })
 
   const slug = params?.slug as string
 
@@ -40,8 +39,8 @@ export default function MedicationsPage() {
         if (!response.ok) throw new Error('Failed to fetch')
         const result = await response.json()
         const sorted = (result.medications || []).sort((a: Medication, b: Medication) => {
-          if (a.active && !b.active) return -1
-          if (!a.active && b.active) return 1
+          if (a.is_active && !b.is_active) return -1
+          if (!a.is_active && b.is_active) return 1
           return a.name.localeCompare(b.name)
         })
         setMedications(sorted)
@@ -68,7 +67,7 @@ export default function MedicationsPage() {
       if (!response.ok) throw new Error('Failed to save')
       const result = await response.json()
       setMedications([result.medication, ...medications])
-      setFormData({ name: '', dosage: '', frequency: '', reason: '', notes: '' })
+      setFormData({ name: '', dosage: '', frequency: '', notes: '' })
       setShowForm(false)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save')
@@ -88,7 +87,7 @@ export default function MedicationsPage() {
       const result = await response.json()
       setMedications(
         medications.map((m) => (m.id === id ? result.medication : m))
-          .sort((a, b) => { if (a.active && !b.active) return -1; if (!a.active && b.active) return 1; return a.name.localeCompare(b.name) })
+          .sort((a, b) => { if (a.is_active && !b.is_active) return -1; if (!a.is_active && b.is_active) return 1; return a.name.localeCompare(b.name) })
       )
     } catch { setError('Failed to update') }
   }
@@ -100,8 +99,8 @@ export default function MedicationsPage() {
     } catch { setError('Failed to delete') }
   }
 
-  const activeMeds = medications.filter((m) => m.active)
-  const inactiveMeds = medications.filter((m) => !m.active)
+  const activeMeds = medications.filter((m) => m.is_active)
+  const inactiveMeds = medications.filter((m) => !m.is_active)
 
   return (
     <SanctuaryShell title="My Routine" subtitle="Track what you take" showBack backHref={`/s/${slug}/tools`}>
@@ -132,8 +131,8 @@ export default function MedicationsPage() {
                   className="px-4 py-3 rounded-xl border border-black/[0.06] bg-white text-[var(--color-text)] text-[15px] placeholder:text-[var(--color-text-muted)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)]/30 transition-all" />
               </div>
 
-              <input type="text" value={formData.reason} onChange={(e) => setFormData({ ...formData, reason: e.target.value })} placeholder="Reason (optional)"
-                className="w-full px-4 py-3 rounded-xl border border-black/[0.06] bg-white text-[var(--color-text)] text-[15px] placeholder:text-[var(--color-text-muted)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)]/30 transition-all" />
+              <textarea value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} placeholder="Notes (optional)" rows={2}
+                className="w-full px-4 py-3 rounded-xl border border-black/[0.06] bg-white text-[var(--color-text)] text-[15px] placeholder:text-[var(--color-text-muted)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)]/30 transition-all resize-none" />
 
               <div className="flex gap-3">
                 <button type="submit" disabled={submitting || !formData.name.trim()} className="flex-1 py-3 rounded-full bg-[var(--color-hope)] text-white font-medium text-[15px] transition-all hover:bg-[var(--color-hope-hover)] disabled:opacity-40">
@@ -152,7 +151,7 @@ export default function MedicationsPage() {
                   <div className="space-y-2">
                     {activeMeds.map((med) => (
                       <div key={med.id} className="rounded-2xl p-5 border border-black/[0.04] flex items-start gap-4" style={{ backgroundColor: 'rgba(255, 255, 255, 0.6)' }}>
-                        <button onClick={() => handleToggle(med.id, med.active)} className="mt-0.5 text-[var(--color-hope)]">
+                        <button onClick={() => handleToggle(med.id, med.is_active)} className="mt-0.5 text-[var(--color-hope)]">
                           <ToggleRight className="w-5 h-5" />
                         </button>
                         <div className="flex-1 min-w-0">
@@ -160,7 +159,7 @@ export default function MedicationsPage() {
                           <p className="text-[13px] text-[var(--color-text-muted)]">
                             {[med.dosage, med.frequency].filter(Boolean).join(' · ') || 'No details'}
                           </p>
-                          {med.reason && <p className="text-[12px] text-[var(--color-text-muted)] mt-1">For: {med.reason}</p>}
+                          {med.notes && <p className="text-[12px] text-[var(--color-text-muted)] mt-1">{med.notes}</p>}
                         </div>
                         <button onClick={() => handleDelete(med.id)} className="p-1.5 text-[var(--color-text-muted)] hover:text-red-500 transition-colors">
                           <Trash2 className="w-3.5 h-3.5" />
@@ -177,7 +176,7 @@ export default function MedicationsPage() {
                   <div className="space-y-2">
                     {inactiveMeds.map((med) => (
                       <div key={med.id} className="rounded-2xl p-5 border border-black/[0.04] flex items-start gap-4 opacity-60" style={{ backgroundColor: 'rgba(255, 255, 255, 0.4)' }}>
-                        <button onClick={() => handleToggle(med.id, med.active)} className="mt-0.5 text-[var(--color-text-muted)]">
+                        <button onClick={() => handleToggle(med.id, med.is_active)} className="mt-0.5 text-[var(--color-text-muted)]">
                           <ToggleLeft className="w-5 h-5" />
                         </button>
                         <div className="flex-1 min-w-0">

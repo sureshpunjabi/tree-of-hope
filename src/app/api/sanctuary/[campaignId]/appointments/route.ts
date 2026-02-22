@@ -5,11 +5,10 @@ import { trackServerEvent } from '@/lib/analytics';
 interface CreateAppointmentRequest {
   user_id: string;
   title: string;
-  description?: string;
-  appointment_date: string;
-  appointment_time?: string;
+  provider?: string;
   location?: string;
-  doctor_name?: string;
+  scheduled_at: string;
+  notes?: string;
 }
 
 interface Appointment {
@@ -17,11 +16,11 @@ interface Appointment {
   campaign_id: string;
   user_id: string;
   title: string;
-  description?: string;
-  appointment_date: string;
-  appointment_time?: string;
+  provider?: string;
   location?: string;
-  doctor_name?: string;
+  notes?: string;
+  scheduled_at: string;
+  reminder_sent: boolean;
   created_at: string;
 }
 
@@ -84,7 +83,7 @@ export async function GET(
     }
 
     const { data: appointments = [], error } = await query.order(
-      'appointment_date',
+      'scheduled_at',
       { ascending: true }
     );
 
@@ -118,14 +117,13 @@ export async function POST(
     const {
       user_id,
       title,
-      description,
-      appointment_date,
-      appointment_time,
+      provider,
       location,
-      doctor_name,
+      scheduled_at,
+      notes,
     } = body;
 
-    if (!user_id || !title || !appointment_date) {
+    if (!user_id || !title || !scheduled_at) {
       return NextResponse.json(
         { success: false, error: 'Missing required fields' },
         { status: 400 }
@@ -172,11 +170,10 @@ export async function POST(
         campaign_id: realCampaignId,
         user_id,
         title,
-        description,
-        appointment_date,
-        appointment_time,
+        provider,
         location,
-        doctor_name,
+        scheduled_at,
+        notes,
       })
       .select()
       .single();

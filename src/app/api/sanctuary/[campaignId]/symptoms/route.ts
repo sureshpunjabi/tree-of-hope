@@ -4,29 +4,25 @@ import { trackServerEvent } from '@/lib/analytics';
 
 interface CreateSymptomRequest {
   user_id: string;
-  name: string;
+  symptom: string;
   severity?: number;
-  description?: string;
-  frequency?: string;
-  triggered_by?: string;
+  notes?: string;
 }
 
-interface Symptom {
+interface SymptomLog {
   id: string;
   campaign_id: string;
   user_id: string;
-  name: string;
+  symptom: string;
   severity?: number;
-  description?: string;
-  frequency?: string;
-  triggered_by?: string;
+  notes?: string;
   created_at: string;
 }
 
 interface SymptomResponse {
   success: boolean;
-  symptoms?: Symptom[];
-  symptom?: Symptom;
+  logs?: SymptomLog[];
+  log?: SymptomLog;
   error?: string;
 }
 
@@ -73,7 +69,7 @@ export async function GET(
     const userId = searchParams.get('user_id');
 
     let query = supabase
-      .from('symptoms')
+      .from('symptom_logs')
       .select('*')
       .eq('campaign_id', realCampaignId);
 
@@ -81,7 +77,7 @@ export async function GET(
       query = query.eq('user_id', userId);
     }
 
-    const { data: symptoms = [], error } = await query.order('created_at', {
+    const { data: logs = [], error } = await query.order('created_at', {
       ascending: false,
     });
 
@@ -94,7 +90,7 @@ export async function GET(
 
     return NextResponse.json({
       success: true,
-      symptoms: symptoms || [],
+      logs: logs || [],
     });
   } catch (error) {
     console.error('Error fetching symptoms:', error);
@@ -114,14 +110,12 @@ export async function POST(
     const { campaignId } = await params;
     const {
       user_id,
-      name,
+      symptom,
       severity,
-      description,
-      frequency,
-      triggered_by,
+      notes,
     } = body;
 
-    if (!user_id || !name) {
+    if (!user_id || !symptom) {
       return NextResponse.json(
         { success: false, error: 'Missing required fields' },
         { status: 400 }
@@ -161,23 +155,21 @@ export async function POST(
     }
     const realCampaignId = campaign.id;
 
-    // Create symptom
-    const { data: symptom, error } = await supabase
-      .from('symptoms')
+    // Create symptom log
+    const { data: log, error } = await supabase
+      .from('symptom_logs')
       .insert({
         campaign_id: realCampaignId,
         user_id,
-        name,
+        symptom,
         severity,
-        description,
-        frequency,
-        triggered_by,
+        notes,
       })
       .select()
       .single();
 
     if (error) {
-      console.error('Failed to create symptom:', error);
+      console.error('Failed to create symptom log:', error);
       return NextResponse.json(
         { success: false, error: 'Failed to create symptom' },
         { status: 500 }
@@ -194,7 +186,7 @@ export async function POST(
     return NextResponse.json(
       {
         success: true,
-        symptom,
+        log,
       },
       { status: 201 }
     );
