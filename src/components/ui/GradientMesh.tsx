@@ -24,10 +24,11 @@ export default function GradientMesh({ className = '' }: { className?: string })
     window.addEventListener('resize', resize);
 
     const blobs = [
-      { x: 0.3, y: 0.4, r: 0.4, color: [30, 60, 40], speed: 0.0004 },
-      { x: 0.7, y: 0.6, r: 0.35, color: [20, 45, 30], speed: 0.0003 },
-      { x: 0.5, y: 0.3, r: 0.3, color: [40, 70, 50], speed: 0.0005 },
-      { x: 0.2, y: 0.7, r: 0.25, color: [15, 35, 25], speed: 0.00035 },
+      { x: 0.3, y: 0.4, r: 0.5, color: [30, 60, 40], speed: 0.0004 },
+      { x: 0.7, y: 0.6, r: 0.45, color: [25, 50, 35], speed: 0.0003 },
+      { x: 0.5, y: 0.3, r: 0.4, color: [35, 65, 45], speed: 0.0005 },
+      { x: 0.2, y: 0.7, r: 0.35, color: [20, 42, 30], speed: 0.00035 },
+      { x: 0.8, y: 0.3, r: 0.35, color: [25, 55, 38], speed: 0.00045 },
     ];
 
     let raf: number;
@@ -35,8 +36,8 @@ export default function GradientMesh({ className = '' }: { className?: string })
       const w = canvas.width;
       const h = canvas.height;
 
-      // Base dark fill
-      ctx.fillStyle = '#1d1d1f';
+      // Base dark green fill — consistent deep forest tone
+      ctx.fillStyle = '#1a2e1f';
       ctx.fillRect(0, 0, w, h);
 
       blobs.forEach((blob, i) => {
@@ -49,8 +50,8 @@ export default function GradientMesh({ className = '' }: { className?: string })
         );
 
         const [r, g, b] = blob.color;
-        gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.25)`);
-        gradient.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, 0.08)`);
+        gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.35)`);
+        gradient.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, 0.12)`);
         gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
         ctx.fillStyle = gradient;
