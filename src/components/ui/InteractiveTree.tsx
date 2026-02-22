@@ -437,12 +437,8 @@ export default function InteractiveTree() {
           ctx.bezierCurveTo(-s * 0.6, s * 0.1, -s * 0.55, -s * 0.5, 0, -s * 0.9);
           ctx.closePath();
 
-          // Fill with slight gradient
-          const leafGrad = ctx.createLinearGradient(0, -s, 0, s * 0.6);
-          leafGrad.addColorStop(0, leaf.highlightColor);
-          leafGrad.addColorStop(0.4, leaf.color);
-          leafGrad.addColorStop(1, leaf.color);
-          ctx.fillStyle = leafGrad;
+          // Solid fill — fast rendering
+          ctx.fillStyle = leaf.glowAmount > 0.3 ? leaf.highlightColor : leaf.color;
           ctx.fill();
 
           // Subtle edge
@@ -476,16 +472,16 @@ export default function InteractiveTree() {
         });
       }
 
-      // Recursively draw children
-      if (p >= 0.5) {
+      // Recursively draw children — show sooner for faster visual bloom
+      if (p >= 0.3) {
         branch.children.forEach(child => drawBranch(child, time));
       }
     };
 
-    // ─── Growth animation ───
+    // ─── Growth animation — fast cascade, full tree in ~4 seconds ───
     const growTree = (branch: Branch, parentProgress: number) => {
-      const speed = branch.depth === 0 ? 0.03 : 0.022;
-      if (parentProgress > 0.25) {
+      const speed = branch.depth === 0 ? 0.05 : 0.04;
+      if (parentProgress > 0.15) {
         branch.progress = Math.min(branch.progress + speed, 1);
       }
       branch.children.forEach(child => growTree(child, branch.progress));
@@ -596,7 +592,7 @@ export default function InteractiveTree() {
       ctx.clearRect(0, 0, W, H);
 
       if (treeRef.current) {
-        treeRef.current.progress = Math.min(treeRef.current.progress + 0.03, 1);
+        treeRef.current.progress = Math.min(treeRef.current.progress + 0.05, 1);
         growTree(treeRef.current, 1);
 
         if (treeRef.current.progress >= 1) {
