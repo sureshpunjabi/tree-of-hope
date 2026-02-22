@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { formatCurrency } from '@/lib/utils'
+import { getSupabase } from '@/lib/supabase'
 import AdminLayout from '@/components/admin/AdminLayout'
 
 interface Campaign {
@@ -34,6 +36,7 @@ const getGreeting = () => {
 }
 
 export default function AdminDashboardPage() {
+  const router = useRouter()
   const [stats, setStats] = useState<AdminStats | null>(null)
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [loading, setLoading] = useState(true)
@@ -45,8 +48,27 @@ export default function AdminDashboardPage() {
         setLoading(true)
         setError(null)
 
+        // Get auth token
+        const supabase = getSupabase()
+        if (!supabase) {
+          router.push('/auth/signin')
+          return
+        }
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session) {
+          router.push('/auth/signin')
+          return
+        }
+        const headers = {
+          'Authorization': `Bearer ${session.access_token}`,
+        }
+
         // Fetch campaigns
-        const campaignsResponse = await fetch('/api/admin/campaigns')
+        const campaignsResponse = await fetch('/api/admin/campaigns', { headers })
+        if (campaignsResponse.status === 401) {
+          router.push('/auth/signin')
+          return
+        }
         if (!campaignsResponse.ok) {
           throw new Error('Failed to fetch campaigns')
         }
@@ -78,7 +100,7 @@ export default function AdminDashboardPage() {
         // Fetch bridge data
         let bridgeCount = 0
         try {
-          const bridgeResponse = await fetch('/api/admin/bridge')
+          const bridgeResponse = await fetch('/api/admin/bridge', { headers })
           if (bridgeResponse.ok) {
             const bridgeData = await bridgeResponse.json()
             const bridgeList = bridgeData.data || bridgeData || []
@@ -106,7 +128,7 @@ export default function AdminDashboardPage() {
     }
 
     fetchData()
-  }, [])
+  }, [router])
 
   const statCards = [
     {
