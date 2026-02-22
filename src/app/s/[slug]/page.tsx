@@ -29,7 +29,8 @@ interface SanctuaryData {
       id: string
       day_number: number
       title: string
-      content: string
+      content?: string
+      content_markdown?: string
       reflection_prompt?: string
     } | null
   }
@@ -169,7 +170,7 @@ export default function SanctuaryHomePage() {
                     ),
                   }}
                 >
-                  {content.content}
+                  {content.content_markdown || content.content || ''}
                 </ReactMarkdown>
               </div>
             </div>
