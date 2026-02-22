@@ -26,7 +26,7 @@ export default function SanctuaryClaimPage() {
       const response = await fetch('/api/auth/magic-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, redirectTo: `/s/${slug}` }),
+        body: JSON.stringify({ email, redirect_to: `/s/${slug}` }),
       })
 
       if (!response.ok) {

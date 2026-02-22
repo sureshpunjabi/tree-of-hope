@@ -27,12 +27,16 @@ export async function POST(
       );
     }
 
+    // Build the redirect URL using the request origin (works in both dev and production)
+    const origin = request.headers.get('origin') || request.headers.get('referer')?.replace(/\/[^/]*$/, '') || 'https://tree-of-hope-olive.vercel.app';
+    const redirectUrl = redirect_to ? (redirect_to.startsWith('http') ? redirect_to : `${origin}${redirect_to}`) : origin;
+
     const supabase = getServiceSupabase();
 
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: redirect_to,
+        emailRedirectTo: redirectUrl,
       },
     });
 
