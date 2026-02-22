@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
 import { trackEvent } from '@/lib/analytics'
+import SanctuaryShell from '@/components/sanctuary/SanctuaryShell'
+import { Plus, X, Trash2, ToggleLeft, ToggleRight } from 'lucide-react'
 
 interface Medication {
   id: string
@@ -25,31 +26,18 @@ export default function MedicationsPage() {
   const [error, setError] = useState('')
   const [showForm, setShowForm] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-
-  const [formData, setFormData] = useState({
-    name: '',
-    dosage: '',
-    frequency: '',
-    reason: '',
-    notes: '',
-  })
+  const [formData, setFormData] = useState({ name: '', dosage: '', frequency: '', reason: '', notes: '' })
 
   const slug = params?.slug as string
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.push(`/s/${slug}/claim`)
-      return
-    }
-
+    if (!authLoading && !user) { router.push(`/s/${slug}/claim`); return }
     if (authLoading || !slug || !user) return
 
     const fetchMedications = async () => {
       try {
-        const response = await fetch(
-          `/api/sanctuary/${slug}/medications?user_id=${user.id}`
-        )
-        if (!response.ok) throw new Error('Failed to fetch medications')
+        const response = await fetch(`/api/sanctuary/${slug}/medications?user_id=${user.id}`)
+        if (!response.ok) throw new Error('Failed to fetch')
         const result = await response.json()
         const sorted = (result.medications || []).sort((a: Medication, b: Medication) => {
           if (a.active && !b.active) return -1
@@ -59,366 +47,163 @@ export default function MedicationsPage() {
         setMedications(sorted)
         trackEvent('tool_used', { tool: 'medications' }, slug, user.id)
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load medications')
+        setError(err instanceof Error ? err.message : 'Failed to load')
       } finally {
         setLoading(false)
       }
     }
-
     fetchMedications()
   }, [authLoading, user, slug, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!user || !formData.name.trim()) return
-
     setSubmitting(true)
     try {
       const response = await fetch(`/api/sanctuary/${slug}/medications`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          user_id: user.id,
-          ...formData,
-          active: true,
-        }),
+        body: JSON.stringify({ user_id: user.id, ...formData, active: true }),
       })
-
-      if (!response.ok) throw new Error('Failed to save medication')
-
+      if (!response.ok) throw new Error('Failed to save')
       const result = await response.json()
       setMedications([result.medication, ...medications])
-      setFormData({
-        name: '',
-        dosage: '',
-        frequency: '',
-        reason: '',
-        notes: '',
-      })
+      setFormData({ name: '', dosage: '', frequency: '', reason: '', notes: '' })
       setShowForm(false)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save medication')
+      setError(err instanceof Error ? err.message : 'Failed to save')
     } finally {
       setSubmitting(false)
     }
   }
 
-  const handleToggleActive = async (id: string, currentActive: boolean) => {
+  const handleToggle = async (id: string, currentActive: boolean) => {
     try {
       const response = await fetch(`/api/sanctuary/${slug}/medications/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ active: !currentActive }),
       })
-
-      if (!response.ok) throw new Error('Failed to update medication')
-
+      if (!response.ok) throw new Error('Failed to update')
       const result = await response.json()
-      const sorted = medications
-        .map((m) => (m.id === id ? result.medication : m))
-        .sort((a, b) => {
-          if (a.active && !b.active) return -1
-          if (!a.active && b.active) return 1
-          return a.name.localeCompare(b.name)
-        })
-      setMedications(sorted)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update medication')
-    }
+      setMedications(
+        medications.map((m) => (m.id === id ? result.medication : m))
+          .sort((a, b) => { if (a.active && !b.active) return -1; if (!a.active && b.active) return 1; return a.name.localeCompare(b.name) })
+      )
+    } catch { setError('Failed to update') }
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this medication?')) return
-
     try {
-      const response = await fetch(`/api/sanctuary/${slug}/medications/${id}`, {
-        method: 'DELETE',
-      })
-
-      if (!response.ok) throw new Error('Failed to delete medication')
-
+      await fetch(`/api/sanctuary/${slug}/medications/${id}`, { method: 'DELETE' })
       setMedications(medications.filter((m) => m.id !== id))
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete medication')
-    }
+    } catch { setError('Failed to delete') }
   }
 
-  if (authLoading || loading) {
-    return (
-      <div className="sanctuary-bg min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-[var(--color-text-muted)]">Loading medications...</p>
-        </div>
-      </div>
-    )
-  }
-
-  const activeMedications = medications.filter((m) => m.active)
-  const inactiveMedications = medications.filter((m) => !m.active)
+  const activeMeds = medications.filter((m) => m.active)
+  const inactiveMeds = medications.filter((m) => !m.active)
 
   return (
-    <div className="sanctuary-bg min-h-screen pb-24">
-      {/* Header */}
-      <div className="bg-white border-b border-[var(--color-border)] sticky top-0 z-40">
-        <div className="page-container flex justify-between items-center py-4">
-          <h1 className="text-3xl font-bold text-[var(--color-text)]">Medications</h1>
-          <Link href={`/s/${slug}/tools`} className="btn-secondary text-sm">
-            ← Back
-          </Link>
-        </div>
-      </div>
+    <SanctuaryShell title="My Routine" subtitle="Track what you take" showBack backHref={`/s/${slug}/tools`}>
+      {loading ? (
+        <div className="space-y-4">{[...Array(3)].map((_, i) => <div key={i} className="rounded-2xl h-24 skeleton" />)}</div>
+      ) : (
+        <div className="space-y-6">
+          {error && <div className="rounded-xl p-4 text-[14px] text-red-700 bg-red-50 border border-red-100">{error}</div>}
 
-      {/* Main Content */}
-      <div className="page-container py-8">
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-red-700">
-            {error}
-          </div>
-        )}
-
-        {/* New Medication Button or Form */}
-        {!showForm && (
-          <button
-            onClick={() => setShowForm(true)}
-            className="w-full btn-primary mb-8"
-          >
-            New Medication
-          </button>
-        )}
-
-        {showForm && (
-          <form onSubmit={handleSubmit} className="card mb-8 space-y-4">
-            <h2 className="text-xl font-bold text-[var(--color-text)]">Add medication</h2>
-
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-[var(--color-text)] mb-2">
-                Medication Name
-              </label>
-              <input
-                id="name"
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="e.g., Aspirin"
-                required
-                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="dosage" className="block text-sm font-medium text-[var(--color-text)] mb-2">
-                  Dosage
-                </label>
-                <input
-                  id="dosage"
-                  type="text"
-                  value={formData.dosage}
-                  onChange={(e) => setFormData({ ...formData, dosage: e.target.value })}
-                  placeholder="e.g., 10mg"
-                  className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="frequency" className="block text-sm font-medium text-[var(--color-text)] mb-2">
-                  Frequency
-                </label>
-                <input
-                  id="frequency"
-                  type="text"
-                  value={formData.frequency}
-                  onChange={(e) => setFormData({ ...formData, frequency: e.target.value })}
-                  placeholder="e.g., Once daily"
-                  className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="reason" className="block text-sm font-medium text-[var(--color-text)] mb-2">
-                Reason / Condition
-              </label>
-              <input
-                id="reason"
-                type="text"
-                value={formData.reason}
-                onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
-                placeholder="e.g., High blood pressure"
-                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="notes" className="block text-sm font-medium text-[var(--color-text)] mb-2">
-                Notes
-              </label>
-              <textarea
-                id="notes"
-                value={formData.notes}
-                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                placeholder="Any additional notes..."
-                rows={3}
-                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] resize-none"
-              />
-            </div>
-
-            <div className="flex gap-2">
-              <button
-                type="submit"
-                disabled={submitting || !formData.name.trim()}
-                className="flex-1 btn-primary disabled:opacity-50"
-              >
-                {submitting ? 'Saving...' : 'Save Medication'}
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowForm(false)}
-                className="flex-1 btn-secondary"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        )}
-
-        {/* Medications List */}
-        {medications.length > 0 ? (
-          <div className="space-y-6">
-            {/* Active Medications */}
-            {activeMedications.length > 0 && (
-              <div>
-                <h2 className="text-lg font-semibold text-[var(--color-text)] mb-4">Active</h2>
-                <div className="space-y-4">
-                  {activeMedications.map((med) => (
-                    <div key={med.id} className="card">
-                      <div className="flex justify-between items-start gap-4 mb-2">
-                        <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-[var(--color-text)]">
-                            {med.name}
-                          </h3>
-                          {med.dosage && (
-                            <p className="text-sm text-[var(--color-text-muted)]">
-                              {med.dosage}
-                            </p>
-                          )}
-                        </div>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleToggleActive(med.id, med.active)}
-                            className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-hope)] font-medium"
-                          >
-                            Mark inactive
-                          </button>
-                          <button
-                            onClick={() => handleDelete(med.id)}
-                            className="text-sm text-red-600 hover:text-red-700 font-medium"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </div>
-                      {med.frequency && (
-                        <p className="text-sm text-[var(--color-text-muted)]">
-                          Frequency: {med.frequency}
-                        </p>
-                      )}
-                      {med.reason && (
-                        <p className="text-sm text-[var(--color-text-muted)]">
-                          For: {med.reason}
-                        </p>
-                      )}
-                      {med.notes && (
-                        <p className="text-sm text-[var(--color-text)] mt-2">
-                          {med.notes}
-                        </p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Inactive Medications */}
-            {inactiveMedications.length > 0 && (
-              <div>
-                <h2 className="text-lg font-semibold text-[var(--color-text-muted)] mb-4">Inactive</h2>
-                <div className="space-y-4">
-                  {inactiveMedications.map((med) => (
-                    <div key={med.id} className="card opacity-75">
-                      <div className="flex justify-between items-start gap-4 mb-2">
-                        <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-[var(--color-text)] line-through">
-                            {med.name}
-                          </h3>
-                          {med.dosage && (
-                            <p className="text-sm text-[var(--color-text-muted)]">
-                              {med.dosage}
-                            </p>
-                          )}
-                        </div>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleToggleActive(med.id, med.active)}
-                            className="text-sm text-[var(--color-leaf-1)] hover:text-color-leaf-2 font-medium"
-                          >
-                            Mark active
-                          </button>
-                          <button
-                            onClick={() => handleDelete(med.id)}
-                            className="text-sm text-red-600 hover:text-red-700 font-medium"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        ) : !showForm ? (
-          <div className="card text-center py-12">
-            <p className="text-[var(--color-text-muted)] mb-4 text-lg">
-              No medications yet. Add one to stay on track.
-            </p>
-            <button
-              onClick={() => setShowForm(true)}
-              className="btn-primary"
-            >
-              Add your first medication
+          {!showForm ? (
+            <button onClick={() => setShowForm(true)} className="w-full flex items-center justify-center gap-2 py-3.5 rounded-full bg-[var(--color-hope)] text-white font-medium text-[15px] transition-all hover:bg-[var(--color-hope-hover)]">
+              <Plus className="w-4 h-4" /> Add to routine
             </button>
-          </div>
-        ) : null}
-      </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="rounded-2xl p-6 border border-black/[0.06] space-y-5" style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)' }}>
+              <div className="flex items-center justify-between">
+                <h2 className="text-[18px] font-semibold text-[var(--color-text)]" style={{ fontFamily: 'var(--font-serif)' }}>Add to your routine</h2>
+                <button type="button" onClick={() => setShowForm(false)} className="p-1 text-[var(--color-text-muted)] hover:text-[var(--color-text)]"><X className="w-4 h-4" /></button>
+              </div>
 
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[var(--color-border)]">
-        <div className="page-container flex justify-around py-4">
-          <Link
-            href={`/s/${slug}/journal`}
-            className="flex flex-col items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-leaf-1)] transition-colors"
-          >
-            <span className="text-xl">📔</span>
-            <span className="text-xs font-medium">Journal</span>
-          </Link>
-          <Link
-            href={`/s/${slug}`}
-            className="flex flex-col items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-leaf-1)] transition-colors"
-          >
-            <span className="text-xl">🏠</span>
-            <span className="text-xs font-medium">Today</span>
-          </Link>
-          <Link
-            href={`/s/${slug}/tools`}
-            className="flex flex-col items-center gap-1 text-[var(--color-leaf-1)] transition-colors"
-          >
-            <span className="text-xl">🛠️</span>
-            <span className="text-xs font-medium">Tools</span>
-          </Link>
+              <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder="Name" required
+                className="w-full px-4 py-3 rounded-xl border border-black/[0.06] bg-white text-[var(--color-text)] text-[15px] placeholder:text-[var(--color-text-muted)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)]/30 transition-all" />
+
+              <div className="grid grid-cols-2 gap-3">
+                <input type="text" value={formData.dosage} onChange={(e) => setFormData({ ...formData, dosage: e.target.value })} placeholder="Dosage (e.g., 10mg)"
+                  className="px-4 py-3 rounded-xl border border-black/[0.06] bg-white text-[var(--color-text)] text-[15px] placeholder:text-[var(--color-text-muted)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)]/30 transition-all" />
+                <input type="text" value={formData.frequency} onChange={(e) => setFormData({ ...formData, frequency: e.target.value })} placeholder="Frequency"
+                  className="px-4 py-3 rounded-xl border border-black/[0.06] bg-white text-[var(--color-text)] text-[15px] placeholder:text-[var(--color-text-muted)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)]/30 transition-all" />
+              </div>
+
+              <input type="text" value={formData.reason} onChange={(e) => setFormData({ ...formData, reason: e.target.value })} placeholder="Reason (optional)"
+                className="w-full px-4 py-3 rounded-xl border border-black/[0.06] bg-white text-[var(--color-text)] text-[15px] placeholder:text-[var(--color-text-muted)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)]/30 transition-all" />
+
+              <div className="flex gap-3">
+                <button type="submit" disabled={submitting || !formData.name.trim()} className="flex-1 py-3 rounded-full bg-[var(--color-hope)] text-white font-medium text-[15px] transition-all hover:bg-[var(--color-hope-hover)] disabled:opacity-40">
+                  {submitting ? 'Saving...' : 'Save'}
+                </button>
+                <button type="button" onClick={() => setShowForm(false)} className="py-3 px-6 rounded-full text-[var(--color-text-muted)] font-medium text-[15px] border border-black/[0.06] hover:bg-black/[0.02] transition-all">Cancel</button>
+              </div>
+            </form>
+          )}
+
+          {medications.length > 0 ? (
+            <div className="space-y-6">
+              {activeMeds.length > 0 && (
+                <div>
+                  <p className="text-[13px] font-medium tracking-[0.1em] uppercase text-[var(--color-text-muted)] mb-3">Active</p>
+                  <div className="space-y-2">
+                    {activeMeds.map((med) => (
+                      <div key={med.id} className="rounded-2xl p-5 border border-black/[0.04] flex items-start gap-4" style={{ backgroundColor: 'rgba(255, 255, 255, 0.6)' }}>
+                        <button onClick={() => handleToggle(med.id, med.active)} className="mt-0.5 text-[var(--color-hope)]">
+                          <ToggleRight className="w-5 h-5" />
+                        </button>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-[15px] font-semibold text-[var(--color-text)]">{med.name}</h3>
+                          <p className="text-[13px] text-[var(--color-text-muted)]">
+                            {[med.dosage, med.frequency].filter(Boolean).join(' · ') || 'No details'}
+                          </p>
+                          {med.reason && <p className="text-[12px] text-[var(--color-text-muted)] mt-1">For: {med.reason}</p>}
+                        </div>
+                        <button onClick={() => handleDelete(med.id)} className="p-1.5 text-[var(--color-text-muted)] hover:text-red-500 transition-colors">
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {inactiveMeds.length > 0 && (
+                <div>
+                  <p className="text-[13px] font-medium tracking-[0.1em] uppercase text-[var(--color-text-muted)] mb-3">Paused</p>
+                  <div className="space-y-2">
+                    {inactiveMeds.map((med) => (
+                      <div key={med.id} className="rounded-2xl p-5 border border-black/[0.04] flex items-start gap-4 opacity-60" style={{ backgroundColor: 'rgba(255, 255, 255, 0.4)' }}>
+                        <button onClick={() => handleToggle(med.id, med.active)} className="mt-0.5 text-[var(--color-text-muted)]">
+                          <ToggleLeft className="w-5 h-5" />
+                        </button>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-[15px] font-semibold text-[var(--color-text)] line-through">{med.name}</h3>
+                          <p className="text-[13px] text-[var(--color-text-muted)]">{med.dosage || 'No details'}</p>
+                        </div>
+                        <button onClick={() => handleDelete(med.id)} className="p-1.5 text-[var(--color-text-muted)] hover:text-red-500 transition-colors">
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : !showForm ? (
+            <div className="text-center py-16">
+              <p className="text-[22px] font-semibold text-[var(--color-text)] mb-2" style={{ fontFamily: 'var(--font-serif)' }}>Nothing here yet.</p>
+              <p className="text-[15px] text-[var(--color-text-muted)] mb-6">Keep track of what you take, so you don&apos;t have to remember.</p>
+              <button onClick={() => setShowForm(true)} className="inline-flex items-center gap-2 bg-[var(--color-hope)] text-white font-medium py-3 px-7 rounded-full text-[15px] transition-all hover:bg-[var(--color-hope-hover)]">
+                <Plus className="w-4 h-4" /> Add your first
+              </button>
+            </div>
+          ) : null}
         </div>
-      </div>
-    </div>
+      )}
+    </SanctuaryShell>
   )
 }

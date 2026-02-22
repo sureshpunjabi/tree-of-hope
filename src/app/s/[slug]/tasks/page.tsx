@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
 import { trackEvent } from '@/lib/analytics'
+import SanctuaryShell from '@/components/sanctuary/SanctuaryShell'
+import { Plus, X, Trash2, Circle, CheckCircle2 } from 'lucide-react'
 
 interface Task {
   id: string
@@ -24,369 +25,181 @@ export default function TasksPage() {
   const [error, setError] = useState('')
   const [showForm, setShowForm] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    due_date: '',
-  })
+  const [formData, setFormData] = useState({ title: '', description: '', due_date: '' })
 
   const slug = params?.slug as string
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.push(`/s/${slug}/claim`)
-      return
-    }
-
+    if (!authLoading && !user) { router.push(`/s/${slug}/claim`); return }
     if (authLoading || !slug || !user) return
 
     const fetchTasks = async () => {
       try {
-        const response = await fetch(
-          `/api/sanctuary/${slug}/tasks?user_id=${user.id}`
-        )
-        if (!response.ok) throw new Error('Failed to fetch tasks')
+        const response = await fetch(`/api/sanctuary/${slug}/tasks?user_id=${user.id}`)
+        if (!response.ok) throw new Error('Failed to fetch')
         const result = await response.json()
-        const sorted = (result.tasks || []).sort((a: Task, b: Task) => {
-          if (a.completed && !b.completed) return 1
-          if (!a.completed && b.completed) return -1
-          return new Date(a.due_date || '').getTime() - new Date(b.due_date || '').getTime()
-        })
-        setTasks(sorted)
+        setTasks(
+          (result.tasks || []).sort((a: Task, b: Task) => {
+            if (a.completed !== b.completed) return a.completed ? 1 : -1
+            return new Date(a.due_date || '9999').getTime() - new Date(b.due_date || '9999').getTime()
+          })
+        )
         trackEvent('tool_used', { tool: 'tasks' }, slug, user.id)
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load tasks')
+        setError(err instanceof Error ? err.message : 'Failed to load')
       } finally {
         setLoading(false)
       }
     }
-
     fetchTasks()
   }, [authLoading, user, slug, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!user || !formData.title.trim()) return
-
     setSubmitting(true)
     try {
       const response = await fetch(`/api/sanctuary/${slug}/tasks`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          user_id: user.id,
-          ...formData,
-          completed: false,
-        }),
+        body: JSON.stringify({ user_id: user.id, ...formData, completed: false }),
       })
-
-      if (!response.ok) throw new Error('Failed to save task')
-
+      if (!response.ok) throw new Error('Failed to save')
       const result = await response.json()
-      setTasks([...tasks, result.task])
-      setFormData({
-        title: '',
-        description: '',
-        due_date: '',
-      })
+      setTasks([result.task, ...tasks])
+      setFormData({ title: '', description: '', due_date: '' })
       setShowForm(false)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save task')
+      setError(err instanceof Error ? err.message : 'Failed to save')
     } finally {
       setSubmitting(false)
     }
   }
 
-  const handleToggleComplete = async (id: string, currentCompleted: boolean) => {
+  const handleToggle = async (id: string, completed: boolean) => {
     try {
       const response = await fetch(`/api/sanctuary/${slug}/tasks/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ completed: !currentCompleted }),
+        body: JSON.stringify({ completed: !completed }),
       })
-
-      if (!response.ok) throw new Error('Failed to update task')
-
+      if (!response.ok) throw new Error('Failed to update')
       const result = await response.json()
-      const sorted = tasks
-        .map((t) => (t.id === id ? result.task : t))
-        .sort((a, b) => {
-          if (a.completed && !b.completed) return 1
-          if (!a.completed && b.completed) return -1
-          return new Date(a.due_date || '').getTime() - new Date(b.due_date || '').getTime()
-        })
-      setTasks(sorted)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update task')
-    }
+      setTasks(
+        tasks.map((t) => (t.id === id ? result.task : t))
+          .sort((a, b) => { if (a.completed !== b.completed) return a.completed ? 1 : -1; return 0 })
+      )
+    } catch { setError('Failed to update') }
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this task?')) return
-
     try {
-      const response = await fetch(`/api/sanctuary/${slug}/tasks/${id}`, {
-        method: 'DELETE',
-      })
-
-      if (!response.ok) throw new Error('Failed to delete task')
-
+      await fetch(`/api/sanctuary/${slug}/tasks/${id}`, { method: 'DELETE' })
       setTasks(tasks.filter((t) => t.id !== id))
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete task')
-    }
+    } catch { setError('Failed to delete') }
   }
 
-  if (authLoading || loading) {
-    return (
-      <div className="sanctuary-bg min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-[var(--color-text-muted)]">Loading tasks...</p>
-        </div>
-      </div>
-    )
-  }
-
-  const incompleteTasks = tasks.filter((t) => !t.completed)
-  const completedTasks = tasks.filter((t) => t.completed)
+  const incomplete = tasks.filter((t) => !t.completed)
+  const completed = tasks.filter((t) => t.completed)
 
   return (
-    <div className="sanctuary-bg min-h-screen pb-24">
-      {/* Header */}
-      <div className="bg-white border-b border-[var(--color-border)] sticky top-0 z-40">
-        <div className="page-container flex justify-between items-center py-4">
-          <h1 className="text-3xl font-bold text-[var(--color-text)]">Tasks</h1>
-          <Link href={`/s/${slug}/tools`} className="btn-secondary text-sm">
-            ← Back
-          </Link>
-        </div>
-      </div>
+    <SanctuaryShell title="My Goals" subtitle="One step at a time" showBack backHref={`/s/${slug}/tools`}>
+      {loading ? (
+        <div className="space-y-4">{[...Array(3)].map((_, i) => <div key={i} className="rounded-2xl h-20 skeleton" />)}</div>
+      ) : (
+        <div className="space-y-6">
+          {error && <div className="rounded-xl p-4 text-[14px] text-red-700 bg-red-50 border border-red-100">{error}</div>}
 
-      {/* Main Content */}
-      <div className="page-container py-8">
-        {/* Evolving State Message */}
-        <div className="evolving-state mb-8">
-          <p className="text-lg text-[var(--color-text)] mb-2 font-semibold">
-            Growing with our families
-          </p>
-          <p className="text-[var(--color-text-muted)]">
-            We're building this tool with our early families. It'll be ready soon — and your experience is helping shape it.
-          </p>
-        </div>
-
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-red-700">
-            {error}
-          </div>
-        )}
-
-        {/* New Task Button or Form */}
-        {!showForm && (
-          <button
-            onClick={() => setShowForm(true)}
-            className="w-full btn-primary mb-8"
-          >
-            New Task
-          </button>
-        )}
-
-        {showForm && (
-          <form onSubmit={handleSubmit} className="card mb-8 space-y-4">
-            <h2 className="text-xl font-bold text-[var(--color-text)]">Add a new task</h2>
-
-            <div>
-              <label htmlFor="title" className="block text-sm font-medium text-[var(--color-text)] mb-2">
-                Task
-              </label>
-              <input
-                id="title"
-                type="text"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder="e.g., Call doctor for test results"
-                required
-                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-[var(--color-text)] mb-2">
-                Description
-              </label>
-              <textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Add any details..."
-                rows={3}
-                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] resize-none"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="due_date" className="block text-sm font-medium text-[var(--color-text)] mb-2">
-                Due Date
-              </label>
-              <input
-                id="due_date"
-                type="date"
-                value={formData.due_date}
-                onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
-                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
-              />
-            </div>
-
-            <div className="flex gap-2">
-              <button
-                type="submit"
-                disabled={submitting || !formData.title.trim()}
-                className="flex-1 btn-primary disabled:opacity-50"
-              >
-                {submitting ? 'Saving...' : 'Add Task'}
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowForm(false)}
-                className="flex-1 btn-secondary"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        )}
-
-        {/* Tasks List */}
-        {tasks.length > 0 ? (
-          <div className="space-y-6">
-            {/* Incomplete Tasks */}
-            {incompleteTasks.length > 0 && (
-              <div>
-                <h2 className="text-lg font-semibold text-[var(--color-text)] mb-4">To Do</h2>
-                <div className="space-y-3">
-                  {incompleteTasks.map((task) => (
-                    <div
-                      key={task.id}
-                      className="card flex items-start gap-4"
-                    >
-                      <button
-                        onClick={() => handleToggleComplete(task.id, task.completed)}
-                        className="mt-1 flex-shrink-0 w-6 h-6 rounded-lg border-2 border-[var(--color-border)] hover:border-[var(--color-leaf-1)] transition-colors flex items-center justify-center"
-                      >
-                        {task.completed && (
-                          <span className="text-[var(--color-leaf-1)] font-bold">✓</span>
-                        )}
-                      </button>
-                      <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-[var(--color-text)]">
-                          {task.title}
-                        </h3>
-                        {task.description && (
-                          <p className="text-sm text-[var(--color-text-muted)] mt-1">
-                            {task.description}
-                          </p>
-                        )}
-                        {task.due_date && (
-                          <p className="text-xs text-[var(--color-text-muted)] mt-2">
-                            Due: {new Date(task.due_date).toLocaleDateString('en-US', {
-                              weekday: 'short',
-                              month: 'short',
-                              day: 'numeric',
-                            })}
-                          </p>
-                        )}
-                      </div>
-                      <button
-                        onClick={() => handleDelete(task.id)}
-                        className="text-red-600 hover:text-red-700 font-medium text-sm flex-shrink-0"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Completed Tasks */}
-            {completedTasks.length > 0 && (
-              <div>
-                <h2 className="text-lg font-semibold text-[var(--color-text-muted)] mb-4">Done</h2>
-                <div className="space-y-3">
-                  {completedTasks.map((task) => (
-                    <div
-                      key={task.id}
-                      className="card opacity-75 flex items-start gap-4"
-                    >
-                      <button
-                        onClick={() => handleToggleComplete(task.id, task.completed)}
-                        className="mt-1 flex-shrink-0 w-6 h-6 rounded-lg bg-[var(--color-leaf-1)] border-2 border-[var(--color-leaf-1)] hover:bg-[var(--color-leaf-2)] transition-colors flex items-center justify-center"
-                      >
-                        <span className="text-white font-bold">✓</span>
-                      </button>
-                      <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-[var(--color-text)] line-through">
-                          {task.title}
-                        </h3>
-                        {task.description && (
-                          <p className="text-sm text-[var(--color-text-muted)] mt-1 line-through">
-                            {task.description}
-                          </p>
-                        )}
-                      </div>
-                      <button
-                        onClick={() => handleDelete(task.id)}
-                        className="text-red-600 hover:text-red-700 font-medium text-sm flex-shrink-0"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        ) : !showForm ? (
-          <div className="card text-center py-12">
-            <p className="text-[var(--color-text-muted)] mb-4 text-lg">
-              No tasks yet. Create one to stay organized.
-            </p>
-            <button
-              onClick={() => setShowForm(true)}
-              className="btn-primary"
-            >
-              Add your first task
+          {!showForm ? (
+            <button onClick={() => setShowForm(true)} className="w-full flex items-center justify-center gap-2 py-3.5 rounded-full bg-[var(--color-hope)] text-white font-medium text-[15px] transition-all hover:bg-[var(--color-hope-hover)]">
+              <Plus className="w-4 h-4" /> Add a goal
             </button>
-          </div>
-        ) : null}
-      </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="rounded-2xl p-6 border border-black/[0.06] space-y-5" style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)' }}>
+              <div className="flex items-center justify-between">
+                <h2 className="text-[18px] font-semibold text-[var(--color-text)]" style={{ fontFamily: 'var(--font-serif)' }}>What would you like to do?</h2>
+                <button type="button" onClick={() => setShowForm(false)} className="p-1 text-[var(--color-text-muted)] hover:text-[var(--color-text)]"><X className="w-4 h-4" /></button>
+              </div>
 
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[var(--color-border)]">
-        <div className="page-container flex justify-around py-4">
-          <Link
-            href={`/s/${slug}/journal`}
-            className="flex flex-col items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-leaf-1)] transition-colors"
-          >
-            <span className="text-xl">📔</span>
-            <span className="text-xs font-medium">Journal</span>
-          </Link>
-          <Link
-            href={`/s/${slug}`}
-            className="flex flex-col items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-leaf-1)] transition-colors"
-          >
-            <span className="text-xl">🏠</span>
-            <span className="text-xs font-medium">Today</span>
-          </Link>
-          <Link
-            href={`/s/${slug}/tools`}
-            className="flex flex-col items-center gap-1 text-[var(--color-leaf-1)] transition-colors"
-          >
-            <span className="text-xl">🛠️</span>
-            <span className="text-xs font-medium">Tools</span>
-          </Link>
+              <input type="text" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} placeholder="e.g., Go for a short walk" required
+                className="w-full px-4 py-3 rounded-xl border border-black/[0.06] bg-white text-[var(--color-text)] text-[15px] placeholder:text-[var(--color-text-muted)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)]/30 transition-all" />
+
+              <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} placeholder="Details (optional)" rows={2}
+                className="w-full px-4 py-3 rounded-xl border border-black/[0.06] bg-white text-[var(--color-text)] text-[15px] placeholder:text-[var(--color-text-muted)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)]/30 transition-all resize-none" />
+
+              <input type="date" value={formData.due_date} onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
+                className="w-full px-4 py-3 rounded-xl border border-black/[0.06] bg-white text-[var(--color-text)] text-[15px] focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)]/30 transition-all" />
+
+              <div className="flex gap-3">
+                <button type="submit" disabled={submitting || !formData.title.trim()} className="flex-1 py-3 rounded-full bg-[var(--color-hope)] text-white font-medium text-[15px] transition-all hover:bg-[var(--color-hope-hover)] disabled:opacity-40">
+                  {submitting ? 'Saving...' : 'Save'}
+                </button>
+                <button type="button" onClick={() => setShowForm(false)} className="py-3 px-6 rounded-full text-[var(--color-text-muted)] font-medium text-[15px] border border-black/[0.06] hover:bg-black/[0.02] transition-all">Cancel</button>
+              </div>
+            </form>
+          )}
+
+          {tasks.length > 0 ? (
+            <div className="space-y-6">
+              {incomplete.length > 0 && (
+                <div>
+                  <p className="text-[13px] font-medium tracking-[0.1em] uppercase text-[var(--color-text-muted)] mb-3">To do</p>
+                  <div className="space-y-2">
+                    {incomplete.map((task) => (
+                      <div key={task.id} className="rounded-2xl p-5 border border-black/[0.04] flex items-start gap-4" style={{ backgroundColor: 'rgba(255, 255, 255, 0.6)' }}>
+                        <button onClick={() => handleToggle(task.id, task.completed)} className="mt-0.5 text-[var(--color-text-muted)] hover:text-[var(--color-hope)] transition-colors">
+                          <Circle className="w-5 h-5" />
+                        </button>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-[15px] font-semibold text-[var(--color-text)]">{task.title}</h3>
+                          {task.description && <p className="text-[13px] text-[var(--color-text-muted)] mt-0.5">{task.description}</p>}
+                          {task.due_date && (
+                            <p className="text-[12px] text-[var(--color-text-muted)] mt-1">
+                              Due {new Date(task.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                            </p>
+                          )}
+                        </div>
+                        <button onClick={() => handleDelete(task.id)} className="p-1.5 text-[var(--color-text-muted)] hover:text-red-500 transition-colors">
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {completed.length > 0 && (
+                <div>
+                  <p className="text-[13px] font-medium tracking-[0.1em] uppercase text-[var(--color-text-muted)] mb-3">Done</p>
+                  <div className="space-y-2">
+                    {completed.map((task) => (
+                      <div key={task.id} className="rounded-2xl p-5 border border-black/[0.04] flex items-start gap-4 opacity-60" style={{ backgroundColor: 'rgba(255, 255, 255, 0.4)' }}>
+                        <button onClick={() => handleToggle(task.id, task.completed)} className="mt-0.5 text-[var(--color-hope)]">
+                          <CheckCircle2 className="w-5 h-5" />
+                        </button>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-[15px] font-semibold text-[var(--color-text)] line-through">{task.title}</h3>
+                        </div>
+                        <button onClick={() => handleDelete(task.id)} className="p-1.5 text-[var(--color-text-muted)] hover:text-red-500 transition-colors">
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : !showForm ? (
+            <div className="text-center py-16">
+              <p className="text-[22px] font-semibold text-[var(--color-text)] mb-2" style={{ fontFamily: 'var(--font-serif)' }}>No goals yet.</p>
+              <p className="text-[15px] text-[var(--color-text-muted)] mb-6">Small steps make a big difference.</p>
+              <button onClick={() => setShowForm(true)} className="inline-flex items-center gap-2 bg-[var(--color-hope)] text-white font-medium py-3 px-7 rounded-full text-[15px] transition-all hover:bg-[var(--color-hope-hover)]">
+                <Plus className="w-4 h-4" /> Set your first goal
+              </button>
+            </div>
+          ) : null}
         </div>
-      </div>
-    </div>
+      )}
+    </SanctuaryShell>
   )
 }

@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { useAuth } from '@/lib/auth-context'
 import { trackEvent } from '@/lib/analytics'
+import SanctuaryShell from '@/components/sanctuary/SanctuaryShell'
+import { Plus, X } from 'lucide-react'
 
 interface JournalEntry {
   id: string
@@ -14,7 +15,14 @@ interface JournalEntry {
   created_at: string
 }
 
-const moodEmojis = ['😢', '😟', '😐', '🙂', '😄']
+const moodLabels = ['Struggling', 'Difficult', 'Okay', 'Good', 'Great']
+const moodColors = [
+  'bg-red-100 text-red-700 border-red-200',
+  'bg-orange-100 text-orange-700 border-orange-200',
+  'bg-yellow-100 text-yellow-700 border-yellow-200',
+  'bg-emerald-100 text-emerald-700 border-emerald-200',
+  'bg-green-100 text-green-700 border-green-200',
+]
 
 export default function JournalPage() {
   const params = useParams()
@@ -24,29 +32,18 @@ export default function JournalPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [showForm, setShowForm] = useState(false)
-
-  const [formData, setFormData] = useState({
-    title: '',
-    content: '',
-    mood_score: 3,
-  })
+  const [formData, setFormData] = useState({ title: '', content: '', mood_score: 3 })
   const [submitting, setSubmitting] = useState(false)
 
   const slug = params?.slug as string
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.push(`/s/${slug}/claim`)
-      return
-    }
-
+    if (!authLoading && !user) { router.push(`/s/${slug}/claim`); return }
     if (authLoading || !slug || !user) return
 
     const fetchEntries = async () => {
       try {
-        const response = await fetch(
-          `/api/sanctuary/${slug}/journal?user_id=${user.id}`
-        )
+        const response = await fetch(`/api/sanctuary/${slug}/journal?user_id=${user.id}`)
         if (!response.ok) throw new Error('Failed to fetch entries')
         const result = await response.json()
         setEntries(result.entries || [])
@@ -57,7 +54,6 @@ export default function JournalPage() {
         setLoading(false)
       }
     }
-
     fetchEntries()
   }, [authLoading, user, slug, router])
 
@@ -77,9 +73,7 @@ export default function JournalPage() {
           mood_score: formData.mood_score,
         }),
       })
-
       if (!response.ok) throw new Error('Failed to save entry')
-
       const result = await response.json()
       setEntries([result.entry, ...entries])
       setFormData({ title: '', content: '', mood_score: 3 })
@@ -92,191 +86,157 @@ export default function JournalPage() {
     }
   }
 
-  if (authLoading || loading) {
-    return (
-      <div className="sanctuary-bg min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-[var(--color-text-muted)]">Loading your journal...</p>
-        </div>
-      </div>
-    )
-  }
-
   return (
-    <div className="sanctuary-bg min-h-screen pb-24">
-      {/* Header */}
-      <div className="bg-white border-b border-[var(--color-border)] sticky top-0 z-40">
-        <div className="page-container flex justify-between items-center py-4">
-          <h1 className="text-3xl font-bold text-[var(--color-text)]">Your Journal</h1>
-          <Link href={`/s/${slug}`} className="btn-secondary text-sm">
-            ← Back
-          </Link>
+    <SanctuaryShell title="Journal" subtitle="Your private space to reflect" showBack>
+      {loading ? (
+        <div className="space-y-4">
+          {[...Array(3)].map((_, i) => <div key={i} className="rounded-2xl h-28 skeleton" />)}
         </div>
-      </div>
+      ) : (
+        <div className="space-y-6">
+          {error && (
+            <div className="rounded-xl p-4 text-[14px] text-red-700 bg-red-50 border border-red-100">
+              {error}
+            </div>
+          )}
 
-      {/* Main Content */}
-      <div className="page-container py-8">
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-red-700">
-            {error}
-          </div>
-        )}
+          {/* New entry button / form */}
+          {!showForm ? (
+            <button
+              onClick={() => setShowForm(true)}
+              className="w-full flex items-center justify-center gap-2 py-3.5 rounded-full bg-[var(--color-hope)] text-white font-medium text-[15px] transition-all duration-300 hover:bg-[var(--color-hope-hover)] hover:shadow-lg hover:shadow-[var(--color-hope)]/20"
+            >
+              <Plus className="w-4 h-4" />
+              New entry
+            </button>
+          ) : (
+            <form
+              onSubmit={handleSubmit}
+              className="rounded-2xl p-6 border border-black/[0.06] space-y-5"
+              style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)' }}
+            >
+              <div className="flex items-center justify-between">
+                <h2
+                  className="text-[18px] font-semibold text-[var(--color-text)] tracking-[-0.01em]"
+                  style={{ fontFamily: 'var(--font-serif)' }}
+                >
+                  What&apos;s on your mind?
+                </h2>
+                <button type="button" onClick={() => setShowForm(false)} className="p-1 text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
 
-        {/* New Entry Button or Form */}
-        {!showForm && (
-          <button
-            onClick={() => setShowForm(true)}
-            className="w-full btn-primary mb-8"
-          >
-            New Entry
-          </button>
-        )}
-
-        {showForm && (
-          <form onSubmit={handleSubmit} className="card mb-8 space-y-4">
-            <h2 className="text-xl font-bold text-[var(--color-text)]">Write a new entry</h2>
-
-            <div>
-              <label htmlFor="title" className="block text-sm font-medium text-[var(--color-text)] mb-2">
-                Title (optional)
-              </label>
               <input
-                id="title"
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder="Give your entry a title..."
-                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
+                placeholder="Title (optional)"
+                className="w-full px-4 py-3 rounded-xl border border-black/[0.06] bg-white text-[var(--color-text)] text-[15px] placeholder:text-[var(--color-text-muted)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)]/30 focus:border-[var(--color-hope)]/40 transition-all"
               />
-            </div>
 
-            <div>
-              <label htmlFor="content" className="block text-sm font-medium text-[var(--color-text)] mb-2">
-                How are you feeling today?
-              </label>
               <textarea
-                id="content"
                 value={formData.content}
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                placeholder="Your thoughts, feelings, and reflections..."
-                rows={6}
-                className="w-full px-4 py-2 border border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)] bg-white text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] resize-none"
+                placeholder="Write freely. This is yours alone."
+                rows={5}
+                className="w-full px-4 py-3 rounded-xl border border-black/[0.06] bg-white text-[var(--color-text)] text-[15px] placeholder:text-[var(--color-text-muted)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--color-hope)]/30 focus:border-[var(--color-hope)]/40 transition-all resize-none leading-[1.6]"
               />
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-[var(--color-text)] mb-3">
-                Mood
-              </label>
-              <div className="flex justify-between gap-2">
-                {moodEmojis.map((emoji, index) => (
-                  <button
-                    key={index}
-                    type="button"
-                    onClick={() => setFormData({ ...formData, mood_score: index + 1 })}
-                    className={`flex-1 text-3xl p-3 rounded-lg transition-all ${
-                      formData.mood_score === index + 1
-                        ? 'bg-[var(--color-leaf-2)] ring-2 ring-[var(--color-leaf-1)] scale-110'
-                        : 'bg-gray-100 hover:bg-gray-200'
-                    }`}
-                  >
-                    {emoji}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex gap-2">
-              <button
-                type="submit"
-                disabled={submitting || !formData.content.trim()}
-                className="flex-1 btn-primary disabled:opacity-50"
-              >
-                {submitting ? 'Saving...' : 'Save Entry'}
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowForm(false)}
-                className="flex-1 btn-secondary"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        )}
-
-        {/* Entries List */}
-        {entries.length > 0 ? (
-          <div className="space-y-4">
-            {entries.map((entry) => (
-              <div key={entry.id} className="card hover:shadow-lg transition-shadow cursor-pointer">
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <h3 className="text-lg font-semibold text-[var(--color-text)]">
-                      {entry.title}
-                    </h3>
-                    <p className="text-sm text-[var(--color-text-muted)]">
-                      {new Date(entry.created_at).toLocaleDateString('en-US', {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })}
-                    </p>
-                  </div>
-                  {entry.mood_score && (
-                    <div className="text-2xl">
-                      {moodEmojis[entry.mood_score - 1]}
-                    </div>
-                  )}
+              {/* Mood selector */}
+              <div>
+                <p className="text-[13px] font-medium text-[var(--color-text-muted)] mb-3">How are you feeling?</p>
+                <div className="flex gap-2">
+                  {moodLabels.map((label, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, mood_score: index + 1 })}
+                      className={`flex-1 py-2.5 rounded-xl text-[12px] font-medium border transition-all duration-200 ${
+                        formData.mood_score === index + 1
+                          ? `${moodColors[index]} scale-105 shadow-sm`
+                          : 'bg-black/[0.02] text-[var(--color-text-muted)] border-transparent hover:bg-black/[0.04]'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
                 </div>
-                <p className="text-[var(--color-text)] line-clamp-3">
-                  {entry.content}
-                </p>
               </div>
-            ))}
-          </div>
-        ) : !showForm ? (
-          <div className="card text-center py-12">
-            <p className="text-[var(--color-text-muted)] mb-4 text-lg">
-              Your journal is waiting. Start writing whenever you're ready.
-            </p>
-            <button
-              onClick={() => setShowForm(true)}
-              className="btn-primary"
-            >
-              Write your first entry
-            </button>
-          </div>
-        ) : null}
-      </div>
 
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[var(--color-border)]">
-        <div className="page-container flex justify-around py-4">
-          <Link
-            href={`/s/${slug}/journal`}
-            className="flex flex-col items-center gap-1 text-[var(--color-leaf-1)] transition-colors"
-          >
-            <span className="text-xl">📔</span>
-            <span className="text-xs font-medium">Journal</span>
-          </Link>
-          <Link
-            href={`/s/${slug}`}
-            className="flex flex-col items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-leaf-1)] transition-colors"
-          >
-            <span className="text-xl">🏠</span>
-            <span className="text-xs font-medium">Today</span>
-          </Link>
-          <Link
-            href={`/s/${slug}/tools`}
-            className="flex flex-col items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-leaf-1)] transition-colors"
-          >
-            <span className="text-xl">🛠️</span>
-            <span className="text-xs font-medium">Tools</span>
-          </Link>
+              <div className="flex gap-3">
+                <button
+                  type="submit"
+                  disabled={submitting || !formData.content.trim()}
+                  className="flex-1 py-3 rounded-full bg-[var(--color-hope)] text-white font-medium text-[15px] transition-all duration-300 hover:bg-[var(--color-hope-hover)] disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  {submitting ? 'Saving...' : 'Save'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowForm(false)}
+                  className="py-3 px-6 rounded-full text-[var(--color-text-muted)] font-medium text-[15px] border border-black/[0.06] hover:bg-black/[0.02] transition-all"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* Entries */}
+          {entries.length > 0 ? (
+            <div className="space-y-3">
+              {entries.map((entry) => (
+                <div
+                  key={entry.id}
+                  className="rounded-2xl p-6 border border-black/[0.04] transition-all duration-300 hover:shadow-md hover:shadow-black/[0.03]"
+                  style={{ backgroundColor: 'rgba(255, 255, 255, 0.6)' }}
+                >
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <h3 className="text-[16px] font-semibold text-[var(--color-text)] tracking-[-0.01em]">
+                        {entry.title}
+                      </h3>
+                      <p className="text-[12px] text-[var(--color-text-muted)] mt-0.5">
+                        {new Date(entry.created_at).toLocaleDateString('en-US', {
+                          weekday: 'long', month: 'long', day: 'numeric',
+                        })}
+                      </p>
+                    </div>
+                    {entry.mood_score && (
+                      <span className={`text-[11px] font-medium px-3 py-1 rounded-full border ${moodColors[entry.mood_score - 1]}`}>
+                        {moodLabels[entry.mood_score - 1]}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[14px] text-[var(--color-text-muted)] leading-[1.6] line-clamp-3">
+                    {entry.content}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : !showForm ? (
+            <div className="text-center py-16">
+              <p
+                className="text-[22px] font-semibold text-[var(--color-text)] mb-2 tracking-[-0.02em]"
+                style={{ fontFamily: 'var(--font-serif)' }}
+              >
+                Your journal is waiting.
+              </p>
+              <p className="text-[15px] text-[var(--color-text-muted)] mb-6">
+                Start writing whenever you&apos;re ready.
+              </p>
+              <button
+                onClick={() => setShowForm(true)}
+                className="inline-flex items-center justify-center gap-2 bg-[var(--color-hope)] text-white font-medium py-3 px-7 rounded-full text-[15px] transition-all duration-300 hover:bg-[var(--color-hope-hover)]"
+              >
+                <Plus className="w-4 h-4" />
+                Write your first entry
+              </button>
+            </div>
+          ) : null}
         </div>
-      </div>
-    </div>
+      )}
+    </SanctuaryShell>
   )
 }
