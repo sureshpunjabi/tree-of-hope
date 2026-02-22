@@ -18,6 +18,7 @@ interface CheckoutResponse {
   sessionId?: string;
   url?: string;
   error?: string;
+  demo?: boolean;
 }
 
 export async function POST(

@@ -3,6 +3,8 @@ import { getServiceSupabase } from '@/lib/supabase'
 import { getDayNumber } from '@/lib/utils'
 import ScrollReveal from '@/components/ui/ScrollReveal'
 
+export const dynamic = 'force-dynamic'
+
 interface Campaign {
   id: string
   slug: string

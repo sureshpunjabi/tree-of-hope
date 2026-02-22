@@ -3,6 +3,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { getServiceSupabase } from '@/lib/supabase'
+
+export const dynamic = 'force-dynamic'
 import { cn } from '@/lib/utils'
 import { getDayNumber } from '@/lib/utils'
 import ScrollReveal from '@/components/ui/ScrollReveal'
