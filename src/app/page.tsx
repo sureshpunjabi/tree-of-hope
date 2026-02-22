@@ -46,13 +46,13 @@ export default function HomePage() {
 
           {/* Terrarium image — floating with warm glow */}
           <ScrollReveal delay={550}>
-            <div className="relative mx-auto mb-12 w-[min(380px,75vw)] aspect-square">
+            <div className="relative mx-auto mb-12 w-[min(380px,75vw)]">
               {/* Warm halo behind image */}
               <div
                 className="absolute inset-[-20%] rounded-full blur-3xl opacity-[0.08] z-0"
                 style={{ background: 'radial-gradient(circle, rgba(140,180,120,0.8) 0%, rgba(200,180,140,0.4) 50%, transparent 70%)' }}
               />
-              <div className="relative z-10 animate-float">
+              <div className="relative z-10 animate-float aspect-square">
                 <Image
                   src="/terrarium-hero.png"
                   alt="A bonsai tree growing inside a glass dome terrarium"
