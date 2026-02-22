@@ -23,16 +23,27 @@ interface TreeLeaf {
   baseY: number;
   size: number;
   color: string;
+  highlightColor: string;
   rotation: number;
   opacity: number;
   swayOffset: number;
+  swaySpeed: number;
   glowAmount: number;
   supporterName?: string;
 }
 
+// Rich palette — spring greens, deep forest, lime accents, golden highlights
 const LEAF_COLORS = [
-  '#4A6741', '#5B8A4E', '#66BB6A', '#81C784',
-  '#6B9362', '#388E3C', '#2E7D32', '#43A047',
+  { fill: '#4A7C3F', highlight: '#6AAE58' },
+  { fill: '#5B9A4A', highlight: '#7DC06A' },
+  { fill: '#3D6E35', highlight: '#5A9C4E' },
+  { fill: '#6DB85A', highlight: '#8ED47A' },
+  { fill: '#82C46E', highlight: '#A0DC8E' },
+  { fill: '#2E7D32', highlight: '#4CAF50' },
+  { fill: '#558B2F', highlight: '#7CB342' },
+  { fill: '#43A047', highlight: '#66BB6A' },
+  { fill: '#8BC34A', highlight: '#AED581' }, // lime accent
+  { fill: '#689F38', highlight: '#8BC34A' },
 ];
 
 const SUPPORTER_NAMES = [
@@ -55,7 +66,7 @@ export default function InteractiveTree() {
   const createBranch = useCallback((
     x: number, y: number, angle: number, length: number, width: number, depth: number
   ): Branch => {
-    const sway = (Math.random() - 0.5) * 0.15;
+    const sway = (Math.random() - 0.5) * 0.18;
     const endX = x + Math.cos(angle + sway) * length;
     const endY = y + Math.sin(angle + sway) * length;
 
@@ -67,32 +78,42 @@ export default function InteractiveTree() {
       leaves: [],
     };
 
-    if (depth < 7 && length > 10) {
-      const numBranches = depth < 2 ? 2 : (Math.random() > 0.4 ? 2 : 3);
+    // More aggressive branching for a fuller tree
+    if (depth < 8 && length > 8) {
+      const numBranches = depth < 2 ? 3 : depth < 4 ? (Math.random() > 0.3 ? 3 : 2) : (Math.random() > 0.5 ? 2 : 3);
       for (let i = 0; i < numBranches; i++) {
-        const spread = 0.3 + Math.random() * 0.4;
-        const newAngle = angle + (i === 0 ? -spread : i === 1 ? spread : (Math.random() - 0.5) * 0.4);
-        const newLength = length * (0.6 + Math.random() * 0.2);
-        const newWidth = width * 0.72;
+        const spread = depth < 3 ? 0.35 + Math.random() * 0.35 : 0.25 + Math.random() * 0.5;
+        const offsetAngle = numBranches === 2
+          ? (i === 0 ? -spread : spread)
+          : (i === 0 ? -spread : i === 1 ? spread : (Math.random() - 0.5) * 0.5);
+        const newAngle = angle + offsetAngle;
+        const decay = 0.62 + Math.random() * 0.13;
+        const newLength = length * decay;
+        const newWidth = width * 0.68;
         branch.children.push(createBranch(endX, endY, newAngle, newLength, newWidth, depth + 1));
       }
     }
 
+    // Leaves on branches depth 3+
     if (depth >= 3) {
-      const numLeaves = depth >= 5 ? Math.floor(Math.random() * 5) + 3 : Math.floor(Math.random() * 3) + 2;
+      const numLeaves = depth >= 6 ? Math.floor(Math.random() * 6) + 4 : depth >= 4 ? Math.floor(Math.random() * 4) + 3 : Math.floor(Math.random() * 3) + 2;
       for (let i = 0; i < numLeaves; i++) {
-        const lx = endX + (Math.random() - 0.5) * 28;
-        const ly = endY + (Math.random() - 0.5) * 28;
+        const spread = depth >= 5 ? 22 : 18;
+        const lx = endX + (Math.random() - 0.5) * spread * 2;
+        const ly = endY + (Math.random() - 0.5) * spread * 2;
+        const colorPick = LEAF_COLORS[Math.floor(Math.random() * LEAF_COLORS.length)];
         const leaf: TreeLeaf = {
           x: lx,
           y: ly,
           baseX: lx,
           baseY: ly,
-          size: 12 + Math.random() * 14,
-          color: LEAF_COLORS[Math.floor(Math.random() * LEAF_COLORS.length)],
+          size: 8 + Math.random() * 12 + (depth >= 5 ? 4 : 0),
+          color: colorPick.fill,
+          highlightColor: colorPick.highlight,
           rotation: Math.random() * Math.PI * 2,
-          opacity: 0.85 + Math.random() * 0.15,
+          opacity: 0.8 + Math.random() * 0.2,
           swayOffset: Math.random() * Math.PI * 2,
+          swaySpeed: 0.001 + Math.random() * 0.001,
           glowAmount: 0,
           supporterName: SUPPORTER_NAMES[nameIndexRef.current % SUPPORTER_NAMES.length],
         };
@@ -121,8 +142,8 @@ export default function InteractiveTree() {
 
     allLeavesRef.current = [];
     nameIndexRef.current = 0;
-    // Trunk starts from base, grows upward. Bold trunk, long reach.
-    treeRef.current = createBranch(W / 2, H - 85, -Math.PI / 2, 110, 16, 0);
+    // Bold trunk — longer reach, thicker base
+    treeRef.current = createBranch(W / 2, H - 85, -Math.PI / 2, 130, 18, 0);
 
     const onMouse = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
@@ -191,7 +212,7 @@ export default function InteractiveTree() {
       ctx.fillStyle = baseGrad;
       ctx.fill();
 
-      // Base rim (top edge highlight)
+      // Base rim
       ctx.beginPath();
       ctx.roundRect(baseX + 3, domeBaseY, baseW - 6, 4, [4, 4, 0, 0]);
       ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
@@ -207,17 +228,17 @@ export default function InteractiveTree() {
       ctx.beginPath();
       ctx.ellipse(domeX, domeBaseY - 2, domeRadiusX - 15, 18, 0, 0, Math.PI * 2);
       const soilGrad = ctx.createRadialGradient(domeX, domeBaseY - 2, 0, domeX, domeBaseY - 2, domeRadiusX - 15);
-      soilGrad.addColorStop(0, 'rgba(101, 80, 56, 0.35)');
-      soilGrad.addColorStop(0.6, 'rgba(101, 80, 56, 0.2)');
+      soilGrad.addColorStop(0, 'rgba(101, 80, 56, 0.4)');
+      soilGrad.addColorStop(0.6, 'rgba(101, 80, 56, 0.25)');
       soilGrad.addColorStop(1, 'rgba(101, 80, 56, 0.05)');
       ctx.fillStyle = soilGrad;
       ctx.fill();
 
       // Tiny moss/grass patches
       const grassY = domeBaseY - 5;
-      ctx.fillStyle = 'rgba(74, 103, 65, 0.2)';
-      for (let gx = domeX - 100; gx < domeX + 100; gx += 15 + Math.random() * 20) {
-        const gw = 4 + Math.random() * 6;
+      ctx.fillStyle = 'rgba(74, 103, 65, 0.25)';
+      for (let gx = domeX - 110; gx < domeX + 110; gx += 12 + Math.random() * 16) {
+        const gw = 4 + Math.random() * 7;
         const gh = 2 + Math.random() * 3;
         ctx.beginPath();
         ctx.ellipse(gx, grassY + Math.random() * 6, gw, gh, 0, 0, Math.PI * 2);
@@ -225,11 +246,11 @@ export default function InteractiveTree() {
       }
 
       // Decorative pebbles
-      const pebbleColor = 'rgba(140, 120, 100, 0.25)';
-      ctx.fillStyle = pebbleColor;
+      ctx.fillStyle = 'rgba(140, 120, 100, 0.3)';
       [[domeX - 60, domeBaseY - 8, 4], [domeX + 45, domeBaseY - 6, 3.5],
        [domeX - 25, domeBaseY - 4, 2.5], [domeX + 70, domeBaseY - 7, 2.8],
-       [domeX - 80, domeBaseY - 5, 2], [domeX + 15, domeBaseY - 3, 3]].forEach(([px, py, pr]) => {
+       [domeX - 80, domeBaseY - 5, 2], [domeX + 15, domeBaseY - 3, 3],
+       [domeX - 95, domeBaseY - 6, 2.2], [domeX + 90, domeBaseY - 5, 1.8]].forEach(([px, py, pr]) => {
         ctx.beginPath();
         ctx.ellipse(px, py, pr, pr * 0.7, 0.3, 0, Math.PI * 2);
         ctx.fill();
@@ -240,26 +261,26 @@ export default function InteractiveTree() {
       ctx.ellipse(domeX, domeBaseY, domeRadiusX, domeRadiusY, 0, Math.PI, 0);
       ctx.closePath();
 
-      // Glass fill — very subtle tint
+      // Glass fill
       const domeGrad = ctx.createLinearGradient(domeX, domeBaseY - domeRadiusY, domeX, domeBaseY);
-      domeGrad.addColorStop(0, 'rgba(220, 235, 220, 0.08)');
-      domeGrad.addColorStop(0.4, 'rgba(255, 255, 255, 0.03)');
-      domeGrad.addColorStop(1, 'rgba(200, 210, 200, 0.06)');
+      domeGrad.addColorStop(0, 'rgba(220, 235, 220, 0.07)');
+      domeGrad.addColorStop(0.4, 'rgba(255, 255, 255, 0.02)');
+      domeGrad.addColorStop(1, 'rgba(200, 210, 200, 0.05)');
       ctx.fillStyle = domeGrad;
       ctx.fill();
 
-      // Glass edge (visible, elegant)
+      // Glass edge
       ctx.beginPath();
       ctx.ellipse(domeX, domeBaseY, domeRadiusX, domeRadiusY, 0, Math.PI, 0);
       ctx.closePath();
-      ctx.strokeStyle = 'rgba(140, 155, 140, 0.55)';
+      ctx.strokeStyle = 'rgba(140, 155, 140, 0.5)';
       ctx.lineWidth = 2.5;
       ctx.stroke();
 
       // Inner edge highlight
       ctx.beginPath();
       ctx.ellipse(domeX, domeBaseY, domeRadiusX - 3, domeRadiusY - 3, 0, Math.PI, 0);
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
       ctx.lineWidth = 1.5;
       ctx.stroke();
 
@@ -270,8 +291,8 @@ export default function InteractiveTree() {
         domeX - domeRadiusX * 0.5, domeBaseY - domeRadiusY * 0.5, 0,
         domeX - domeRadiusX * 0.5, domeBaseY - domeRadiusY * 0.5, domeRadiusY * 0.3
       );
-      reflGrad.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
-      reflGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.07)');
+      reflGrad.addColorStop(0, 'rgba(255, 255, 255, 0.18)');
+      reflGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.06)');
       reflGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
       ctx.fillStyle = reflGrad;
       ctx.fill();
@@ -283,7 +304,7 @@ export default function InteractiveTree() {
         domeX - 20, domeBaseY - domeRadiusY + 30, 0,
         domeX - 20, domeBaseY - domeRadiusY + 30, 25
       );
-      topHighlight.addColorStop(0, 'rgba(255, 255, 255, 0.18)');
+      topHighlight.addColorStop(0, 'rgba(255, 255, 255, 0.16)');
       topHighlight.addColorStop(1, 'rgba(255, 255, 255, 0)');
       ctx.fillStyle = topHighlight;
       ctx.fill();
@@ -292,9 +313,8 @@ export default function InteractiveTree() {
       const sparkleAngle = time * 0.0004;
       const sparkleX = domeX + Math.cos(sparkleAngle) * domeRadiusX * 0.55;
       const sparkleY = domeBaseY - domeRadiusY * 0.4 + Math.sin(sparkleAngle * 1.3) * 40;
-      const sparkleAlpha = (Math.sin(time * 0.003) + 1) * 0.15 + 0.05;
+      const sparkleAlpha = (Math.sin(time * 0.003) + 1) * 0.12 + 0.04;
 
-      // Star-shaped sparkle
       ctx.save();
       ctx.translate(sparkleX, sparkleY);
       ctx.rotate(time * 0.001);
@@ -316,7 +336,7 @@ export default function InteractiveTree() {
       ctx.restore();
     };
 
-    // ─── Draw branch with natural curvature ───
+    // ─── Draw branch with natural curvature and bark texture ───
     const drawBranch = (branch: Branch, time: number) => {
       if (branch.progress <= 0) return;
 
@@ -324,92 +344,132 @@ export default function InteractiveTree() {
       const currentEndX = branch.startX + (branch.endX - branch.startX) * p;
       const currentEndY = branch.startY + (branch.endY - branch.startY) * p;
 
-      const windX = mouseRef.current.x > 0 ? (mouseRef.current.x - W / 2) * 0.0003 * branch.depth : 0;
-      const sway = Math.sin(time * 0.0008 + branch.depth * 0.7) * branch.depth * 0.25;
+      const windX = mouseRef.current.x > 0 ? (mouseRef.current.x - W / 2) * 0.0002 * branch.depth : 0;
+      const sway = Math.sin(time * 0.0008 + branch.depth * 0.7) * branch.depth * 0.2;
 
-      // Draw branch with gradient
-      ctx.beginPath();
-      ctx.moveTo(branch.startX, branch.startY);
+      // Control point for smooth curve
       const cpX = (branch.startX + currentEndX) / 2 + sway + windX * 10;
       const cpY = (branch.startY + currentEndY) / 2;
+
+      // Draw the branch — thicker outline for depth
+      if (branch.depth < 4 && branch.width > 3) {
+        ctx.beginPath();
+        ctx.moveTo(branch.startX, branch.startY);
+        ctx.quadraticCurveTo(cpX, cpY, currentEndX + sway + windX * 15, currentEndY);
+        const darkR = Math.max(30, 65 - branch.depth * 6);
+        const darkG = Math.max(22, 45 - branch.depth * 5);
+        const darkB = Math.max(15, 32 - branch.depth * 4);
+        ctx.strokeStyle = `rgb(${darkR}, ${darkG}, ${darkB})`;
+        ctx.lineWidth = Math.max(2, branch.width * p) + 1.5;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+      }
+
+      // Main branch color
+      ctx.beginPath();
+      ctx.moveTo(branch.startX, branch.startY);
       ctx.quadraticCurveTo(cpX, cpY, currentEndX + sway + windX * 15, currentEndY);
 
-      // Bark color — rich, visible brown tones
-      const r = 85 - branch.depth * 4;
-      const g = 60 - branch.depth * 3;
-      const b = 42 - branch.depth * 2;
-      ctx.strokeStyle = `rgb(${Math.max(40, r)}, ${Math.max(30, g)}, ${Math.max(20, b)})`;
-      ctx.lineWidth = Math.max(1.5, branch.width * p);
+      // Rich bark gradient — warm browns
+      const r = Math.max(45, 95 - branch.depth * 5);
+      const g = Math.max(32, 68 - branch.depth * 4);
+      const b = Math.max(22, 48 - branch.depth * 3);
+      ctx.strokeStyle = `rgb(${r}, ${g}, ${b})`;
+      ctx.lineWidth = Math.max(1.2, branch.width * p);
       ctx.lineCap = 'round';
       ctx.stroke();
+
+      // Bark highlight on thick branches
+      if (branch.depth < 3 && branch.width > 5) {
+        ctx.beginPath();
+        ctx.moveTo(branch.startX + 1, branch.startY);
+        ctx.quadraticCurveTo(cpX + 1, cpY, currentEndX + sway + windX * 15 + 1, currentEndY);
+        ctx.strokeStyle = `rgba(180, 155, 130, 0.25)`;
+        ctx.lineWidth = Math.max(1, branch.width * p * 0.3);
+        ctx.stroke();
+      }
 
       // Draw leaves when branch is mostly grown
       if (branch.progress > 0.7) {
         const leafProgress = Math.min((branch.progress - 0.7) / 0.3, 1);
         branch.leaves.forEach(leaf => {
-          const leafSway = Math.sin(time * 0.0015 + leaf.swayOffset) * 2;
+          const leafSway = Math.sin(time * leaf.swaySpeed + leaf.swayOffset) * 2.5;
           const mx = mouseRef.current.x;
           const my = mouseRef.current.y;
           const dx = mx - leaf.baseX;
           const dy = my - leaf.baseY;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          // Magnetic pull toward cursor when close
-          const magnetRange = 70;
+          // Magnetic pull
+          const magnetRange = 65;
           let magnetX = 0;
           let magnetY = 0;
           if (dist < magnetRange && dist > 0) {
-            const force = (1 - dist / magnetRange) * 6;
+            const force = (1 - dist / magnetRange) * 5;
             magnetX = (dx / dist) * force;
             magnetY = (dy / dist) * force;
-            leaf.glowAmount = Math.min(leaf.glowAmount + 0.1, 1);
+            leaf.glowAmount = Math.min(leaf.glowAmount + 0.08, 1);
           } else {
-            leaf.glowAmount = Math.max(leaf.glowAmount - 0.04, 0);
+            leaf.glowAmount = Math.max(leaf.glowAmount - 0.03, 0);
           }
 
-          leaf.x = leaf.baseX + leafSway + windX * 20 + magnetX;
-          leaf.y = leaf.baseY + magnetY;
+          leaf.x = leaf.baseX + leafSway + windX * 18 + magnetX;
+          leaf.y = leaf.baseY + Math.sin(time * 0.0012 + leaf.swayOffset) * 0.8 + magnetY;
 
           ctx.save();
           ctx.translate(leaf.x, leaf.y);
-          ctx.rotate(leaf.rotation + Math.sin(time * 0.001 + leaf.swayOffset) * 0.08);
+          ctx.rotate(leaf.rotation + Math.sin(time * 0.0008 + leaf.swayOffset) * 0.06);
           ctx.globalAlpha = leaf.opacity * leafProgress;
 
-          // Glow effect for nearby leaves
+          // Glow when hovered
           if (leaf.glowAmount > 0) {
-            ctx.shadowColor = '#66BB6A';
-            ctx.shadowBlur = 16 * leaf.glowAmount;
+            ctx.shadowColor = leaf.highlightColor;
+            ctx.shadowBlur = 14 * leaf.glowAmount;
           }
 
-          // Leaf shape — teardrop with more body
-          const s = leaf.size * (1 + leaf.glowAmount * 0.35);
+          const s = leaf.size * (0.9 + leafProgress * 0.1) * (1 + leaf.glowAmount * 0.2);
+
+          // Natural leaf shape — pointed tip, rounded body
           ctx.beginPath();
-          ctx.moveTo(0, -s);
-          ctx.bezierCurveTo(s * 0.8, -s * 0.3, s * 0.5, s * 0.5, 0, s * 0.7);
-          ctx.bezierCurveTo(-s * 0.5, s * 0.5, -s * 0.8, -s * 0.3, 0, -s);
-          ctx.fillStyle = leaf.color;
+          ctx.moveTo(0, -s * 0.9);
+          ctx.bezierCurveTo(s * 0.55, -s * 0.5, s * 0.6, s * 0.1, s * 0.1, s * 0.55);
+          ctx.bezierCurveTo(0, s * 0.65, 0, s * 0.65, -s * 0.1, s * 0.55);
+          ctx.bezierCurveTo(-s * 0.6, s * 0.1, -s * 0.55, -s * 0.5, 0, -s * 0.9);
+          ctx.closePath();
+
+          // Fill with slight gradient
+          const leafGrad = ctx.createLinearGradient(0, -s, 0, s * 0.6);
+          leafGrad.addColorStop(0, leaf.highlightColor);
+          leafGrad.addColorStop(0.4, leaf.color);
+          leafGrad.addColorStop(1, leaf.color);
+          ctx.fillStyle = leafGrad;
           ctx.fill();
 
-          // Leaf vein (central)
+          // Subtle edge
+          ctx.strokeStyle = `rgba(0, 0, 0, 0.08)`;
+          ctx.lineWidth = 0.4;
+          ctx.stroke();
+
+          // Central vein
           ctx.beginPath();
-          ctx.moveTo(0, -s * 0.6);
-          ctx.lineTo(0, s * 0.5);
+          ctx.moveTo(0, -s * 0.7);
+          ctx.quadraticCurveTo(0.5, 0, 0, s * 0.45);
           ctx.strokeStyle = `rgba(255, 255, 255, ${0.2 + leaf.glowAmount * 0.15})`;
-          ctx.lineWidth = 0.6;
+          ctx.lineWidth = 0.7;
           ctx.shadowBlur = 0;
           ctx.shadowColor = 'transparent';
           ctx.stroke();
 
           // Side veins
           ctx.beginPath();
-          ctx.moveTo(0, -s * 0.2);
-          ctx.lineTo(s * 0.3, -s * 0.05);
-          ctx.moveTo(0, 0);
-          ctx.lineTo(-s * 0.25, s * 0.15);
-          ctx.moveTo(0, s * 0.2);
-          ctx.lineTo(s * 0.2, s * 0.3);
-          ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 + leaf.glowAmount * 0.1})`;
-          ctx.lineWidth = 0.4;
+          ctx.moveTo(0, -s * 0.3);
+          ctx.lineTo(s * 0.3, -s * 0.15);
+          ctx.moveTo(0, -s * 0.05);
+          ctx.lineTo(-s * 0.28, s * 0.1);
+          ctx.moveTo(0, s * 0.15);
+          ctx.lineTo(s * 0.22, s * 0.28);
+          ctx.strokeStyle = `rgba(255, 255, 255, ${0.12 + leaf.glowAmount * 0.08})`;
+          ctx.lineWidth = 0.35;
           ctx.stroke();
 
           ctx.restore();
@@ -417,16 +477,16 @@ export default function InteractiveTree() {
       }
 
       // Recursively draw children
-      if (p >= 0.6) {
+      if (p >= 0.5) {
         branch.children.forEach(child => drawBranch(child, time));
       }
     };
 
-    // ─── Growth animation — faster cascade ───
+    // ─── Growth animation ───
     const growTree = (branch: Branch, parentProgress: number) => {
-      const growSpeed = 0.02;
-      if (parentProgress > 0.3) {
-        branch.progress = Math.min(branch.progress + growSpeed, 1);
+      const speed = branch.depth === 0 ? 0.03 : 0.022;
+      if (parentProgress > 0.25) {
+        branch.progress = Math.min(branch.progress + speed, 1);
       }
       branch.children.forEach(child => growTree(child, branch.progress));
     };
@@ -436,7 +496,7 @@ export default function InteractiveTree() {
       const mx = mouseRef.current.x;
       const my = mouseRef.current.y;
       let closest: TreeLeaf | null = null;
-      let closestDist = 30;
+      let closestDist = 28;
 
       for (const leaf of allLeavesRef.current) {
         const dx = mx - leaf.x;
@@ -463,11 +523,10 @@ export default function InteractiveTree() {
       }
     };
 
-    // ─── Draw lush canopy cloud behind individual leaves ───
-    const drawCanopy = (time: number) => {
+    // ─── Subtle canopy glow — BEHIND everything, very faint ───
+    const drawCanopyGlow = (time: number) => {
       if (allLeavesRef.current.length === 0) return;
 
-      // Find the bounding box of all leaves
       let minX = W, maxX = 0, minY = H, maxY = 0;
       for (const leaf of allLeavesRef.current) {
         if (leaf.baseX < minX) minX = leaf.baseX;
@@ -478,31 +537,55 @@ export default function InteractiveTree() {
 
       const cx = (minX + maxX) / 2;
       const cy = (minY + maxY) / 2;
-      const rx = (maxX - minX) / 2 + 30;
-      const ry = (maxY - minY) / 2 + 25;
+      const rx = (maxX - minX) / 2 + 35;
+      const ry = (maxY - minY) / 2 + 30;
 
-      // Draw overlapping soft green circles for a canopy "cloud"
-      const canopyBlobs = [
-        { x: cx, y: cy, r: Math.max(rx, ry) * 0.75 },
-        { x: cx - rx * 0.4, y: cy - ry * 0.2, r: Math.max(rx, ry) * 0.6 },
-        { x: cx + rx * 0.4, y: cy - ry * 0.15, r: Math.max(rx, ry) * 0.6 },
-        { x: cx - rx * 0.15, y: cy - ry * 0.5, r: Math.max(rx, ry) * 0.5 },
-        { x: cx + rx * 0.2, y: cy + ry * 0.35, r: Math.max(rx, ry) * 0.45 },
-        { x: cx - rx * 0.55, y: cy + ry * 0.2, r: Math.max(rx, ry) * 0.4 },
-        { x: cx + rx * 0.55, y: cy + ry * 0.15, r: Math.max(rx, ry) * 0.42 },
+      const breathe = Math.sin(time * 0.0005) * 0.015 + 1;
+
+      // Just 3 very subtle blobs — hint of green atmosphere
+      ctx.save();
+      const blobs = [
+        { x: cx, y: cy, r: Math.max(rx, ry) * 0.7 },
+        { x: cx - rx * 0.3, y: cy - ry * 0.25, r: Math.max(rx, ry) * 0.5 },
+        { x: cx + rx * 0.3, y: cy + ry * 0.1, r: Math.max(rx, ry) * 0.5 },
       ];
 
-      const breathe = Math.sin(time * 0.0006) * 0.02 + 1;
-
-      ctx.save();
-      for (const blob of canopyBlobs) {
+      for (const blob of blobs) {
         const grad = ctx.createRadialGradient(blob.x, blob.y, 0, blob.x, blob.y, blob.r * breathe);
-        grad.addColorStop(0, 'rgba(74, 130, 65, 0.18)');
-        grad.addColorStop(0.5, 'rgba(90, 150, 80, 0.10)');
+        grad.addColorStop(0, 'rgba(74, 130, 65, 0.06)');
+        grad.addColorStop(0.5, 'rgba(90, 150, 80, 0.03)');
         grad.addColorStop(1, 'rgba(100, 170, 90, 0)');
         ctx.fillStyle = grad;
         ctx.beginPath();
         ctx.arc(blob.x, blob.y, blob.r * breathe, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    };
+
+    // ─── Floating light particles ───
+    const particles: { x: number; y: number; speed: number; size: number; phase: number }[] = [];
+    for (let i = 0; i < 8; i++) {
+      particles.push({
+        x: domeX - 120 + Math.random() * 240,
+        y: domeBaseY - 60 - Math.random() * 200,
+        speed: 0.2 + Math.random() * 0.3,
+        size: 1 + Math.random() * 1.5,
+        phase: Math.random() * Math.PI * 2,
+      });
+    }
+
+    const drawParticles = (time: number) => {
+      ctx.save();
+      for (const p of particles) {
+        const y = p.y - (time * p.speed * 0.01) % 220;
+        const adjustedY = y < domeBaseY - 260 ? y + 220 : y;
+        const x = p.x + Math.sin(time * 0.001 + p.phase) * 8;
+        const alpha = (Math.sin(time * 0.002 + p.phase) + 1) * 0.15 + 0.05;
+
+        ctx.beginPath();
+        ctx.arc(x, adjustedY, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(200, 230, 180, ${alpha})`;
         ctx.fill();
       }
       ctx.restore();
@@ -513,18 +596,21 @@ export default function InteractiveTree() {
       ctx.clearRect(0, 0, W, H);
 
       if (treeRef.current) {
-        treeRef.current.progress = Math.min(treeRef.current.progress + 0.025, 1);
+        treeRef.current.progress = Math.min(treeRef.current.progress + 0.03, 1);
         growTree(treeRef.current, 1);
 
         if (treeRef.current.progress >= 1) {
           isGrownRef.current = true;
         }
 
-        // Draw canopy cloud first (behind branches)
+        // Layer order: canopy glow → branches+leaves → particles → dome glass
         if (isGrownRef.current) {
-          drawCanopy(timestamp);
+          drawCanopyGlow(timestamp);
         }
         drawBranch(treeRef.current, timestamp);
+        if (isGrownRef.current) {
+          drawParticles(timestamp);
+        }
         drawDome(timestamp);
         checkHover();
       }
@@ -547,9 +633,9 @@ export default function InteractiveTree() {
     <div className="relative flex flex-col items-center justify-center">
       {/* Ambient glow behind dome */}
       <div
-        className="absolute rounded-full blur-3xl opacity-20 pointer-events-none"
+        className="absolute rounded-full blur-3xl opacity-15 pointer-events-none"
         style={{
-          background: 'radial-gradient(circle, rgba(74, 103, 65, 0.3) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(74, 124, 63, 0.25) 0%, transparent 70%)',
           width: '120%',
           height: '120%',
           top: '-10%',
