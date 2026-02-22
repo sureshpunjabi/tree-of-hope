@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { getServiceSupabase } from '@/lib/supabase'
@@ -9,11 +10,44 @@ import SplitText from '@/components/ui/SplitText'
 import CountUp from '@/components/ui/CountUp'
 import MagneticButton from '@/components/ui/MagneticButton'
 import GradientMesh from '@/components/ui/GradientMesh'
+import ShareTreeButton from '@/components/campaign/ShareTreeButton'
 
 interface PageProps {
   params: Promise<{
     slug: string
   }>
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params
+  const supabase = getServiceSupabase()
+  const { data: campaign } = await supabase
+    .from('campaigns')
+    .select('patient_name, title, slug')
+    .eq('slug', slug)
+    .single()
+
+  if (!campaign) return {}
+
+  const title = `${campaign.patient_name}'s Tree of Hope`
+  const description = `Join the circle of support around ${campaign.patient_name}. Add your leaf and show up with lasting commitment.`
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: `https://tree-of-hope-olive.vercel.app/c/${slug}`,
+      images: [{ url: '/og-image.png', width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+    },
+  }
 }
 
 interface Campaign {
@@ -253,24 +287,39 @@ export default async function CampaignPage({ params }: PageProps) {
             <>
               <SplitText
                 as="h2"
-                className="text-[clamp(2rem,4.5vw,3.75rem)] font-semibold text-[var(--color-text)] leading-[1.08] tracking-[-0.03em] text-center mb-16"
+                className="text-[clamp(2rem,4.5vw,3.75rem)] font-semibold text-[var(--color-text)] leading-[1.08] tracking-[-0.03em] text-center mb-6"
               >
                 {`${leaves.length} ${leaves.length === 1 ? 'leaf' : 'leaves'} on the tree.`}
               </SplitText>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {leaves.map((leaf) => (
-                  <div
-                    key={leaf.id}
-                    className="rounded-2xl p-7 transition-all duration-500 hover:scale-[1.02] hover:shadow-lg hover:shadow-black/[0.04] backdrop-blur-sm border border-black/[0.04]"
-                    style={{ backgroundColor: 'rgba(245, 245, 240, 0.6)' }}
-                  >
-                    <p className="text-[15px] text-[var(--color-text)] leading-[1.65] mb-5">
-                      &ldquo;{leaf.message}&rdquo;
-                    </p>
-                    <p className="text-[13px] text-[var(--color-text-muted)]">
-                      {leaf.author_name}
-                    </p>
-                  </div>
+              <p className="text-[15px] text-[var(--color-text-muted)] text-center mb-16 max-w-[420px] mx-auto leading-[1.6]">
+                Each message is a promise to show up.
+              </p>
+
+              {/* Masonry-inspired staggered grid */}
+              <div className="columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
+                {leaves.map((leaf, i) => (
+                  <ScrollReveal key={leaf.id} delay={i * 60}>
+                    <div
+                      className="break-inside-avoid rounded-2xl p-7 transition-all duration-500 hover:scale-[1.02] hover:shadow-xl hover:shadow-black/[0.06] backdrop-blur-sm border border-black/[0.04] group"
+                      style={{ backgroundColor: 'rgba(245, 245, 240, 0.6)' }}
+                    >
+                      <div className="w-8 h-8 rounded-full bg-[var(--color-hope)]/[0.08] flex items-center justify-center mb-5 group-hover:bg-[var(--color-hope)]/[0.14] transition-colors duration-500">
+                        <span className="text-[14px]">🌿</span>
+                      </div>
+                      <p
+                        className="text-[15px] text-[var(--color-text)] leading-[1.7] mb-5"
+                        style={{ fontFamily: 'var(--font-serif)' }}
+                      >
+                        &ldquo;{leaf.message}&rdquo;
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <div className="w-1 h-1 rounded-full bg-[var(--color-hope)]" />
+                        <p className="text-[13px] font-medium text-[var(--color-text-muted)]">
+                          {leaf.author_name}
+                        </p>
+                      </div>
+                    </div>
+                  </ScrollReveal>
                 ))}
               </div>
             </>
@@ -297,6 +346,27 @@ export default async function CampaignPage({ params }: PageProps) {
               )}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* ─── SHARE ─── Viral growth engine */}
+      <section className="py-20 md:py-28" style={{ backgroundColor: 'rgba(245, 245, 240, 0.5)' }}>
+        <div className="max-w-lg mx-auto px-5 sm:px-8 text-center">
+          <ScrollReveal>
+            <p className="text-[13px] font-medium tracking-[0.15em] uppercase text-[var(--color-text-muted)] mb-5">
+              Spread the word
+            </p>
+            <h2
+              className="text-[clamp(1.75rem,3.5vw,2.5rem)] font-semibold text-[var(--color-text)] tracking-[-0.02em] mb-4 leading-[1.15]"
+              style={{ fontFamily: 'var(--font-serif)' }}
+            >
+              Share {campaign.patient_name}&apos;s tree.
+            </h2>
+            <p className="text-[15px] text-[var(--color-text-muted)] leading-[1.6] mb-8">
+              Every share is an invitation for someone to show up.
+            </p>
+            <ShareTreeButton slug={campaign.slug} patientName={campaign.patient_name} />
+          </ScrollReveal>
         </div>
       </section>
 
