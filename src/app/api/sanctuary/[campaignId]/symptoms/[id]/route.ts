@@ -24,11 +24,20 @@ export async function PATCH(
     const body = await request.json();
     const supabase = getServiceSupabase();
 
+    // Resolve slug to campaign UUID
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(campaignId);
+    const campaignQuery = isUUID
+      ? supabase.from('campaigns').select('id').or(`slug.eq.${campaignId},id.eq.${campaignId}`).single()
+      : supabase.from('campaigns').select('id').eq('slug', campaignId).single();
+    const { data: campaign } = await campaignQuery;
+    if (!campaign) return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 });
+    const realCampaignId = campaign.id;
+
     const { data: log, error } = await supabase
       .from('symptom_logs')
       .update(body)
       .eq('id', id)
-      .eq('campaign_id', campaignId)
+      .eq('campaign_id', realCampaignId)
       .select()
       .single();
 
@@ -69,11 +78,20 @@ export async function DELETE(
     const { campaignId, id } = await params;
     const supabase = getServiceSupabase();
 
+    // Resolve slug to campaign UUID
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(campaignId);
+    const campaignQuery = isUUID
+      ? supabase.from('campaigns').select('id').or(`slug.eq.${campaignId},id.eq.${campaignId}`).single()
+      : supabase.from('campaigns').select('id').eq('slug', campaignId).single();
+    const { data: campaign } = await campaignQuery;
+    if (!campaign) return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 });
+    const realCampaignId = campaign.id;
+
     const { error } = await supabase
       .from('symptom_logs')
       .delete()
       .eq('id', id)
-      .eq('campaign_id', campaignId);
+      .eq('campaign_id', realCampaignId);
 
     if (error) {
       console.error('Failed to delete symptom log:', error);

@@ -16,7 +16,7 @@ interface SymptomLog {
   symptom: string;
   severity?: number;
   notes?: string;
-  created_at: string;
+  logged_at: string;
 }
 
 interface SymptomResponse {
@@ -77,7 +77,7 @@ export async function GET(
       query = query.eq('user_id', userId);
     }
 
-    const { data: logs = [], error } = await query.order('created_at', {
+    const { data: logs = [], error } = await query.order('logged_at', {
       ascending: false,
     });
 

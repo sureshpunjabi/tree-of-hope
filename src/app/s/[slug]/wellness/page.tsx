@@ -12,7 +12,7 @@ interface WellnessLog {
   symptom: string
   severity: number
   notes?: string
-  created_at: string
+  logged_at: string
 }
 
 const severityLabel = (s: number) => {
@@ -54,7 +54,7 @@ export default function WellnessPage() {
         if (!response.ok) throw new Error('Failed to fetch')
         const result = await response.json()
         setLogs((result.logs || []).sort((a: WellnessLog, b: WellnessLog) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          new Date(b.logged_at).getTime() - new Date(a.logged_at).getTime()
         ))
         trackEvent('tool_used', { tool: 'wellness' }, slug, user.id)
       } catch (err) {
@@ -182,7 +182,7 @@ export default function WellnessPage() {
                     <div>
                       <h3 className="text-[15px] font-semibold text-[var(--color-text)]">{log.symptom}</h3>
                       <p className="text-[12px] text-[var(--color-text-muted)] mt-0.5">
-                        {new Date(log.created_at).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                        {new Date(log.logged_at).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
                     <button onClick={() => handleDelete(log.id)} className="p-1.5 text-[var(--color-text-muted)] hover:text-red-500 transition-colors">
