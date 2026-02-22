@@ -6,7 +6,9 @@ interface SanctuaryDay {
   campaign_id: string;
   day_number: number;
   title: string;
-  content: string;
+  content?: string;
+  content_markdown?: string;
+  reflection_prompt?: string;
   created_at: string;
 }
 
@@ -72,7 +74,13 @@ export async function GET(
         .eq('day_number', dayNumber)
         .single();
 
-      todayContent = sanctuaryDay || null;
+      // Map content_markdown to content for frontend compatibility
+      if (sanctuaryDay) {
+        todayContent = {
+          ...sanctuaryDay,
+          content: sanctuaryDay.content_markdown || sanctuaryDay.content || '',
+        };
+      }
     }
 
     // Get recent journal entries
