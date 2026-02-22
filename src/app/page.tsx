@@ -10,42 +10,52 @@ import GradientMesh from '@/components/ui/GradientMesh'
 export default function HomePage() {
   return (
     <div className="min-h-screen">
-      {/* ─── HERO ─── One moment. Nothing else. */}
-      <section className="relative min-h-[100svh] flex flex-col items-center justify-center px-5 sm:px-8">
+      {/* ─── HERO ─── Photo-centric, premium feel */}
+      <section className="relative min-h-[100svh] flex flex-col items-center justify-center px-5 sm:px-8 pt-16 pb-10">
         <div className="max-w-[900px] mx-auto text-center">
+          {/* Headline */}
           <SplitText
             as="h1"
-            className="text-[clamp(2.75rem,7vw,6.5rem)] font-semibold text-[var(--color-text)] leading-[1.06] tracking-[-0.03em] mb-7"
+            className="text-[clamp(3.5rem,9vw,8rem)] font-semibold text-[var(--color-text)] leading-[1.02] tracking-[-0.04em] mb-5"
             delay={100}
+            style={{ fontFamily: 'var(--font-serif)' }}
           >
-            Show up. Stay.
+            Give hope.
           </SplitText>
 
-          <ScrollReveal delay={500}>
-            <p className="text-[clamp(1.05rem,2vw,1.35rem)] text-[var(--color-text-muted)] max-w-[520px] mx-auto leading-[1.5] mb-10 tracking-[-0.01em]">
-              When someone you love is diagnosed, Tree&nbsp;of&nbsp;Hope turns a moment of helplessness into a circle of lasting&nbsp;support.
+          <ScrollReveal delay={400}>
+            <p
+              className="text-[clamp(1.1rem,2.2vw,1.5rem)] text-[var(--color-text-muted)] max-w-[440px] mx-auto leading-[1.45] mb-10 tracking-[-0.01em]"
+              style={{ fontFamily: 'var(--font-serif)' }}
+            >
+              When we care for someone,<br />something grows.
             </p>
           </ScrollReveal>
 
-          <ScrollReveal delay={700}>
-            <div className="flex flex-col sm:flex-row justify-center gap-3.5">
-              <MagneticButton strength={0.1} className="inline-block">
-                <Link
-                  href="/c/sarah"
-                  className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-3.5 px-8 rounded-full text-[15px] transition-all duration-300 tracking-[-0.01em] hover:shadow-lg hover:shadow-[var(--color-hope)]/20"
-                >
-                  See a live tree
-                </Link>
-              </MagneticButton>
-              <MagneticButton strength={0.1} className="inline-block">
-                <Link
-                  href="#how"
-                  className="inline-flex items-center justify-center text-[var(--color-hope)] font-medium py-3.5 px-8 rounded-full text-[15px] transition-all duration-300 tracking-[-0.01em] hover:bg-[var(--color-hope)]/[0.06]"
-                >
-                  How it works
-                </Link>
-              </MagneticButton>
+          {/* Terrarium image */}
+          <ScrollReveal delay={600}>
+            <div className="relative mx-auto mb-10 w-[min(340px,70vw)] aspect-square">
+              <Image
+                src="/terrarium-hero.png"
+                alt="A bonsai tree growing inside a glass dome terrarium"
+                fill
+                priority
+                className="object-contain drop-shadow-[0_20px_60px_rgba(0,0,0,0.12)]"
+                sizes="(max-width: 640px) 70vw, 340px"
+              />
             </div>
+          </ScrollReveal>
+
+          {/* CTA */}
+          <ScrollReveal delay={800}>
+            <MagneticButton strength={0.1} className="inline-block">
+              <Link
+                href="/c/sarah"
+                className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-4 px-10 rounded-full text-[16px] transition-all duration-300 tracking-[-0.01em] hover:shadow-lg hover:shadow-[var(--color-hope)]/20"
+              >
+                Contribute
+              </Link>
+            </MagneticButton>
           </ScrollReveal>
         </div>
 

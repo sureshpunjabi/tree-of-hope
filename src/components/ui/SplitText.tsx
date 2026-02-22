@@ -8,6 +8,7 @@ interface SplitTextProps {
   className?: string;
   delay?: number;
   as?: 'h1' | 'h2' | 'h3' | 'p' | 'span';
+  style?: React.CSSProperties;
 }
 
 export default function SplitText({
@@ -15,6 +16,7 @@ export default function SplitText({
   className = '',
   delay = 0,
   as = 'h2',
+  style,
 }: SplitTextProps) {
   const words = children.split(' ');
 
@@ -51,6 +53,7 @@ export default function SplitText({
   return (
     <Component
       className={className}
+      style={style}
       variants={containerVariants}
       initial="hidden"
       whileInView="visible"
