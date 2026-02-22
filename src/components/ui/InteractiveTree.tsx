@@ -79,16 +79,16 @@ export default function InteractiveTree() {
     }
 
     if (depth >= 3) {
-      const numLeaves = depth >= 5 ? Math.floor(Math.random() * 4) + 2 : Math.floor(Math.random() * 2) + 1;
+      const numLeaves = depth >= 5 ? Math.floor(Math.random() * 5) + 3 : Math.floor(Math.random() * 3) + 2;
       for (let i = 0; i < numLeaves; i++) {
-        const lx = endX + (Math.random() - 0.5) * 22;
-        const ly = endY + (Math.random() - 0.5) * 22;
+        const lx = endX + (Math.random() - 0.5) * 28;
+        const ly = endY + (Math.random() - 0.5) * 28;
         const leaf: TreeLeaf = {
           x: lx,
           y: ly,
           baseX: lx,
           baseY: ly,
-          size: 7 + Math.random() * 9,
+          size: 12 + Math.random() * 14,
           color: LEAF_COLORS[Math.floor(Math.random() * LEAF_COLORS.length)],
           rotation: Math.random() * Math.PI * 2,
           opacity: 0.85 + Math.random() * 0.15,
@@ -463,6 +463,51 @@ export default function InteractiveTree() {
       }
     };
 
+    // ─── Draw lush canopy cloud behind individual leaves ───
+    const drawCanopy = (time: number) => {
+      if (allLeavesRef.current.length === 0) return;
+
+      // Find the bounding box of all leaves
+      let minX = W, maxX = 0, minY = H, maxY = 0;
+      for (const leaf of allLeavesRef.current) {
+        if (leaf.baseX < minX) minX = leaf.baseX;
+        if (leaf.baseX > maxX) maxX = leaf.baseX;
+        if (leaf.baseY < minY) minY = leaf.baseY;
+        if (leaf.baseY > maxY) maxY = leaf.baseY;
+      }
+
+      const cx = (minX + maxX) / 2;
+      const cy = (minY + maxY) / 2;
+      const rx = (maxX - minX) / 2 + 30;
+      const ry = (maxY - minY) / 2 + 25;
+
+      // Draw overlapping soft green circles for a canopy "cloud"
+      const canopyBlobs = [
+        { x: cx, y: cy, r: Math.max(rx, ry) * 0.75 },
+        { x: cx - rx * 0.4, y: cy - ry * 0.2, r: Math.max(rx, ry) * 0.6 },
+        { x: cx + rx * 0.4, y: cy - ry * 0.15, r: Math.max(rx, ry) * 0.6 },
+        { x: cx - rx * 0.15, y: cy - ry * 0.5, r: Math.max(rx, ry) * 0.5 },
+        { x: cx + rx * 0.2, y: cy + ry * 0.35, r: Math.max(rx, ry) * 0.45 },
+        { x: cx - rx * 0.55, y: cy + ry * 0.2, r: Math.max(rx, ry) * 0.4 },
+        { x: cx + rx * 0.55, y: cy + ry * 0.15, r: Math.max(rx, ry) * 0.42 },
+      ];
+
+      const breathe = Math.sin(time * 0.0006) * 0.02 + 1;
+
+      ctx.save();
+      for (const blob of canopyBlobs) {
+        const grad = ctx.createRadialGradient(blob.x, blob.y, 0, blob.x, blob.y, blob.r * breathe);
+        grad.addColorStop(0, 'rgba(74, 130, 65, 0.18)');
+        grad.addColorStop(0.5, 'rgba(90, 150, 80, 0.10)');
+        grad.addColorStop(1, 'rgba(100, 170, 90, 0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(blob.x, blob.y, blob.r * breathe, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    };
+
     // ─── Main animation loop ───
     const animate = (timestamp: number) => {
       ctx.clearRect(0, 0, W, H);
@@ -475,6 +520,10 @@ export default function InteractiveTree() {
           isGrownRef.current = true;
         }
 
+        // Draw canopy cloud first (behind branches)
+        if (isGrownRef.current) {
+          drawCanopy(timestamp);
+        }
         drawBranch(treeRef.current, timestamp);
         drawDome(timestamp);
         checkHover();
