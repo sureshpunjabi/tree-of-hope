@@ -105,7 +105,7 @@ export default function SanctuaryHomePage() {
       ) : (
         <div className="space-y-8">
           {/* Day header + progress */}
-          <div>
+          <div className="animate-fade-in-up">
             <p className="text-[13px] font-medium tracking-[0.15em] uppercase text-[var(--color-text-muted)] mb-2">
               Your Sanctuary
             </p>
@@ -136,7 +136,7 @@ export default function SanctuaryHomePage() {
           {/* Today's content card */}
           {content && (
             <div
-              className="rounded-2xl p-7 border border-black/[0.04]"
+              className="rounded-2xl p-7 border border-black/[0.04] animate-fade-in-up-delay-1"
               style={{ backgroundColor: 'rgba(245, 245, 240, 0.6)' }}
             >
               <div className="flex items-center gap-2 mb-4">
@@ -179,7 +179,7 @@ export default function SanctuaryHomePage() {
           {/* Reflection prompt */}
           {content?.reflection_prompt && (
             <div
-              className="rounded-2xl p-7 relative overflow-hidden"
+              className="rounded-2xl p-7 relative overflow-hidden animate-fade-in-up-delay-2"
               style={{ background: 'linear-gradient(135deg, rgba(74, 103, 65, 0.06) 0%, rgba(200, 230, 201, 0.08) 100%)' }}
             >
               <p className="text-[12px] font-medium tracking-[0.1em] uppercase text-[var(--color-hope)] mb-3">
@@ -202,7 +202,7 @@ export default function SanctuaryHomePage() {
           )}
 
           {/* Quick actions grid */}
-          <div>
+          <div className="animate-fade-in-up-delay-3">
             <p className="text-[13px] font-medium tracking-[0.15em] uppercase text-[var(--color-text-muted)] mb-4">
               Your tools
             </p>

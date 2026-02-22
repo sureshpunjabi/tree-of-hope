@@ -1,22 +1,22 @@
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
-      <section className="py-20 md:py-28">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-sm font-semibold tracking-widest uppercase text-[var(--color-hope)] mb-4">
+      <section className="py-20 md:py-32">
+        <div className="max-w-[640px] mx-auto px-5 sm:px-8">
+          <p className="text-[13px] font-medium tracking-[0.15em] uppercase text-[var(--color-text-muted)] mb-5">
             Legal
           </p>
           <h1
-            className="text-5xl md:text-[3.5rem] font-bold text-[var(--color-text)] leading-[1.1] mb-4"
+            className="text-[clamp(2.5rem,5vw,4rem)] font-semibold text-[var(--color-text)] leading-[1.08] tracking-[-0.03em] mb-3"
             style={{ fontFamily: 'var(--font-serif)' }}
           >
             Terms of Service
           </h1>
-          <p className="text-sm text-[var(--color-text-muted)] mb-12">
+          <p className="text-[14px] text-[var(--color-text-muted)] mb-16">
             Last updated: February 2026
           </p>
 
-          <div className="space-y-12">
+          <div className="space-y-10">
             {[
               {
                 title: 'Acceptance of Terms',
@@ -57,12 +57,12 @@ export default function TermsPage() {
             ].map((section) => (
               <div key={section.title}>
                 <h2
-                  className="text-2xl font-bold text-[var(--color-text)] mb-4"
+                  className="text-[20px] font-semibold text-[var(--color-text)] mb-3 tracking-[-0.01em]"
                   style={{ fontFamily: 'var(--font-serif)' }}
                 >
                   {section.title}
                 </h2>
-                <p className="text-[var(--color-text-muted)] leading-relaxed">
+                <p className="text-[15px] text-[var(--color-text-muted)] leading-[1.7]">
                   {section.body}
                 </p>
               </div>

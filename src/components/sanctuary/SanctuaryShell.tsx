@@ -100,7 +100,7 @@ export default function SanctuaryShell({
       )}
 
       {/* Main Content */}
-      <div className="max-w-3xl mx-auto px-5 sm:px-8 py-8">
+      <div className="max-w-3xl mx-auto px-5 sm:px-8 py-8 animate-fade-in-up">
         {children}
       </div>
 

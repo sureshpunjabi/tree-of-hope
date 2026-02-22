@@ -20,6 +20,7 @@ export default function CommitmentPage() {
   const [monthlyTier, setMonthlyTier] = useState<MonthlyTier>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [demoMode, setDemoMode] = useState(false)
 
   useEffect(() => {
     trackEvent('commitment_viewed', { slug })
@@ -137,7 +138,7 @@ export default function CommitmentPage() {
 
       // Handle demo mode gracefully
       if (data.demo) {
-        setError(data.error)
+        setDemoMode(true)
         setLoading(false)
         return
       }
@@ -348,11 +349,39 @@ export default function CommitmentPage() {
           </div>
         </section>
 
+        {/* ─── DEMO MODE OVERLAY ─── */}
+        {demoMode && (
+          <section className="py-20 md:py-28 bg-[var(--color-bg)]">
+            <div className="max-w-lg mx-auto px-4 sm:px-6 lg:px-8 text-center">
+              <div className="w-16 h-16 rounded-full bg-[var(--color-hope)]/10 flex items-center justify-center mx-auto mb-8">
+                <span className="text-[28px]">🌱</span>
+              </div>
+              <h2
+                className="text-[clamp(1.75rem,3.5vw,2.5rem)] font-semibold text-[var(--color-text)] tracking-[-0.02em] mb-4"
+                style={{ fontFamily: 'var(--font-serif)' }}
+              >
+                Payments launching soon.
+              </h2>
+              <p className="text-[15px] text-[var(--color-text-muted)] leading-[1.7] mb-8 max-w-md mx-auto">
+                We&apos;re putting the final touches on secure checkout.
+                Your selections have been saved — we&apos;ll let you know the moment this goes live.
+              </p>
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[var(--color-hope)]/[0.06] text-[var(--color-hope)] text-[13px] font-medium">
+                <span className="w-2 h-2 rounded-full bg-[var(--color-hope)] animate-pulse" />
+                Demo mode — no charges will be made
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* ─── SUMMARY BAR (Sticky on mobile) ─── */}
-        <section className="border-t border-[var(--color-border)] bg-white sticky bottom-0 z-40 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+        <section className={cn(
+          "border-t border-[var(--color-border)] bg-white sticky bottom-0 z-40 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]",
+          demoMode && "hidden"
+        )}>
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
             {error && (
-              <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+              <div className="mb-4 p-4 bg-[var(--color-hope)]/[0.06] border border-[var(--color-hope)]/20 text-[var(--color-text)] rounded-xl text-sm">
                 {error}
               </div>
             )}

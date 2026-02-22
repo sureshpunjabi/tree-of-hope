@@ -3,27 +3,27 @@ import Image from 'next/image'
 
 export default function NotFound() {
   return (
-    <div className="min-h-[80vh] flex items-center justify-center bg-[var(--color-bg)]">
-      <div className="max-w-lg mx-auto px-4 text-center">
+    <div className="min-h-[80vh] flex items-center justify-center px-5">
+      <div className="max-w-md mx-auto text-center">
         <Image
           src="/tree-hero.png"
           alt="Tree of Hope"
-          width={120}
-          height={124}
-          className="mx-auto mb-12 opacity-40"
+          width={100}
+          height={104}
+          className="mx-auto mb-10 opacity-30"
         />
         <h1
-          className="text-5xl md:text-6xl font-bold text-[var(--color-text)] mb-6 leading-tight"
+          className="text-[clamp(2rem,4vw,3rem)] font-semibold text-[var(--color-text)] mb-4 leading-[1.15] tracking-[-0.02em]"
           style={{ fontFamily: 'var(--font-serif)' }}
         >
-          This path doesn't lead anywhere yet.
+          This path doesn&apos;t lead anywhere yet.
         </h1>
-        <p className="text-lg text-[var(--color-text-muted)] mb-10 leading-relaxed">
-          But every journey starts somewhere. Let's take you back to familiar ground.
+        <p className="text-[15px] text-[var(--color-text-muted)] mb-10 leading-[1.7]">
+          But every journey starts somewhere. Let&apos;s take you back to familiar ground.
         </p>
         <Link
           href="/"
-          className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-semibold py-4 px-10 rounded-full text-base transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
+          className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-3 px-8 rounded-full text-[15px] transition-all duration-300 hover:shadow-lg hover:shadow-[var(--color-hope)]/20"
         >
           Return home
         </Link>
