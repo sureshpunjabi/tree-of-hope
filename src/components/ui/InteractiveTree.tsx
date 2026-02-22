@@ -369,11 +369,12 @@ export default function InteractiveTree() {
       const ceX = b.startX + (b.endX - b.startX) * p;
       const ceY = b.startY + (b.endY - b.startY) * p;
 
-      // Mouse wind — stronger with mouse velocity
+      // Mouse wind — gentle breeze from mouse velocity
       const mv = mouseRef.current;
-      const windForce = mv.x > 0 ? (mv.vx || 0) * 0.003 * b.depth : 0;
+      const rawWind = mv.x > 0 ? (mv.vx || 0) * 0.0004 * b.depth : 0;
+      const windForce = Math.max(-3, Math.min(3, rawWind)); // clamp
       const ambientSway = Math.sin(t * 0.0008 + b.depth * 0.7) * b.depth * 0.2;
-      const totalSway = ambientSway + windForce * 8;
+      const totalSway = ambientSway + windForce * 2;
 
       const cpX = (b.startX + ceX) / 2 + totalSway;
       const cpY = (b.startY + ceY) / 2;
@@ -435,7 +436,7 @@ export default function InteractiveTree() {
         leaf.glowAmt = Math.max(leaf.glowAmt - 0.03, 0);
       }
 
-      leaf.x = leaf.baseX + sway + wind * 18 + magX;
+      leaf.x = leaf.baseX + sway + wind * 3 + magX;
       leaf.y = leaf.baseY + Math.sin(t * 0.0012 + leaf.swayPhase) * 0.8 + magY;
 
       // Depth-based rendering — back leaves smaller/dimmer, front bigger/brighter
@@ -667,7 +668,7 @@ export default function InteractiveTree() {
       }
 
       // Decay mouse velocity
-      mouseRef.current.vx *= 0.92;
+      mouseRef.current.vx *= 0.85;
       mouseRef.current.vy *= 0.92;
 
       animRef.current = requestAnimationFrame(animate);
