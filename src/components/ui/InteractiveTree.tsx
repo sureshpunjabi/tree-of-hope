@@ -31,8 +31,8 @@ interface TreeLeaf {
 }
 
 const LEAF_COLORS = [
-  '#4A6741', '#66BB6A', '#81C784', '#A5D6A7',
-  '#C8E6C9', '#388E3C', '#2E7D32', '#43A047',
+  '#4A6741', '#5B8A4E', '#66BB6A', '#81C784',
+  '#6B9362', '#388E3C', '#2E7D32', '#43A047',
 ];
 
 const SUPPORTER_NAMES = [
@@ -44,7 +44,7 @@ const SUPPORTER_NAMES = [
 export default function InteractiveTree() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const treeRef = useRef<Branch | null>(null);
-  const mouseRef = useRef({ x: 250, y: 250 });
+  const mouseRef = useRef({ x: -999, y: -999 });
   const animFrameRef = useRef(0);
   const allLeavesRef = useRef<TreeLeaf[]>([]);
   const hoveredLeafRef = useRef<TreeLeaf | null>(null);
@@ -55,8 +55,9 @@ export default function InteractiveTree() {
   const createBranch = useCallback((
     x: number, y: number, angle: number, length: number, width: number, depth: number
   ): Branch => {
-    const endX = x + Math.cos(angle) * length;
-    const endY = y + Math.sin(angle) * length;
+    const sway = (Math.random() - 0.5) * 0.15;
+    const endX = x + Math.cos(angle + sway) * length;
+    const endY = y + Math.sin(angle + sway) * length;
 
     const branch: Branch = {
       startX: x, startY: y, endX, endY,
@@ -66,31 +67,31 @@ export default function InteractiveTree() {
       leaves: [],
     };
 
-    if (depth < 8 && length > 8) {
-      const numBranches = depth < 3 ? 2 : (Math.random() > 0.3 ? 2 : 3);
+    if (depth < 7 && length > 12) {
+      const numBranches = depth < 2 ? 2 : (Math.random() > 0.4 ? 2 : 3);
       for (let i = 0; i < numBranches; i++) {
-        const spread = 0.4 + Math.random() * 0.3;
-        const newAngle = angle + (i === 0 ? -spread : i === 1 ? spread : (Math.random() - 0.5) * 0.3);
-        const newLength = length * (0.65 + Math.random() * 0.15);
-        const newWidth = width * 0.7;
+        const spread = 0.35 + Math.random() * 0.35;
+        const newAngle = angle + (i === 0 ? -spread : i === 1 ? spread : (Math.random() - 0.5) * 0.4);
+        const newLength = length * (0.62 + Math.random() * 0.18);
+        const newWidth = width * 0.68;
         branch.children.push(createBranch(endX, endY, newAngle, newLength, newWidth, depth + 1));
       }
     }
 
-    if (depth >= 5) {
+    if (depth >= 4) {
       const numLeaves = Math.floor(Math.random() * 3) + 1;
       for (let i = 0; i < numLeaves; i++) {
-        const lx = endX + (Math.random() - 0.5) * 14;
-        const ly = endY + (Math.random() - 0.5) * 14;
+        const lx = endX + (Math.random() - 0.5) * 18;
+        const ly = endY + (Math.random() - 0.5) * 18;
         const leaf: TreeLeaf = {
           x: lx,
           y: ly,
           baseX: lx,
           baseY: ly,
-          size: 4 + Math.random() * 6,
+          size: 6 + Math.random() * 7,
           color: LEAF_COLORS[Math.floor(Math.random() * LEAF_COLORS.length)],
           rotation: Math.random() * Math.PI * 2,
-          opacity: 0.6 + Math.random() * 0.4,
+          opacity: 0.75 + Math.random() * 0.25,
           swayOffset: Math.random() * Math.PI * 2,
           glowAmount: 0,
           supporterName: SUPPORTER_NAMES[nameIndexRef.current % SUPPORTER_NAMES.length],
@@ -113,16 +114,15 @@ export default function InteractiveTree() {
 
     const dpr = window.devicePixelRatio || 1;
     const W = 500;
-    const H = 520;
+    const H = 550;
     canvas.width = W * dpr;
     canvas.height = H * dpr;
-    canvas.style.width = `${W}px`;
-    canvas.style.height = `${H}px`;
     ctx.scale(dpr, dpr);
 
     allLeavesRef.current = [];
     nameIndexRef.current = 0;
-    treeRef.current = createBranch(W / 2, H - 70, -Math.PI / 2, 85, 8, 0);
+    // Trunk starts from base, grows upward. Thicker trunk, longer reach.
+    treeRef.current = createBranch(W / 2, H - 85, -Math.PI / 2, 100, 11, 0);
 
     const onMouse = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
@@ -132,6 +132,11 @@ export default function InteractiveTree() {
         x: (e.clientX - rect.left) * scaleX,
         y: (e.clientY - rect.top) * scaleY,
       };
+    };
+
+    const onMouseLeave = () => {
+      mouseRef.current = { x: -999, y: -999 };
+      setTooltip(null);
     };
 
     const onTouch = (e: TouchEvent) => {
@@ -148,87 +153,170 @@ export default function InteractiveTree() {
     };
 
     canvas.addEventListener('mousemove', onMouse);
+    canvas.addEventListener('mouseleave', onMouseLeave);
     canvas.addEventListener('touchmove', onTouch, { passive: true });
     canvas.addEventListener('touchstart', onTouch, { passive: true });
 
-    // Dome dimensions
+    // ─── Dome geometry ───
     const domeX = W / 2;
-    const domeBaseY = H - 55;
-    const domeRadiusX = 185;
-    const domeRadiusY = 240;
+    const domeBaseY = H - 65;
+    const domeRadiusX = 190;
+    const domeRadiusY = 255;
 
+    // ─── Draw the glass dome terrarium ───
     const drawDome = (time: number) => {
-      // Glass dome base platform
       ctx.save();
 
-      // Wooden base
-      const baseGrad = ctx.createLinearGradient(domeX - domeRadiusX - 20, domeBaseY, domeX + domeRadiusX + 20, domeBaseY);
-      baseGrad.addColorStop(0, '#8B7355');
-      baseGrad.addColorStop(0.3, '#A0896A');
+      // ── Wooden base platform ──
+      const baseGrad = ctx.createLinearGradient(domeX - domeRadiusX - 25, domeBaseY, domeX + domeRadiusX + 25, domeBaseY);
+      baseGrad.addColorStop(0, '#7A6548');
+      baseGrad.addColorStop(0.25, '#9A8268');
       baseGrad.addColorStop(0.5, '#B09878');
-      baseGrad.addColorStop(0.7, '#A0896A');
-      baseGrad.addColorStop(1, '#8B7355');
+      baseGrad.addColorStop(0.75, '#9A8268');
+      baseGrad.addColorStop(1, '#7A6548');
 
-      // Base platform - rounded rect
-      const baseH = 28;
-      const baseW = domeRadiusX * 2 + 40;
+      const baseH = 30;
+      const baseW = domeRadiusX * 2 + 50;
       const baseX = domeX - baseW / 2;
+
+      // Base shadow
       ctx.beginPath();
-      ctx.roundRect(baseX, domeBaseY - 2, baseW, baseH, 8);
+      ctx.ellipse(domeX, domeBaseY + baseH + 6, baseW / 2 + 10, 8, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
+      ctx.fill();
+
+      // Main base
+      ctx.beginPath();
+      ctx.roundRect(baseX, domeBaseY, baseW, baseH, 10);
       ctx.fillStyle = baseGrad;
       ctx.fill();
 
-      // Base subtle shadow
+      // Base rim (top edge highlight)
       ctx.beginPath();
-      ctx.roundRect(baseX, domeBaseY + baseH - 6, baseW, 6, [0, 0, 8, 8]);
-      ctx.fillStyle = 'rgba(93, 64, 55, 0.15)';
+      ctx.roundRect(baseX + 3, domeBaseY, baseW - 6, 4, [4, 4, 0, 0]);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
       ctx.fill();
 
-      // Glass dome - elliptical arc
+      // Base dark underside
+      ctx.beginPath();
+      ctx.roundRect(baseX, domeBaseY + baseH - 8, baseW, 8, [0, 0, 10, 10]);
+      ctx.fillStyle = 'rgba(60, 40, 20, 0.2)';
+      ctx.fill();
+
+      // ── Soil / ground inside dome ──
+      ctx.beginPath();
+      ctx.ellipse(domeX, domeBaseY - 2, domeRadiusX - 15, 18, 0, 0, Math.PI * 2);
+      const soilGrad = ctx.createRadialGradient(domeX, domeBaseY - 2, 0, domeX, domeBaseY - 2, domeRadiusX - 15);
+      soilGrad.addColorStop(0, 'rgba(101, 80, 56, 0.35)');
+      soilGrad.addColorStop(0.6, 'rgba(101, 80, 56, 0.2)');
+      soilGrad.addColorStop(1, 'rgba(101, 80, 56, 0.05)');
+      ctx.fillStyle = soilGrad;
+      ctx.fill();
+
+      // Tiny moss/grass patches
+      const grassY = domeBaseY - 5;
+      ctx.fillStyle = 'rgba(74, 103, 65, 0.2)';
+      for (let gx = domeX - 100; gx < domeX + 100; gx += 15 + Math.random() * 20) {
+        const gw = 4 + Math.random() * 6;
+        const gh = 2 + Math.random() * 3;
+        ctx.beginPath();
+        ctx.ellipse(gx, grassY + Math.random() * 6, gw, gh, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Decorative pebbles
+      const pebbleColor = 'rgba(140, 120, 100, 0.25)';
+      ctx.fillStyle = pebbleColor;
+      [[domeX - 60, domeBaseY - 8, 4], [domeX + 45, domeBaseY - 6, 3.5],
+       [domeX - 25, domeBaseY - 4, 2.5], [domeX + 70, domeBaseY - 7, 2.8],
+       [domeX - 80, domeBaseY - 5, 2], [domeX + 15, domeBaseY - 3, 3]].forEach(([px, py, pr]) => {
+        ctx.beginPath();
+        ctx.ellipse(px, py, pr, pr * 0.7, 0.3, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // ── Glass dome ──
       ctx.beginPath();
       ctx.ellipse(domeX, domeBaseY, domeRadiusX, domeRadiusY, 0, Math.PI, 0);
+      ctx.closePath();
 
-      // Glass gradient - subtle, transparent
-      const domeGrad = ctx.createRadialGradient(
-        domeX - 40, domeBaseY - domeRadiusY * 0.6, 20,
-        domeX, domeBaseY - domeRadiusY * 0.4, domeRadiusX * 1.2
-      );
-      domeGrad.addColorStop(0, 'rgba(255, 255, 255, 0.12)');
-      domeGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.04)');
-      domeGrad.addColorStop(1, 'rgba(255, 255, 255, 0.08)');
+      // Glass fill — very subtle tint
+      const domeGrad = ctx.createLinearGradient(domeX, domeBaseY - domeRadiusY, domeX, domeBaseY);
+      domeGrad.addColorStop(0, 'rgba(220, 235, 220, 0.08)');
+      domeGrad.addColorStop(0.4, 'rgba(255, 255, 255, 0.03)');
+      domeGrad.addColorStop(1, 'rgba(200, 210, 200, 0.06)');
       ctx.fillStyle = domeGrad;
       ctx.fill();
 
-      // Glass edge
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
-      ctx.lineWidth = 1.5;
+      // Glass edge (visible, elegant)
+      ctx.beginPath();
+      ctx.ellipse(domeX, domeBaseY, domeRadiusX, domeRadiusY, 0, Math.PI, 0);
+      ctx.closePath();
+      ctx.strokeStyle = 'rgba(180, 190, 180, 0.4)';
+      ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Light reflection on glass (left side highlight)
+      // Inner edge highlight
       ctx.beginPath();
-      ctx.ellipse(domeX - domeRadiusX * 0.45, domeBaseY - domeRadiusY * 0.55, 15, domeRadiusY * 0.35, -0.3, 0, Math.PI * 2);
+      ctx.ellipse(domeX, domeBaseY, domeRadiusX - 2, domeRadiusY - 2, 0, Math.PI, 0);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // ── Left-side light reflection ──
+      ctx.beginPath();
+      ctx.ellipse(domeX - domeRadiusX * 0.5, domeBaseY - domeRadiusY * 0.5, 12, domeRadiusY * 0.3, -0.25, 0, Math.PI * 2);
       const reflGrad = ctx.createRadialGradient(
-        domeX - domeRadiusX * 0.45, domeBaseY - domeRadiusY * 0.55, 0,
-        domeX - domeRadiusX * 0.45, domeBaseY - domeRadiusY * 0.55, domeRadiusY * 0.35
+        domeX - domeRadiusX * 0.5, domeBaseY - domeRadiusY * 0.5, 0,
+        domeX - domeRadiusX * 0.5, domeBaseY - domeRadiusY * 0.5, domeRadiusY * 0.3
       );
-      reflGrad.addColorStop(0, 'rgba(255, 255, 255, 0.15)');
+      reflGrad.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
+      reflGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.07)');
       reflGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
       ctx.fillStyle = reflGrad;
       ctx.fill();
 
-      // Tiny sparkle that moves with time
-      const sparkleAngle = time * 0.0003;
-      const sparkleX = domeX + Math.cos(sparkleAngle) * domeRadiusX * 0.6;
-      const sparkleY = domeBaseY - domeRadiusY * 0.3 + Math.sin(sparkleAngle * 1.5) * 30;
-      const sparkleAlpha = (Math.sin(time * 0.003) + 1) * 0.1;
+      // ── Small top highlight ──
       ctx.beginPath();
-      ctx.arc(sparkleX, sparkleY, 2, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255, 255, 255, ${sparkleAlpha})`;
+      ctx.ellipse(domeX - 20, domeBaseY - domeRadiusY + 30, 25, 8, -0.1, 0, Math.PI * 2);
+      const topHighlight = ctx.createRadialGradient(
+        domeX - 20, domeBaseY - domeRadiusY + 30, 0,
+        domeX - 20, domeBaseY - domeRadiusY + 30, 25
+      );
+      topHighlight.addColorStop(0, 'rgba(255, 255, 255, 0.18)');
+      topHighlight.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      ctx.fillStyle = topHighlight;
       ctx.fill();
+
+      // ── Moving sparkle ──
+      const sparkleAngle = time * 0.0004;
+      const sparkleX = domeX + Math.cos(sparkleAngle) * domeRadiusX * 0.55;
+      const sparkleY = domeBaseY - domeRadiusY * 0.4 + Math.sin(sparkleAngle * 1.3) * 40;
+      const sparkleAlpha = (Math.sin(time * 0.003) + 1) * 0.15 + 0.05;
+
+      // Star-shaped sparkle
+      ctx.save();
+      ctx.translate(sparkleX, sparkleY);
+      ctx.rotate(time * 0.001);
+      ctx.beginPath();
+      for (let i = 0; i < 4; i++) {
+        const a = (i / 4) * Math.PI * 2;
+        ctx.moveTo(0, 0);
+        ctx.lineTo(Math.cos(a) * 4, Math.sin(a) * 4);
+      }
+      ctx.strokeStyle = `rgba(255, 255, 255, ${sparkleAlpha})`;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(0, 0, 1.5, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255, 255, 255, ${sparkleAlpha * 1.5})`;
+      ctx.fill();
+      ctx.restore();
 
       ctx.restore();
     };
 
+    // ─── Draw branch with natural curvature ───
     const drawBranch = (branch: Branch, time: number) => {
       if (branch.progress <= 0) return;
 
@@ -236,25 +324,31 @@ export default function InteractiveTree() {
       const currentEndX = branch.startX + (branch.endX - branch.startX) * p;
       const currentEndY = branch.startY + (branch.endY - branch.startY) * p;
 
-      const windX = (mouseRef.current.x - 250) * 0.0004 * branch.depth;
-      const sway = Math.sin(time * 0.001 + branch.depth * 0.5) * branch.depth * 0.3;
+      const windX = mouseRef.current.x > 0 ? (mouseRef.current.x - W / 2) * 0.0003 * branch.depth : 0;
+      const sway = Math.sin(time * 0.0008 + branch.depth * 0.7) * branch.depth * 0.25;
 
+      // Draw branch with gradient
       ctx.beginPath();
       ctx.moveTo(branch.startX, branch.startY);
       const cpX = (branch.startX + currentEndX) / 2 + sway + windX * 10;
       const cpY = (branch.startY + currentEndY) / 2;
-      ctx.quadraticCurveTo(cpX, cpY, currentEndX + sway + windX * 20, currentEndY);
+      ctx.quadraticCurveTo(cpX, cpY, currentEndX + sway + windX * 15, currentEndY);
 
-      const darkness = Math.max(0.2, 1 - branch.depth * 0.1);
-      ctx.strokeStyle = `rgba(93, 64, 55, ${darkness})`;
-      ctx.lineWidth = branch.width * p;
+      // Bark color darkens with depth — rich brown tones
+      const r = 75 - branch.depth * 3;
+      const g = 55 - branch.depth * 2;
+      const b = 40 - branch.depth * 1.5;
+      const alpha = Math.max(0.6, 1 - branch.depth * 0.06);
+      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      ctx.lineWidth = Math.max(1, branch.width * p);
       ctx.lineCap = 'round';
       ctx.stroke();
 
-      if (branch.progress > 0.8) {
-        const leafProgress = (branch.progress - 0.8) / 0.2;
+      // Draw leaves when branch is mostly grown
+      if (branch.progress > 0.7) {
+        const leafProgress = Math.min((branch.progress - 0.7) / 0.3, 1);
         branch.leaves.forEach(leaf => {
-          const leafSway = Math.sin(time * 0.002 + leaf.swayOffset) * 2.5;
+          const leafSway = Math.sin(time * 0.0015 + leaf.swayOffset) * 2;
           const mx = mouseRef.current.x;
           const my = mouseRef.current.y;
           const dx = mx - leaf.baseX;
@@ -262,72 +356,88 @@ export default function InteractiveTree() {
           const dist = Math.sqrt(dx * dx + dy * dy);
 
           // Magnetic pull toward cursor when close
-          const magnetRange = 60;
+          const magnetRange = 70;
           let magnetX = 0;
           let magnetY = 0;
-          if (dist < magnetRange) {
-            const force = (1 - dist / magnetRange) * 4;
+          if (dist < magnetRange && dist > 0) {
+            const force = (1 - dist / magnetRange) * 6;
             magnetX = (dx / dist) * force;
             magnetY = (dy / dist) * force;
-            leaf.glowAmount = Math.min(leaf.glowAmount + 0.08, 1);
+            leaf.glowAmount = Math.min(leaf.glowAmount + 0.1, 1);
           } else {
-            leaf.glowAmount = Math.max(leaf.glowAmount - 0.03, 0);
+            leaf.glowAmount = Math.max(leaf.glowAmount - 0.04, 0);
           }
 
-          leaf.x = leaf.baseX + leafSway + windX * 25 + magnetX;
+          leaf.x = leaf.baseX + leafSway + windX * 20 + magnetX;
           leaf.y = leaf.baseY + magnetY;
 
           ctx.save();
           ctx.translate(leaf.x, leaf.y);
-          ctx.rotate(leaf.rotation + Math.sin(time * 0.001 + leaf.swayOffset) * 0.1);
+          ctx.rotate(leaf.rotation + Math.sin(time * 0.001 + leaf.swayOffset) * 0.08);
           ctx.globalAlpha = leaf.opacity * leafProgress;
 
           // Glow effect for nearby leaves
           if (leaf.glowAmount > 0) {
-            ctx.shadowColor = leaf.color;
-            ctx.shadowBlur = 12 * leaf.glowAmount;
+            ctx.shadowColor = '#66BB6A';
+            ctx.shadowBlur = 16 * leaf.glowAmount;
           }
 
-          // Leaf shape
-          const s = leaf.size * (1 + leaf.glowAmount * 0.3);
+          // Leaf shape — teardrop with more body
+          const s = leaf.size * (1 + leaf.glowAmount * 0.35);
           ctx.beginPath();
           ctx.moveTo(0, -s);
-          ctx.quadraticCurveTo(s * 0.7, -s * 0.2, 0, s * 0.6);
-          ctx.quadraticCurveTo(-s * 0.7, -s * 0.2, 0, -s);
+          ctx.bezierCurveTo(s * 0.8, -s * 0.3, s * 0.5, s * 0.5, 0, s * 0.7);
+          ctx.bezierCurveTo(-s * 0.5, s * 0.5, -s * 0.8, -s * 0.3, 0, -s);
           ctx.fillStyle = leaf.color;
           ctx.fill();
 
-          // Leaf vein
+          // Leaf vein (central)
           ctx.beginPath();
-          ctx.moveTo(0, -s * 0.7);
-          ctx.lineTo(0, s * 0.4);
-          ctx.strokeStyle = `rgba(255, 255, 255, ${0.15 + leaf.glowAmount * 0.1})`;
-          ctx.lineWidth = 0.5;
+          ctx.moveTo(0, -s * 0.6);
+          ctx.lineTo(0, s * 0.5);
+          ctx.strokeStyle = `rgba(255, 255, 255, ${0.2 + leaf.glowAmount * 0.15})`;
+          ctx.lineWidth = 0.6;
+          ctx.shadowBlur = 0;
+          ctx.shadowColor = 'transparent';
+          ctx.stroke();
+
+          // Side veins
+          ctx.beginPath();
+          ctx.moveTo(0, -s * 0.2);
+          ctx.lineTo(s * 0.3, -s * 0.05);
+          ctx.moveTo(0, 0);
+          ctx.lineTo(-s * 0.25, s * 0.15);
+          ctx.moveTo(0, s * 0.2);
+          ctx.lineTo(s * 0.2, s * 0.3);
+          ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 + leaf.glowAmount * 0.1})`;
+          ctx.lineWidth = 0.4;
           ctx.stroke();
 
           ctx.restore();
         });
       }
 
-      if (p >= 0.7) {
+      // Recursively draw children
+      if (p >= 0.6) {
         branch.children.forEach(child => drawBranch(child, time));
       }
     };
 
+    // ─── Growth animation ───
     const growTree = (branch: Branch, parentProgress: number) => {
-      const growSpeed = 0.008;
-      if (parentProgress > 0.5) {
+      const growSpeed = 0.01;
+      if (parentProgress > 0.4) {
         branch.progress = Math.min(branch.progress + growSpeed, 1);
       }
       branch.children.forEach(child => growTree(child, branch.progress));
     };
 
-    // Check for hovered leaf
+    // ─── Hover detection ───
     const checkHover = () => {
       const mx = mouseRef.current.x;
       const my = mouseRef.current.y;
       let closest: TreeLeaf | null = null;
-      let closestDist = 25;
+      let closestDist = 30;
 
       for (const leaf of allLeavesRef.current) {
         const dx = mx - leaf.x;
@@ -345,7 +455,7 @@ export default function InteractiveTree() {
           const rect = canvas.getBoundingClientRect();
           setTooltip({
             x: (closest.x / W) * rect.width,
-            y: (closest.y / H) * rect.height - 20,
+            y: (closest.y / H) * rect.height - 16,
             name: closest.supporterName,
           });
         } else {
@@ -354,30 +464,17 @@ export default function InteractiveTree() {
       }
     };
 
+    // ─── Main animation loop ───
     const animate = (timestamp: number) => {
       ctx.clearRect(0, 0, W, H);
 
       if (treeRef.current) {
-        treeRef.current.progress = Math.min(treeRef.current.progress + 0.012, 1);
+        treeRef.current.progress = Math.min(treeRef.current.progress + 0.015, 1);
         growTree(treeRef.current, 1);
 
         if (treeRef.current.progress >= 1) {
           isGrownRef.current = true;
         }
-
-        // Draw ground inside dome
-        const groundGrad = ctx.createRadialGradient(W / 2, H - 65, 0, W / 2, H - 65, 120);
-        groundGrad.addColorStop(0, 'rgba(139, 119, 101, 0.12)');
-        groundGrad.addColorStop(1, 'rgba(139, 119, 101, 0)');
-        ctx.fillStyle = groundGrad;
-        ctx.fillRect(W / 2 - 150, H - 80, 300, 30);
-
-        // Small decorative stones/pebbles
-        ctx.fillStyle = 'rgba(160, 140, 120, 0.15)';
-        ctx.beginPath(); ctx.arc(W / 2 - 50, H - 62, 3, 0, Math.PI * 2); ctx.fill();
-        ctx.beginPath(); ctx.arc(W / 2 + 35, H - 60, 2.5, 0, Math.PI * 2); ctx.fill();
-        ctx.beginPath(); ctx.arc(W / 2 - 20, H - 58, 2, 0, Math.PI * 2); ctx.fill();
-        ctx.beginPath(); ctx.arc(W / 2 + 55, H - 63, 1.8, 0, Math.PI * 2); ctx.fill();
 
         drawBranch(treeRef.current, timestamp);
         drawDome(timestamp);
@@ -391,6 +488,7 @@ export default function InteractiveTree() {
 
     return () => {
       canvas.removeEventListener('mousemove', onMouse);
+      canvas.removeEventListener('mouseleave', onMouseLeave);
       canvas.removeEventListener('touchmove', onTouch);
       canvas.removeEventListener('touchstart', onTouch);
       cancelAnimationFrame(animFrameRef.current);
@@ -398,30 +496,33 @@ export default function InteractiveTree() {
   }, [createBranch]);
 
   return (
-    <div className="relative flex items-center justify-center">
-      {/* Ambient glow */}
+    <div className="relative flex flex-col items-center justify-center">
+      {/* Ambient glow behind dome */}
       <div
-        className="absolute inset-0 rounded-full blur-3xl opacity-15 pointer-events-none"
+        className="absolute rounded-full blur-3xl opacity-20 pointer-events-none"
         style={{
-          background: 'radial-gradient(circle, rgba(74, 103, 65, 0.25) 0%, transparent 70%)',
-          transform: 'scale(1.4)',
+          background: 'radial-gradient(circle, rgba(74, 103, 65, 0.3) 0%, transparent 70%)',
+          width: '120%',
+          height: '120%',
+          top: '-10%',
+          left: '-10%',
         }}
       />
       <div className="relative">
         <canvas
           ref={canvasRef}
           className="relative z-10 cursor-pointer"
-          style={{ width: '100%', maxWidth: 500, height: 'auto', aspectRatio: '500 / 520' }}
+          style={{ width: '100%', maxWidth: 500, height: 'auto', aspectRatio: '500 / 550' }}
         />
         {/* Tooltip */}
         {tooltip && (
           <div
-            className="absolute z-20 pointer-events-none transform -translate-x-1/2 -translate-y-full"
+            className="absolute z-20 pointer-events-none transform -translate-x-1/2 -translate-y-full transition-all duration-150"
             style={{ left: tooltip.x, top: tooltip.y }}
           >
             <div
-              className="px-3 py-1.5 rounded-full text-[11px] font-medium text-white whitespace-nowrap animate-fade-in-up"
-              style={{ backgroundColor: 'rgba(74, 103, 65, 0.9)', backdropFilter: 'blur(8px)' }}
+              className="px-3.5 py-1.5 rounded-full text-[11px] font-medium text-white whitespace-nowrap shadow-lg"
+              style={{ backgroundColor: 'rgba(74, 103, 65, 0.92)', backdropFilter: 'blur(8px)' }}
             >
               {tooltip.name}&apos;s leaf
             </div>
@@ -429,7 +530,7 @@ export default function InteractiveTree() {
         )}
       </div>
       {/* Label */}
-      <p className="absolute bottom-0 text-[11px] text-[var(--color-text-muted)] tracking-[0.1em] uppercase opacity-50">
+      <p className="mt-3 text-[11px] text-[var(--color-text-muted)] tracking-[0.12em] uppercase opacity-40">
         Hover the leaves
       </p>
     </div>
