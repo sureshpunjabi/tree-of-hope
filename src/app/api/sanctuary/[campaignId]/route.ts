@@ -36,11 +36,11 @@ export async function GET(
     const supabase = getServiceSupabase();
     const { campaignId } = await params;
 
-    // Get campaign
+    // Get campaign by slug or id
     const { data: campaign, error: campaignError } = await supabase
       .from('campaigns')
       .select('*')
-      .eq('id', campaignId)
+      .or(`slug.eq.${campaignId},id.eq.${campaignId}`)
       .single();
 
     if (campaignError || !campaign) {
@@ -59,13 +59,16 @@ export async function GET(
       dayNumber = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
     }
 
+    // Use the actual campaign ID (UUID) for subsequent queries
+    const realCampaignId = campaign.id;
+
     // Get today's sanctuary day content
     let todayContent = null;
     if (dayNumber > 0) {
       const { data: sanctuaryDay } = await supabase
         .from('sanctuary_days')
         .select('*')
-        .eq('campaign_id', campaignId)
+        .eq('campaign_id', realCampaignId)
         .eq('day_number', dayNumber)
         .single();
 
@@ -76,7 +79,7 @@ export async function GET(
     const { data: recentEntries = [] } = await supabase
       .from('journal_entries')
       .select('id, campaign_id, title, created_at')
-      .eq('campaign_id', campaignId)
+      .eq('campaign_id', realCampaignId)
       .order('created_at', { ascending: false })
       .limit(5);
 

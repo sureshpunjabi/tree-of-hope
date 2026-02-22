@@ -37,13 +37,28 @@ export async function GET(
   try {
     const supabase = getServiceSupabase();
     const { campaignId } = await params;
+
+    // Look up campaign by slug
+    const { data: campaign } = await supabase
+      .from('campaigns')
+      .select('id')
+      .or(`slug.eq.${campaignId},id.eq.${campaignId}`)
+      .single();
+    if (!campaign) {
+      return NextResponse.json(
+        { success: false, error: 'Not found' },
+        { status: 404 }
+      );
+    }
+    const realCampaignId = campaign.id;
+
     const searchParams = request.nextUrl.searchParams;
     const userId = searchParams.get('user_id');
 
     let query = supabase
       .from('tasks')
       .select('*')
-      .eq('campaign_id', campaignId);
+      .eq('campaign_id', realCampaignId);
 
     if (userId) {
       query = query.eq('user_id', userId);
@@ -98,11 +113,25 @@ export async function POST(
 
     const supabase = getServiceSupabase();
 
+    // Look up campaign by slug
+    const { data: campaign } = await supabase
+      .from('campaigns')
+      .select('id')
+      .or(`slug.eq.${campaignId},id.eq.${campaignId}`)
+      .single();
+    if (!campaign) {
+      return NextResponse.json(
+        { success: false, error: 'Not found' },
+        { status: 404 }
+      );
+    }
+    const realCampaignId = campaign.id;
+
     // Create task
     const { data: task, error } = await supabase
       .from('tasks')
       .insert({
-        campaign_id: campaignId,
+        campaign_id: realCampaignId,
         user_id,
         title,
         description,
@@ -123,7 +152,7 @@ export async function POST(
 
     // Track analytics
     await trackServerEvent('tool_used', {
-      campaign_id: campaignId,
+      campaign_id: realCampaignId,
       user_id,
       tool: 'tasks',
     });

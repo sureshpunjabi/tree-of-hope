@@ -42,15 +42,29 @@ export async function POST(
 
     const supabase = getServiceSupabase();
 
+    // Look up campaign by slug
+    const { data: campaign } = await supabase
+      .from('campaigns')
+      .select('id')
+      .or(`slug.eq.${campaignId},id.eq.${campaignId}`)
+      .single();
+    if (!campaign) {
+      return NextResponse.json(
+        { success: false, error: 'Not found' },
+        { status: 404 }
+      );
+    }
+    const realCampaignId = campaign.id;
+
     // Update campaign
-    const { data: campaign, error: updateError } = await supabase
+    const { data: updatedCampaign, error: updateError } = await supabase
       .from('campaigns')
       .update({
         sanctuary_claimed: true,
         sanctuary_claimed_by: user_id,
         sanctuary_start_date: new Date().toISOString().split('T')[0],
       })
-      .eq('id', campaignId)
+      .eq('id', realCampaignId)
       .select()
       .single();
 
@@ -66,7 +80,7 @@ export async function POST(
     const { error: membershipError } = await supabase
       .from('memberships')
       .insert({
-        campaign_id: campaignId,
+        campaign_id: realCampaignId,
         user_id,
         role: 'patient',
         joined_at: new Date().toISOString(),
@@ -78,13 +92,13 @@ export async function POST(
 
     // Track analytics
     await trackServerEvent('sanctuary_claimed', {
-      campaign_id: campaignId,
+      campaign_id: realCampaignId,
       user_id,
     });
 
     return NextResponse.json({
       success: true,
-      campaign,
+      campaign: updatedCampaign,
     });
   } catch (error) {
     console.error('Error claiming sanctuary:', error);
