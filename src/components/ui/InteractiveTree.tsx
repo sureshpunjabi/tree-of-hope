@@ -67,31 +67,31 @@ export default function InteractiveTree() {
       leaves: [],
     };
 
-    if (depth < 7 && length > 12) {
+    if (depth < 7 && length > 10) {
       const numBranches = depth < 2 ? 2 : (Math.random() > 0.4 ? 2 : 3);
       for (let i = 0; i < numBranches; i++) {
-        const spread = 0.35 + Math.random() * 0.35;
+        const spread = 0.3 + Math.random() * 0.4;
         const newAngle = angle + (i === 0 ? -spread : i === 1 ? spread : (Math.random() - 0.5) * 0.4);
-        const newLength = length * (0.62 + Math.random() * 0.18);
-        const newWidth = width * 0.68;
+        const newLength = length * (0.6 + Math.random() * 0.2);
+        const newWidth = width * 0.72;
         branch.children.push(createBranch(endX, endY, newAngle, newLength, newWidth, depth + 1));
       }
     }
 
-    if (depth >= 4) {
-      const numLeaves = Math.floor(Math.random() * 3) + 1;
+    if (depth >= 3) {
+      const numLeaves = depth >= 5 ? Math.floor(Math.random() * 4) + 2 : Math.floor(Math.random() * 2) + 1;
       for (let i = 0; i < numLeaves; i++) {
-        const lx = endX + (Math.random() - 0.5) * 18;
-        const ly = endY + (Math.random() - 0.5) * 18;
+        const lx = endX + (Math.random() - 0.5) * 22;
+        const ly = endY + (Math.random() - 0.5) * 22;
         const leaf: TreeLeaf = {
           x: lx,
           y: ly,
           baseX: lx,
           baseY: ly,
-          size: 6 + Math.random() * 7,
+          size: 7 + Math.random() * 9,
           color: LEAF_COLORS[Math.floor(Math.random() * LEAF_COLORS.length)],
           rotation: Math.random() * Math.PI * 2,
-          opacity: 0.75 + Math.random() * 0.25,
+          opacity: 0.85 + Math.random() * 0.15,
           swayOffset: Math.random() * Math.PI * 2,
           glowAmount: 0,
           supporterName: SUPPORTER_NAMES[nameIndexRef.current % SUPPORTER_NAMES.length],
@@ -121,8 +121,8 @@ export default function InteractiveTree() {
 
     allLeavesRef.current = [];
     nameIndexRef.current = 0;
-    // Trunk starts from base, grows upward. Thicker trunk, longer reach.
-    treeRef.current = createBranch(W / 2, H - 85, -Math.PI / 2, 100, 11, 0);
+    // Trunk starts from base, grows upward. Bold trunk, long reach.
+    treeRef.current = createBranch(W / 2, H - 85, -Math.PI / 2, 110, 16, 0);
 
     const onMouse = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
@@ -252,15 +252,15 @@ export default function InteractiveTree() {
       ctx.beginPath();
       ctx.ellipse(domeX, domeBaseY, domeRadiusX, domeRadiusY, 0, Math.PI, 0);
       ctx.closePath();
-      ctx.strokeStyle = 'rgba(180, 190, 180, 0.4)';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = 'rgba(140, 155, 140, 0.55)';
+      ctx.lineWidth = 2.5;
       ctx.stroke();
 
       // Inner edge highlight
       ctx.beginPath();
-      ctx.ellipse(domeX, domeBaseY, domeRadiusX - 2, domeRadiusY - 2, 0, Math.PI, 0);
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-      ctx.lineWidth = 1;
+      ctx.ellipse(domeX, domeBaseY, domeRadiusX - 3, domeRadiusY - 3, 0, Math.PI, 0);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+      ctx.lineWidth = 1.5;
       ctx.stroke();
 
       // ── Left-side light reflection ──
@@ -334,13 +334,12 @@ export default function InteractiveTree() {
       const cpY = (branch.startY + currentEndY) / 2;
       ctx.quadraticCurveTo(cpX, cpY, currentEndX + sway + windX * 15, currentEndY);
 
-      // Bark color darkens with depth — rich brown tones
-      const r = 75 - branch.depth * 3;
-      const g = 55 - branch.depth * 2;
-      const b = 40 - branch.depth * 1.5;
-      const alpha = Math.max(0.6, 1 - branch.depth * 0.06);
-      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-      ctx.lineWidth = Math.max(1, branch.width * p);
+      // Bark color — rich, visible brown tones
+      const r = 85 - branch.depth * 4;
+      const g = 60 - branch.depth * 3;
+      const b = 42 - branch.depth * 2;
+      ctx.strokeStyle = `rgb(${Math.max(40, r)}, ${Math.max(30, g)}, ${Math.max(20, b)})`;
+      ctx.lineWidth = Math.max(1.5, branch.width * p);
       ctx.lineCap = 'round';
       ctx.stroke();
 
@@ -423,10 +422,10 @@ export default function InteractiveTree() {
       }
     };
 
-    // ─── Growth animation ───
+    // ─── Growth animation — faster cascade ───
     const growTree = (branch: Branch, parentProgress: number) => {
-      const growSpeed = 0.01;
-      if (parentProgress > 0.4) {
+      const growSpeed = 0.02;
+      if (parentProgress > 0.3) {
         branch.progress = Math.min(branch.progress + growSpeed, 1);
       }
       branch.children.forEach(child => growTree(child, branch.progress));
@@ -469,7 +468,7 @@ export default function InteractiveTree() {
       ctx.clearRect(0, 0, W, H);
 
       if (treeRef.current) {
-        treeRef.current.progress = Math.min(treeRef.current.progress + 0.015, 1);
+        treeRef.current.progress = Math.min(treeRef.current.progress + 0.025, 1);
         growTree(treeRef.current, 1);
 
         if (treeRef.current.progress >= 1) {
