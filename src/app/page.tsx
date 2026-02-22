@@ -63,11 +63,11 @@ export default function HomePage() {
       </section>
 
       {/* ─── THE RHYTHM ─── Three beats, maximum restraint */}
-      <section id="how" className="py-28 md:py-44">
+      <section id="how" className="py-16 md:py-44">
         <div className="max-w-5xl mx-auto px-5 sm:px-8">
           <SplitText
             as="h2"
-            className="text-[clamp(2.25rem,5.5vw,4.5rem)] font-semibold text-[var(--color-text)] leading-[1.08] tracking-[-0.03em] text-center mb-20 md:mb-28"
+            className="text-[clamp(2.25rem,5.5vw,4.5rem)] font-semibold text-[var(--color-text)] leading-[1.08] tracking-[-0.03em] text-center mb-12 md:mb-28"
           >
             Five days. One circle.
           </SplitText>
@@ -112,7 +112,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── DARK SECTION ─── Gradient mesh + emotional gravity */}
-      <section className="relative py-32 md:py-48 overflow-hidden">
+      <section className="relative py-20 md:py-48 overflow-hidden">
         <GradientMesh />
         <div className="relative z-10 max-w-3xl mx-auto px-5 sm:px-8 text-center">
           <ScrollReveal>
@@ -132,9 +132,9 @@ export default function HomePage() {
       </section>
 
       {/* ─── THREE SURFACES ─── Product architecture with glass cards */}
-      <section className="py-28 md:py-44">
+      <section className="py-16 md:py-44">
         <div className="max-w-5xl mx-auto px-5 sm:px-8">
-          <div className="text-center mb-20 md:mb-28">
+          <div className="text-center mb-12 md:mb-28">
             <SplitText
               as="h2"
               className="text-[clamp(2.25rem,5.5vw,4.5rem)] font-semibold text-[var(--color-text)] leading-[1.08] tracking-[-0.03em]"
@@ -198,11 +198,11 @@ export default function HomePage() {
       </section>
 
       {/* ─── TRUST ─── Radical transparency, no gimmicks */}
-      <section className="py-28 md:py-44" style={{ backgroundColor: 'rgba(245, 245, 240, 0.5)' }}>
+      <section className="py-16 md:py-44" style={{ backgroundColor: 'rgba(245, 245, 240, 0.5)' }}>
         <div className="max-w-[680px] mx-auto px-5 sm:px-8">
           <SplitText
             as="h2"
-            className="text-[clamp(2rem,4.5vw,3.75rem)] font-semibold text-[var(--color-text)] leading-[1.1] tracking-[-0.03em] text-center mb-16 md:mb-20"
+            className="text-[clamp(2rem,4.5vw,3.75rem)] font-semibold text-[var(--color-text)] leading-[1.1] tracking-[-0.03em] text-center mb-10 md:mb-20"
           >
             Radical transparency.
           </SplitText>
@@ -248,7 +248,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── FINAL CTA ─── One last breath */}
-      <section className="py-32 md:py-48">
+      <section className="py-20 md:py-48">
         <div className="max-w-3xl mx-auto px-5 sm:px-8 text-center">
           <ScrollReveal>
             <div className="mb-12 flex justify-center">

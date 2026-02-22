@@ -211,7 +211,7 @@ export default async function CampaignPage({ params }: PageProps) {
 
       {/* ─── STORY ─── */}
       {campaign.story && (
-        <section className="py-28 md:py-40">
+        <section className="py-16 md:py-40">
           <div className="max-w-[680px] mx-auto px-5 sm:px-8">
             <ScrollReveal>
               <p className="text-[13px] font-medium tracking-[0.15em] uppercase text-[var(--color-text-muted)] mb-5">
@@ -232,16 +232,16 @@ export default async function CampaignPage({ params }: PageProps) {
       )}
 
       {/* ─── HOW IT WORKS ─── */}
-      <section id="how-it-works" className="py-28 md:py-40 bg-[#f5f5f0]">
+      <section id="how-it-works" className="py-16 md:py-40 bg-[#f5f5f0]">
         <div className="max-w-5xl mx-auto px-5 sm:px-8">
           <SplitText
             as="h2"
-            className="text-[clamp(2rem,4.5vw,3.75rem)] font-semibold text-[var(--color-text)] leading-[1.08] tracking-[-0.03em] text-center mb-20"
+            className="text-[clamp(2rem,4.5vw,3.75rem)] font-semibold text-[var(--color-text)] leading-[1.08] tracking-[-0.03em] text-center mb-12 md:mb-20"
           >
             Three simple steps.
           </SplitText>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-16 md:gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-10">
             {[
               {
                 num: '01',
@@ -281,7 +281,7 @@ export default async function CampaignPage({ params }: PageProps) {
       </section>
 
       {/* ─── LEAVES ─── */}
-      <section id="leaves" className="py-28 md:py-40">
+      <section id="leaves" className="py-16 md:py-40">
         <div className="max-w-5xl mx-auto px-5 sm:px-8">
           {leaves.length > 0 ? (
             <>
@@ -298,7 +298,7 @@ export default async function CampaignPage({ params }: PageProps) {
               {/* Masonry-inspired staggered grid */}
               <div className="columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
                 {leaves.map((leaf, i) => (
-                  <ScrollReveal key={leaf.id} delay={i * 60}>
+                  <ScrollReveal key={leaf.id} delay={Math.min(i * 60, 300)}>
                     <div
                       className="break-inside-avoid rounded-2xl p-7 transition-all duration-500 hover:scale-[1.02] hover:shadow-xl hover:shadow-black/[0.06] backdrop-blur-sm border border-black/[0.04] group"
                       style={{ backgroundColor: 'rgba(245, 245, 240, 0.6)' }}
@@ -371,7 +371,7 @@ export default async function CampaignPage({ params }: PageProps) {
       </section>
 
       {/* ─── FINAL CTA ─── */}
-      <section className="relative py-28 md:py-40 overflow-hidden">
+      <section className="relative py-20 md:py-40 overflow-hidden">
         <GradientMesh />
         <div className="relative z-10 max-w-3xl mx-auto px-5 sm:px-8 text-center">
           <ScrollReveal>
