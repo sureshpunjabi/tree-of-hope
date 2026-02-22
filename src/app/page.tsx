@@ -4,7 +4,8 @@ import ScrollReveal from '@/components/ui/ScrollReveal'
 import { StaggerContainer, StaggerItem } from '@/components/ui/StaggerChildren'
 import SplitText from '@/components/ui/SplitText'
 import MagneticButton from '@/components/ui/MagneticButton'
-import ParallaxImage from '@/components/ui/ParallaxImage'
+import InteractiveTree from '@/components/ui/InteractiveTree'
+import GradientMesh from '@/components/ui/GradientMesh'
 
 export default function HomePage() {
   return (
@@ -31,7 +32,7 @@ export default function HomePage() {
               <MagneticButton strength={0.1} className="inline-block">
                 <Link
                   href="/c/sarah"
-                  className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-3.5 px-8 rounded-full text-[15px] transition-all duration-300 tracking-[-0.01em]"
+                  className="inline-flex items-center justify-center bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white font-medium py-3.5 px-8 rounded-full text-[15px] transition-all duration-300 tracking-[-0.01em] hover:shadow-lg hover:shadow-[var(--color-hope)]/20"
                 >
                   See a live tree
                 </Link>
@@ -47,23 +48,17 @@ export default function HomePage() {
             </div>
           </ScrollReveal>
         </div>
+
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-40 animate-pulse">
+          <div className="w-[1px] h-8 bg-gradient-to-b from-transparent to-[var(--color-text)]" />
+        </div>
       </section>
 
-      {/* ─── TREE IMAGE ─── Full-width moment of pause */}
-      <section className="py-20 md:py-32 flex justify-center px-5">
+      {/* ─── INTERACTIVE TREE ─── Living, breathing, canvas-drawn */}
+      <section className="py-16 md:py-24 flex justify-center px-5">
         <ScrollReveal>
-          <div className="relative">
-            <div className="absolute inset-0 bg-[var(--color-hope)] opacity-[0.04] rounded-full blur-[100px] scale-[2]" />
-            <ParallaxImage
-              src="/tree-hero.png"
-              alt="A bonsai tree in a glass dome"
-              width={380}
-              height={394}
-              className="relative z-10 drop-shadow-xl"
-              speed={0.12}
-              priority
-            />
-          </div>
+          <InteractiveTree />
         </ScrollReveal>
       </section>
 
@@ -116,9 +111,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── DARK SECTION ─── Dramatic contrast. Emotional gravity. */}
-      <section className="section-dark py-32 md:py-48">
-        <div className="max-w-3xl mx-auto px-5 sm:px-8 text-center">
+      {/* ─── DARK SECTION ─── Gradient mesh + emotional gravity */}
+      <section className="relative py-32 md:py-48 overflow-hidden">
+        <GradientMesh />
+        <div className="relative z-10 max-w-3xl mx-auto px-5 sm:px-8 text-center">
           <ScrollReveal>
             <blockquote>
               <p
@@ -135,7 +131,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── THREE SURFACES ─── Product architecture */}
+      {/* ─── THREE SURFACES ─── Product architecture with glass cards */}
       <section className="py-28 md:py-44">
         <div className="max-w-5xl mx-auto px-5 sm:px-8">
           <div className="text-center mb-20 md:mb-28">
@@ -154,28 +150,31 @@ export default function HomePage() {
                 desc: 'Five days of gathering. Messages become leaves. Leaves become monthly commitments.',
                 href: '/c/sarah',
                 label: 'View example',
-                bg: '#f5f0ea',
+                bg: 'rgba(245, 240, 234, 0.7)',
+                border: 'rgba(200, 180, 160, 0.2)',
               },
               {
                 title: 'Sanctuary',
                 desc: 'A private space for patient and caregiver. Journal, tools, and 30 days of guided content.',
                 href: '/sanctuary',
                 label: 'Learn more',
-                bg: '#eef3eb',
+                bg: 'rgba(238, 243, 235, 0.7)',
+                border: 'rgba(160, 200, 160, 0.2)',
               },
               {
                 title: 'Bridge',
                 desc: 'Converts one-time GoFundMe generosity into sustained monthly support.',
                 href: '/bridge',
                 label: 'Learn more',
-                bg: '#ebeef3',
+                bg: 'rgba(235, 238, 243, 0.7)',
+                border: 'rgba(160, 170, 200, 0.2)',
               },
             ].map((card) => (
               <StaggerItem key={card.title}>
                 <Link href={card.href} className="block group">
                   <div
-                    className="rounded-2xl p-8 md:p-9 transition-all duration-500 group-hover:scale-[1.015] group-hover:shadow-lg group-hover:shadow-black/[0.04]"
-                    style={{ backgroundColor: card.bg }}
+                    className="rounded-2xl p-8 md:p-9 transition-all duration-500 group-hover:scale-[1.02] group-hover:shadow-xl group-hover:shadow-black/[0.06] backdrop-blur-sm border"
+                    style={{ backgroundColor: card.bg, borderColor: card.border }}
                   >
                     <h3
                       className="text-[24px] md:text-[28px] font-semibold text-[var(--color-text)] mb-3 tracking-[-0.02em]"
@@ -188,7 +187,7 @@ export default function HomePage() {
                     </p>
                     <span className="text-[14px] font-medium text-[var(--color-hope)] inline-flex items-center gap-1.5 group-hover:gap-2.5 transition-all duration-300">
                       {card.label}
-                      <span className="text-[12px]">→</span>
+                      <span className="text-[12px] transition-transform duration-300 group-hover:translate-x-0.5">→</span>
                     </span>
                   </div>
                 </Link>
@@ -199,7 +198,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── TRUST ─── Radical transparency, no gimmicks */}
-      <section className="py-28 md:py-44 bg-[#f5f5f0]">
+      <section className="py-28 md:py-44" style={{ backgroundColor: 'rgba(245, 245, 240, 0.5)' }}>
         <div className="max-w-[680px] mx-auto px-5 sm:px-8">
           <SplitText
             as="h2"
@@ -280,7 +279,7 @@ export default function HomePage() {
             <MagneticButton strength={0.1} className="inline-block">
               <Link
                 href="/c/sarah"
-                className="inline-flex items-center justify-center bg-[var(--color-text)] hover:bg-[var(--color-text)]/80 text-white font-medium py-3.5 px-8 rounded-full text-[15px] transition-all duration-300 tracking-[-0.01em]"
+                className="inline-flex items-center justify-center bg-[var(--color-text)] hover:bg-[var(--color-text)]/80 text-white font-medium py-3.5 px-8 rounded-full text-[15px] transition-all duration-300 tracking-[-0.01em] hover:shadow-lg hover:shadow-black/10"
               >
                 See Sarah&apos;s tree
               </Link>

@@ -5,7 +5,11 @@ import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import SmoothScroll from '@/components/ui/SmoothScroll'
 import ScrollProgress from '@/components/ui/ScrollProgress'
-import FilmGrain from '@/components/ui/FilmGrain'
+import LeafParticles from '@/components/ui/LeafParticles'
+import CustomCursor from '@/components/ui/CustomCursor'
+import NoiseOverlay from '@/components/ui/NoiseOverlay'
+import ScrollColorMorph from '@/components/ui/ScrollColorMorph'
+import CinematicEntrance from '@/components/ui/CinematicEntrance'
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -76,16 +80,21 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       </head>
-      <body className="flex flex-col min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
+      <body className="flex flex-col min-h-screen text-[var(--color-text)]" style={{ backgroundColor: 'var(--dynamic-bg, var(--color-bg))' }}>
         <ScrollProgress />
-        <FilmGrain />
-        <SmoothScroll>
-          <AuthProvider>
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </AuthProvider>
-        </SmoothScroll>
+        <LeafParticles />
+        <NoiseOverlay />
+        <CustomCursor />
+        <ScrollColorMorph />
+        <CinematicEntrance>
+          <SmoothScroll>
+            <AuthProvider>
+              <Header />
+              <main className="flex-1 relative z-10">{children}</main>
+              <Footer />
+            </AuthProvider>
+          </SmoothScroll>
+        </CinematicEntrance>
       </body>
     </html>
   )

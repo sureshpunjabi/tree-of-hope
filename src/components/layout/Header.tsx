@@ -35,11 +35,12 @@ export default function Header() {
   return (
     <header
       className={cn(
-        'sticky top-0 z-50 transition-all duration-500',
+        'sticky top-0 z-50 transition-all duration-700',
         scrolled
-          ? 'bg-[var(--color-bg)]/80 backdrop-blur-xl border-b border-black/[0.04]'
+          ? 'backdrop-blur-2xl backdrop-saturate-150 border-b border-white/[0.08]'
           : 'bg-transparent'
       )}
+      style={scrolled ? { backgroundColor: 'rgba(251, 250, 248, 0.72)' } : undefined}
     >
       <div className="max-w-6xl mx-auto px-5 sm:px-8">
         <div className="flex justify-between items-center h-12">

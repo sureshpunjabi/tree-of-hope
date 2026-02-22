@@ -8,6 +8,7 @@ import ScrollReveal from '@/components/ui/ScrollReveal'
 import SplitText from '@/components/ui/SplitText'
 import CountUp from '@/components/ui/CountUp'
 import MagneticButton from '@/components/ui/MagneticButton'
+import GradientMesh from '@/components/ui/GradientMesh'
 
 interface PageProps {
   params: Promise<{
@@ -260,7 +261,8 @@ export default async function CampaignPage({ params }: PageProps) {
                 {leaves.map((leaf) => (
                   <div
                     key={leaf.id}
-                    className="bg-[#f5f5f0] rounded-2xl p-7 transition-all duration-300 hover:bg-[#efefe8]"
+                    className="rounded-2xl p-7 transition-all duration-500 hover:scale-[1.02] hover:shadow-lg hover:shadow-black/[0.04] backdrop-blur-sm border border-black/[0.04]"
+                    style={{ backgroundColor: 'rgba(245, 245, 240, 0.6)' }}
                   >
                     <p className="text-[15px] text-[var(--color-text)] leading-[1.65] mb-5">
                       &ldquo;{leaf.message}&rdquo;
@@ -299,8 +301,9 @@ export default async function CampaignPage({ params }: PageProps) {
       </section>
 
       {/* ─── FINAL CTA ─── */}
-      <section className="section-dark py-28 md:py-40">
-        <div className="max-w-3xl mx-auto px-5 sm:px-8 text-center">
+      <section className="relative py-28 md:py-40 overflow-hidden">
+        <GradientMesh />
+        <div className="relative z-10 max-w-3xl mx-auto px-5 sm:px-8 text-center">
           <ScrollReveal>
             <Image
               src="/tree-hero.png"
