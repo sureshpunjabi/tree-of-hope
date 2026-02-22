@@ -31,15 +31,20 @@ export function getServiceSupabase() {
   })
 }
 
-// Get authenticated Supabase client from request
+// Get authenticated user from request (server-side)
 export async function getAuthenticatedUser(request: Request) {
-  const client = getSupabase()
-  if (!client) return null
-  
   const authHeader = request.headers.get('Authorization')
   if (!authHeader) return null
 
   const token = authHeader.replace('Bearer ', '')
+  if (!token || !supabaseUrl || !supabaseAnonKey) return null
+
+  // Create a server-side client with the user's token
+  const client = createClient(supabaseUrl, supabaseAnonKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+    global: { headers: { Authorization: `Bearer ${token}` } },
+  })
+
   const { data: { user }, error } = await client.auth.getUser(token)
 
   if (error || !user) return null
