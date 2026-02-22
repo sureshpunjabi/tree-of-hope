@@ -38,12 +38,29 @@ export async function GET(
     const supabase = getServiceSupabase();
     const { campaignId } = await params;
 
-    // Get campaign by slug or id
-    const { data: campaign, error: campaignError } = await supabase
-      .from('campaigns')
-      .select('*')
-      .or(`slug.eq.${campaignId},id.eq.${campaignId}`)
-      .single();
+    // Get campaign by slug first, then by id if it looks like a UUID
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(campaignId);
+
+    let campaign = null;
+    let campaignError = null;
+
+    if (isUUID) {
+      const result = await supabase
+        .from('campaigns')
+        .select('*')
+        .or(`slug.eq.${campaignId},id.eq.${campaignId}`)
+        .single();
+      campaign = result.data;
+      campaignError = result.error;
+    } else {
+      const result = await supabase
+        .from('campaigns')
+        .select('*')
+        .eq('slug', campaignId)
+        .single();
+      campaign = result.data;
+      campaignError = result.error;
+    }
 
     if (campaignError || !campaign) {
       return NextResponse.json(

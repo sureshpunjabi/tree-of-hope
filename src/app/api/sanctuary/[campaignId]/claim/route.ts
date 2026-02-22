@@ -42,12 +42,29 @@ export async function POST(
 
     const supabase = getServiceSupabase();
 
-    // Look up campaign by slug
-    const { data: campaign } = await supabase
-      .from('campaigns')
-      .select('id')
-      .or(`slug.eq.${campaignId},id.eq.${campaignId}`)
-      .single();
+    // Check if campaignId is a UUID
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(campaignId);
+
+    // Look up campaign by slug or id
+    let campaign = null;
+    let campaignError = null;
+    if (isUUID) {
+      const result = await supabase
+        .from('campaigns')
+        .select('id')
+        .or(`slug.eq.${campaignId},id.eq.${campaignId}`)
+        .single();
+      campaign = result.data;
+      campaignError = result.error;
+    } else {
+      const result = await supabase
+        .from('campaigns')
+        .select('id')
+        .eq('slug', campaignId)
+        .single();
+      campaign = result.data;
+      campaignError = result.error;
+    }
     if (!campaign) {
       return NextResponse.json(
         { success: false, error: 'Not found' },
