@@ -7,6 +7,7 @@ import MagneticButton from '@/components/ui/MagneticButton'
 import InteractiveTree from '@/components/ui/InteractiveTree'
 import GradientMesh from '@/components/ui/GradientMesh'
 import HeroAtmosphere from '@/components/ui/HeroAtmosphere'
+import ImpactNumbers from '@/components/ui/ImpactNumbers'
 
 export default function HomePage() {
   return (
@@ -91,6 +92,9 @@ export default function HomePage() {
         </ScrollReveal>
       </section>
 
+      {/* ─── IMPACT NUMBERS ─── Animated counters */}
+      <ImpactNumbers />
+
       {/* ─── THE RHYTHM ─── Three beats, maximum restraint */}
       <section id="how" className="py-16 md:py-44">
         <div className="max-w-5xl mx-auto px-5 sm:px-8">
@@ -107,21 +111,41 @@ export default function HomePage() {
                 num: '01',
                 title: 'Gather',
                 desc: 'People who care leave messages of hope — their leaves on a growing tree.',
+                icon: (
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--color-hope)] mb-4 opacity-60">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  </svg>
+                ),
               },
               {
                 num: '02',
                 title: 'Commit',
                 desc: 'Each person chooses a small monthly amount. Pausable anytime, no questions asked.',
+                icon: (
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--color-hope)] mb-4 opacity-60">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                  </svg>
+                ),
               },
               {
                 num: '03',
                 title: 'Shelter',
                 desc: 'A private Sanctuary opens for patient and caregiver. Journal. Tools. Guided content.',
+                icon: (
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--color-hope)] mb-4 opacity-60">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                  </svg>
+                ),
               },
             ].map((card) => (
               <StaggerItem key={card.num}>
                 <div className="group">
-                  <span className="text-[13px] font-medium tracking-[0.15em] text-[var(--color-text-muted)] uppercase block mb-5">
+                  {card.icon}
+                  <span className="text-[13px] font-medium tracking-[0.15em] text-[var(--color-text-muted)] uppercase block mb-3">
                     {card.num}
                   </span>
                   <h3
@@ -181,6 +205,7 @@ export default function HomePage() {
                 label: 'View example',
                 bg: 'rgba(245, 240, 234, 0.7)',
                 border: 'rgba(200, 180, 160, 0.2)',
+                icon: '🌱',
               },
               {
                 title: 'Sanctuary',
@@ -189,6 +214,7 @@ export default function HomePage() {
                 label: 'Learn more',
                 bg: 'rgba(238, 243, 235, 0.7)',
                 border: 'rgba(160, 200, 160, 0.2)',
+                icon: '🏡',
               },
               {
                 title: 'Bridge',
@@ -197,14 +223,16 @@ export default function HomePage() {
                 label: 'Learn more',
                 bg: 'rgba(235, 238, 243, 0.7)',
                 border: 'rgba(160, 170, 200, 0.2)',
+                icon: '🌉',
               },
             ].map((card) => (
               <StaggerItem key={card.title}>
                 <Link href={card.href} className="block group">
                   <div
-                    className="rounded-2xl p-8 md:p-9 transition-all duration-500 group-hover:scale-[1.02] group-hover:shadow-xl group-hover:shadow-black/[0.06] backdrop-blur-sm border"
+                    className="rounded-2xl p-8 md:p-9 transition-all duration-500 group-hover:scale-[1.02] group-hover:shadow-xl group-hover:shadow-black/[0.06] backdrop-blur-sm border h-full"
                     style={{ backgroundColor: card.bg, borderColor: card.border }}
                   >
+                    <span className="text-[28px] block mb-4">{card.icon}</span>
                     <h3
                       className="text-[24px] md:text-[28px] font-semibold text-[var(--color-text)] mb-3 tracking-[-0.02em]"
                       style={{ fontFamily: 'var(--font-serif)' }}
@@ -260,7 +288,7 @@ export default function HomePage() {
                   key={faq.q}
                   className="group border-b border-black/[0.06] last:border-0"
                 >
-                  <summary className="flex items-center justify-between cursor-pointer py-5 text-[var(--color-text)] text-[16px] font-medium tracking-[-0.01em]">
+                  <summary className="flex items-center justify-between cursor-pointer py-5 text-[var(--color-text)] text-[16px] font-medium tracking-[-0.01em] hover:text-[var(--color-hope)] transition-colors duration-300">
                     {faq.q}
                     <span className="text-[var(--color-text-muted)] group-open:rotate-45 transition-transform duration-300 text-[20px] leading-none ml-4 flex-shrink-0">
                       +
