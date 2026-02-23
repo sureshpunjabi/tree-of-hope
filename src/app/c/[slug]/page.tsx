@@ -13,6 +13,7 @@ import CountUp from '@/components/ui/CountUp'
 import MagneticButton from '@/components/ui/MagneticButton'
 import GradientMesh from '@/components/ui/GradientMesh'
 import ShareTreeButton from '@/components/campaign/ShareTreeButton'
+import InteractiveTree from '@/components/ui/InteractiveTree'
 
 interface PageProps {
   params: Promise<{
@@ -167,21 +168,11 @@ export default async function CampaignPage({ params }: PageProps) {
         </div>
       </section>
 
-      {/* ─── TREE IMAGE ─── Breathing room */}
-      <section className="py-16 md:py-24 flex justify-center px-5">
-        <ScrollReveal>
-          <div className="relative">
-            <div className="absolute inset-0 bg-[var(--color-hope)] opacity-[0.04] rounded-full blur-[80px] scale-[2]" />
-            <Image
-              src="/tree-hero.png"
-              alt={`${campaign.patient_name}'s Tree of Hope`}
-              width={360}
-              height={373}
-              className="relative z-10 drop-shadow-xl"
-              priority
-            />
-          </div>
-        </ScrollReveal>
+      {/* ─── INTERACTIVE TREE ─── Spring physics, magnetic cursor */}
+      <section className="py-8 md:py-16 flex justify-center px-5">
+        <div className="w-full max-w-[600px]">
+          <InteractiveTree />
+        </div>
       </section>
 
       {/* ─── STATS ─── Clean, minimal */}
