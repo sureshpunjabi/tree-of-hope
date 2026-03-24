@@ -10,9 +10,8 @@ function isPlaceholder(value: string | undefined): boolean {
 
 export const IS_STRIPE_CONFIGURED =
   !isPlaceholder(process.env.STRIPE_SECRET_KEY) &&
-  !isPlaceholder(process.env.STRIPE_PRICE_NURTURE) &&
-  !isPlaceholder(process.env.STRIPE_PRICE_SUSTAIN) &&
-  !isPlaceholder(process.env.STRIPE_PRICE_FLOURISH)
+  // Easter Minimum: only need Leaf price configured (Sponsor is optional at launch)
+  !isPlaceholder(process.env.STRIPE_PRICE_LEAF || process.env.STRIPE_PRICE_FLOURISH)
 
 export const STRIPE_DEMO_MESSAGE =
   'Payments are being configured. In the meantime, your leaf and your presence matter most. Contact hello@treeofhope.com to support directly.'
