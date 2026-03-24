@@ -9,5 +9,5 @@ export const stripe = stripeSecretKey
     })
   : (null as unknown as Stripe)
 
-// Re-export product config for backward compatibility
-export { STRIPE_PRODUCTS, type JoiningGiftTier, type MonthlyTier } from './stripe-products'
+// Re-export product config
+export { STRIPE_PRODUCTS, type CommitmentType } from './stripe-products'
