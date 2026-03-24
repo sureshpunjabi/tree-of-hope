@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServiceSupabase } from '@/lib/supabase';
-import { stripe, STRIPE_PRODUCTS } from '@/lib/stripe';
+import { stripe, STRIPE_PRODUCTS, CommitmentType } from '@/lib/stripe';
 import { IS_STRIPE_CONFIGURED, STRIPE_DEMO_MESSAGE } from '@/lib/stripe-config';
-import { trackServerEvent } from '@/lib/analytics';
+import { LEGACY_TIER_MAP } from '@/lib/stripe-products';
+
+// Easter Minimum: Two products only. Recurring. No one-off payments. Ever.
 
 interface CheckoutRequest {
   campaign_id: string;
-  user_id: string;
-  monthly_tier: string;
-  joining_gift_tier?: string;
+  commitment_type: CommitmentType;
   success_url: string;
   cancel_url: string;
 }
@@ -25,19 +24,32 @@ export async function POST(
   request: NextRequest
 ): Promise<NextResponse<CheckoutResponse>> {
   try {
-    const body: CheckoutRequest = await request.json();
-    const {
+    const body = await request.json();
+    let {
       campaign_id,
-      user_id,
-      monthly_tier,
-      joining_gift_tier,
+      commitment_type,
       success_url,
       cancel_url,
-    } = body;
+    } = body as CheckoutRequest;
 
-    if (!campaign_id || !monthly_tier) {
+    // Backward compatibility: map old tier names to new ones
+    if (!commitment_type && body.monthly_tier) {
+      const mapped = LEGACY_TIER_MAP[body.monthly_tier];
+      commitment_type = mapped || 'leaf';
+    }
+
+    if (!campaign_id || !commitment_type) {
       return NextResponse.json(
         { success: false, error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
+
+    // Validate commitment type
+    const product = STRIPE_PRODUCTS[commitment_type];
+    if (!product) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid commitment type' },
         { status: 400 }
       );
     }
@@ -50,42 +62,12 @@ export async function POST(
       );
     }
 
-    // Map tier names to Stripe price IDs
-    const monthlyProduct = STRIPE_PRODUCTS.monthlyTiers[monthly_tier as keyof typeof STRIPE_PRODUCTS.monthlyTiers];
-    if (!monthlyProduct) {
+    // Validate that Stripe price ID is configured
+    if (!product.priceId) {
       return NextResponse.json(
-        { success: false, error: 'Invalid monthly tier' },
-        { status: 400 }
-      );
-    }
-
-    // Validate that Stripe price IDs are configured
-    if (!monthlyProduct.priceId) {
-      return NextResponse.json(
-        { success: false, error: 'Stripe price IDs are not configured. Please set STRIPE_PRICE_* environment variables.' },
+        { success: false, error: 'Stripe price ID is not configured for this tier. Please set STRIPE_PRICE_* environment variables.' },
         { status: 500 }
       );
-    }
-
-    const lineItems: Array<{
-      price: string;
-      quantity: number;
-    }> = [
-      {
-        price: monthlyProduct.priceId,
-        quantity: 1,
-      },
-    ];
-
-    // Add joining gift if provided
-    if (joining_gift_tier) {
-      const joiningGiftProduct = STRIPE_PRODUCTS.joiningGifts[joining_gift_tier as keyof typeof STRIPE_PRODUCTS.joiningGifts];
-      if (joiningGiftProduct && joiningGiftProduct.priceId) {
-        lineItems.push({
-          price: joiningGiftProduct.priceId,
-          quantity: 1,
-        });
-      }
     }
 
     // Fallback URLs
@@ -93,18 +75,21 @@ export async function POST(
     const finalSuccessUrl = success_url || `${baseUrl}/c/${campaign_id}/thank-you?session_id={CHECKOUT_SESSION_ID}`;
     const finalCancelUrl = cancel_url || `${baseUrl}/c/${campaign_id}/commitment`;
 
-    // Create Stripe checkout session
+    // Create Stripe checkout session — subscription mode, single recurring line item
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       payment_method_types: ['card'],
-      line_items: lineItems,
+      line_items: [
+        {
+          price: product.priceId,
+          quantity: 1,
+        },
+      ],
       success_url: finalSuccessUrl,
       cancel_url: finalCancelUrl,
       metadata: {
         campaign_id,
-        user_id,
-        monthly_tier,
-        joining_gift_tier: joining_gift_tier || '',
+        commitment_type,
       },
     });
 
@@ -115,15 +100,6 @@ export async function POST(
       );
     }
 
-    // Track the checkout session creation
-    await trackServerEvent('checkout_started', {
-      campaign_id,
-      user_id,
-      session_id: session.id,
-      monthly_tier,
-      joining_gift_tier,
-    });
-
     return NextResponse.json({
       success: true,
       sessionId: session.id,
@@ -131,10 +107,6 @@ export async function POST(
     });
   } catch (error) {
     console.error('Error creating checkout session:', error);
-    await trackServerEvent('checkout_started', {
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
-    });
     return NextResponse.json(
       { success: false, error: 'Failed to create checkout session' },
       { status: 500 }
