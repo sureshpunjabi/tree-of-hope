@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og'
 
 export const runtime = 'edge'
-export const alt = 'Tree of Hope — Community fundraising with roots'
+export const alt = 'Tree of Hope â Show up for someone you love'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -29,7 +29,7 @@ export default async function Image() {
             gap: '24px',
           }}
         >
-          <div style={{ fontSize: '72px', marginBottom: '8px' }}>🌿</div>
+          <div style={{ fontSize: '72px', marginBottom: '8px' }}>ð¿</div>
           <div
             style={{
               fontSize: '64px',
