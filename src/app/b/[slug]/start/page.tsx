@@ -7,7 +7,7 @@ import Image from 'next/image'
 import { Leaf, AlertCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { trackEvent } from '@/lib/analytics'
-import { STRIPE_PRODUCTS, type MonthlyTier, type JoiningGiftTier } from '@/lib/stripe-products'
+import { STRIPE_PRODUCTS, type CommitmentType, type MonthlyTier, type JoiningGiftTier } from '@/lib/stripe-products'
 
 interface BridgeData {
   success: boolean
