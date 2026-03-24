@@ -38,13 +38,13 @@ export default function Footer() {
             <div className="flex gap-16 md:gap-20">
               <div>
                 <p className="text-[11px] font-medium tracking-[0.12em] uppercase text-[var(--color-text-muted)] mb-3">
-                  Platform
+                  Explore
                 </p>
                 <ul className="space-y-2.5">
                   {[
-                    { label: 'Campaigns', href: '/campaigns' },
-                    { label: 'Sanctuary', href: '/sanctuary' },
-                    { label: 'Bridge', href: '/bridge' },
+                    { label: 'Trees', href: '/campaigns' },
+                    { label: 'How it works', href: '/#how-it-works' },
+                    { label: 'Contact', href: '/contact' },
                   ].map((item) => (
                     <li key={item.label}>
                       <Link
@@ -90,7 +90,7 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} Tree of Hope. All rights reserved.
           </p>
           <p className="text-[12px] text-[var(--color-text-muted)] opacity-70">
-            This is a for-profit service. Contributions fund the platform, not the individual.
+            This is a for-profit service. Contributions fund the Sanctuary, not the individual.
           </p>
         </div>
       </div>
