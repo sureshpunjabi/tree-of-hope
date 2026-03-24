@@ -4,11 +4,8 @@ import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { trackEvent } from '@/lib/analytics'
-import { STRIPE_PRODUCTS } from '@/lib/stripe-products'
+import { STRIPE_PRODUCTS, CommitmentType } from '@/lib/stripe-products'
 import { cn } from '@/lib/utils'
-
-type JoiningGiftTier = 'seedling' | 'sapling' | 'mightyOak' | null
-type MonthlyTier = 'nurture' | 'sustain' | 'flourish' | null
 
 export default function CommitmentPage() {
   const params = useParams()
@@ -16,8 +13,7 @@ export default function CommitmentPage() {
   const slug = params.slug as string
 
   const [patientName, setPatientName] = useState<string>('this patient')
-  const [joiningGift, setJoiningGift] = useState<JoiningGiftTier>(null)
-  const [monthlyTier, setMonthlyTier] = useState<MonthlyTier>(null)
+  const [selected, setSelected] = useState<CommitmentType>('leaf')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [demoMode, setDemoMode] = useState(false)
@@ -41,94 +37,23 @@ export default function CommitmentPage() {
     fetchCampaign()
   }, [slug])
 
-  const joiningGiftTiers = [
-    {
-      id: 'seedling' as const,
-      name: 'Seedling',
-      price: 9.99,
-      description: 'A modest gift of support',
-    },
-    {
-      id: 'sapling' as const,
-      name: 'Sapling',
-      price: 24.99,
-      description: 'A meaningful contribution',
-    },
-    {
-      id: 'mightyOak' as const,
-      name: 'Mighty Oak',
-      price: 99.0,
-      description: 'A generous foundation of care',
-    },
-  ]
-
-  const monthlyTiers = [
-    {
-      id: 'nurture' as const,
-      name: 'Nurture',
-      price: 9,
-      description: 'A quiet, steady presence',
-    },
-    {
-      id: 'sustain' as const,
-      name: 'Sustain',
-      price: 19,
-      description: 'Sustained, growing support',
-      featured: true,
-    },
-    {
-      id: 'flourish' as const,
-      name: 'Flourish',
-      price: 35,
-      description: 'Deep, full commitment to care',
-    },
-  ]
-
-  const calculateTotal = () => {
-    let total = 0
-
-    if (joiningGift) {
-      const giftAmount =
-        STRIPE_PRODUCTS.joiningGifts[joiningGift].amount / 100
-      total += giftAmount
-    }
-
-    if (monthlyTier) {
-      const monthlyAmount =
-        STRIPE_PRODUCTS.monthlyTiers[monthlyTier].amount / 100
-      total += monthlyAmount
-    }
-
-    return total.toFixed(2)
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
-    if (!monthlyTier) {
-      setError('Please select a monthly commitment tier')
-      return
-    }
-
     setLoading(true)
     setError(null)
 
     try {
       trackEvent('checkout_started', {
         slug,
-        joiningGift: joiningGift || 'none',
-        monthlyTier,
+        commitment_type: selected,
       })
 
       const response = await fetch('/api/billing/checkout-session', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           campaign_id: slug,
-          monthly_tier: monthlyTier,
-          joining_gift_tier: joiningGift,
+          commitment_type: selected,
           success_url: `${window.location.origin}/c/${slug}/thank-you?session_id={CHECKOUT_SESSION_ID}`,
           cancel_url: `${window.location.origin}/c/${slug}/commitment`,
         }),
@@ -136,7 +61,6 @@ export default function CommitmentPage() {
 
       const data = await response.json()
 
-      // Handle demo mode gracefully
       if (data.demo) {
         setDemoMode(true)
         setLoading(false)
@@ -161,114 +85,113 @@ export default function CommitmentPage() {
     }
   }
 
-  const handleTierSelect = (tier: JoiningGiftTier | MonthlyTier, type: 'joining' | 'monthly') => {
-    if (type === 'joining') {
-      setJoiningGift(tier as JoiningGiftTier)
-    } else {
-      setMonthlyTier(tier as MonthlyTier)
-      trackEvent('tier_selected', { slug, tier })
-    }
-  }
+  const product = STRIPE_PRODUCTS[selected]
 
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
-      {/* ─── HERO ─── */}
-      <section className="relative overflow-hidden bg-[var(--color-bg)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 md:py-48">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <div className="max-w-2xl">
-              <p className="text-xs font-light tracking-[0.25em] uppercase text-[var(--color-hope)] mb-8">
-                Make a commitment
-              </p>
-              <h1
-                className="text-5xl md:text-6xl font-light text-[var(--color-text)] leading-[1.15] mb-8"
-                style={{ fontFamily: 'var(--font-serif)' }}
-              >
-                Support with<br />
-                <span className="text-[var(--color-hope)]">roots that hold.</span>
-              </h1>
-              <p className="text-base md:text-lg text-[var(--color-text-muted)] leading-relaxed max-w-lg">
-                Today is a one-time start. Monthly support continues quietly in the
-                background. You can pause for hardship at any time.
-              </p>
-            </div>
-
-            <div className="relative hidden lg:flex justify-center lg:justify-end">
-              <div className="relative">
-                <div className="absolute inset-0 bg-[var(--color-hope)] opacity-[0.04] rounded-full blur-3xl scale-110" />
-                <Image
-                  src="/tree-hero.png"
-                  alt="Tree of Hope"
-                  width={400}
-                  height={414}
-                  className="relative z-10 drop-shadow-xl"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── COMMITMENT FORM ─── */}
       <form onSubmit={handleSubmit}>
-        {/* Joining Gift Section */}
-        <section className="py-20 md:py-28 bg-white">
+        {/* Hero */}
+        <section className="py-20 md:py-28">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p className="text-xs tracking-[0.15em] uppercase text-[var(--color-text-muted)] mb-6">
+              Show up for {patientName}
+            </p>
+            <h1
+              className="text-[clamp(2rem,5vw,3.5rem)] font-semibold text-[var(--color-text)] tracking-[-0.02em] leading-[1.1] mb-6"
+              style={{ fontFamily: 'var(--font-serif)' }}
+            >
+              Choose how you show up.
+            </h1>
+            <p className="text-[15px] md:text-base text-[var(--color-text-muted)] leading-[1.7] max-w-xl mx-auto">
+              Every contribution builds a living Sanctuary. Pick the level that feels right.
+              You can change or pause anytime.
+            </p>
+          </div>
+        </section>
+
+        {/* Commitment options */}
+        <section className="py-20 md:py-28 bg-[var(--color-bg)]">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <p className="text-xs font-light tracking-[0.25em] uppercase text-[var(--color-hope)] mb-6">
-                Optional
-              </p>
-              <h2
-                className="text-5xl md:text-6xl font-light text-[var(--color-text)] leading-tight"
-                style={{ fontFamily: 'var(--font-serif)' }}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+              {/* Plant a Leaf — $35/mo */}
+              <button
+                type="button"
+                onClick={() => {
+                  setSelected('leaf')
+                  trackEvent('tier_selected', { slug, tier: 'leaf' })
+                }}
+                className={cn(
+                  'group relative rounded-lg p-8 text-left transition-all duration-300',
+                  selected === 'leaf'
+                    ? 'border-l-4 border-[var(--color-hope)] bg-[var(--color-hope)]/[0.02]'
+                    : 'border-l-4 border-transparent'
+                )}
               >
-                Joining Gift
-              </h2>
-              <p className="text-base text-[var(--color-text-muted)] mt-6 max-w-xl mx-auto leading-relaxed">
-                Make an optional one-time contribution to get started.
-              </p>
-            </div>
+                <div className="absolute top-0 left-0 right-0 h-px bg-[var(--color-hope)] opacity-100" />
+                <div className="relative z-10">
+                  <p
+                    className="text-4xl font-light text-[var(--color-hope)] mb-1"
+                    style={{ fontFamily: 'var(--font-serif)' }}
+                  >
+                    $35<span className="text-lg font-light text-[var(--color-text-muted)]">/mo</span>
+                  </p>
+                  <p className="text-xs tracking-[0.15em] uppercase text-[var(--color-hope)] mb-4">
+                    Most popular
+                  </p>
+                  <h3
+                    className="text-lg font-light text-[var(--color-text)] mb-2"
+                    style={{ fontFamily: 'var(--font-serif)' }}
+                  >
+                    Plant a Leaf
+                  </h3>
+                  <p className="text-sm text-[var(--color-text-muted)]">
+                    Show up for someone you love. $35/month builds their Sanctuary.
+                  </p>
+                </div>
+              </button>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {joiningGiftTiers.map((tier) => (
-                <button
-                  key={tier.id}
-                  type="button"
-                  onClick={() => handleTierSelect(tier.id, 'joining')}
-                  className={cn(
-                    'group relative rounded-lg p-8 text-left transition-all duration-300',
-                    joiningGift === tier.id
-                      ? 'border-l-4 border-[var(--color-hope)]'
-                      : 'border-l-4 border-transparent'
-                  )}
-                >
-                  {/* Top border */}
-                  <div className="absolute top-0 left-0 right-0 h-px bg-[var(--color-hope)] opacity-100" />
-
-                  <div className="relative z-10">
-                    <p
-                      className="text-4xl font-light text-[var(--color-hope)] mb-6"
-                      style={{ fontFamily: 'var(--font-serif)' }}
-                    >
-                      ${tier.price.toFixed(2)}
-                    </p>
-                    <h3
-                      className="text-lg font-light text-[var(--color-text)] mb-2"
-                      style={{ fontFamily: 'var(--font-serif)' }}
-                    >
-                      {tier.name}
-                    </h3>
-                    <p className="text-sm text-[var(--color-text-muted)]">
-                      {tier.description}
-                    </p>
-                  </div>
-                </button>
-              ))}
+              {/* Fund a Tree — $500/mo */}
+              <button
+                type="button"
+                onClick={() => {
+                  setSelected('sponsor')
+                  trackEvent('tier_selected', { slug, tier: 'sponsor' })
+                }}
+                className={cn(
+                  'group relative rounded-lg p-8 text-left transition-all duration-300',
+                  selected === 'sponsor'
+                    ? 'border-l-4 border-[var(--color-hope)] bg-[var(--color-hope)]/[0.02]'
+                    : 'border-l-4 border-transparent'
+                )}
+              >
+                <div className="absolute top-0 left-0 right-0 h-px bg-[var(--color-hope)] opacity-100" />
+                <div className="relative z-10">
+                  <p
+                    className="text-4xl font-light text-[var(--color-hope)] mb-1"
+                    style={{ fontFamily: 'var(--font-serif)' }}
+                  >
+                    $500<span className="text-lg font-light text-[var(--color-text-muted)]">/mo</span>
+                  </p>
+                  <p className="text-xs tracking-[0.15em] uppercase text-[var(--color-hope)] mb-4">
+                    Sponsor
+                  </p>
+                  <h3
+                    className="text-lg font-light text-[var(--color-text)] mb-2"
+                    style={{ fontFamily: 'var(--font-serif)' }}
+                  >
+                    Fund a Tree
+                  </h3>
+                  <p className="text-sm text-[var(--color-text-muted)]">
+                    Sponsor the entire Tree and its Sanctuary.
+                    Your name appears on the Tree as a founding supporter.
+                  </p>
+                </div>
+              </button>
             </div>
           </div>
         </section>
 
-        {/* Testimonial Section */}
+        {/* Testimonial */}
         <section className="py-20 md:py-28 bg-[var(--color-bg)]">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <blockquote>
@@ -276,7 +199,7 @@ export default function CommitmentPage() {
                 className="text-2xl md:text-3xl font-light text-[var(--color-text)] leading-relaxed mb-6"
                 style={{ fontFamily: 'var(--font-serif)' }}
               >
-                "I chose $19 a month. It's less than my streaming subscription, but it means Sarah knows I'm here."
+                &ldquo;$35 a month is less than my streaming service. But it means {patientName} knows I&rsquo;m here.&rdquo;
               </p>
               <footer className="text-sm tracking-[0.15em] uppercase text-[var(--color-text-muted)]">
                 — A supporter
@@ -285,71 +208,7 @@ export default function CommitmentPage() {
           </div>
         </section>
 
-        {/* Monthly Commitment Section */}
-        <section className="py-20 md:py-28 bg-white">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <p className="text-xs font-light tracking-[0.25em] uppercase text-[var(--color-hope)] mb-6">
-                Required
-              </p>
-              <h2
-                className="text-5xl md:text-6xl font-light text-[var(--color-text)] leading-tight"
-                style={{ fontFamily: 'var(--font-serif)' }}
-              >
-                Monthly Commitment
-              </h2>
-              <p className="text-base text-[var(--color-text-muted)] mt-6 max-w-xl mx-auto leading-relaxed">
-                Choose a monthly contribution. Pause anytime for hardship.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {monthlyTiers.map((tier) => (
-                <button
-                  key={tier.id}
-                  type="button"
-                  onClick={() => handleTierSelect(tier.id, 'monthly')}
-                  className={cn(
-                    'group relative rounded-lg p-8 text-left transition-all duration-300',
-                    monthlyTier === tier.id
-                      ? 'border-l-4 border-[var(--color-hope)]'
-                      : 'border-l-4 border-transparent'
-                  )}
-                >
-                  {/* Top border */}
-                  <div className="absolute top-0 left-0 right-0 h-px bg-[var(--color-hope)] opacity-100" />
-
-                  <div className="relative z-10">
-                    <p
-                      className="text-4xl font-light text-[var(--color-hope)] mb-1"
-                      style={{ fontFamily: 'var(--font-serif)' }}
-                    >
-                      ${tier.price}<span className="text-lg font-light text-[var(--color-text-muted)]">/mo</span>
-                    </p>
-
-                    {tier.featured && (
-                      <p className="text-xs tracking-[0.15em] uppercase text-[var(--color-hope)] mb-4">
-                        Most chosen
-                      </p>
-                    )}
-
-                    <h3
-                      className="text-lg font-light text-[var(--color-text)] mb-2"
-                      style={{ fontFamily: 'var(--font-serif)' }}
-                    >
-                      {tier.name}
-                    </h3>
-                    <p className="text-sm text-[var(--color-text-muted)]">
-                      {tier.description}
-                    </p>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ─── DEMO MODE OVERLAY ─── */}
+        {/* Demo mode overlay */}
         {demoMode && (
           <section className="py-20 md:py-28 bg-[var(--color-bg)]">
             <div className="max-w-lg mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -364,7 +223,7 @@ export default function CommitmentPage() {
               </h2>
               <p className="text-[15px] text-[var(--color-text-muted)] leading-[1.7] mb-8 max-w-md mx-auto">
                 We&apos;re putting the final touches on secure checkout.
-                Your selections have been saved — we&apos;ll let you know the moment this goes live.
+                Your selections have been saved.
               </p>
               <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[var(--color-hope)]/[0.06] text-[var(--color-hope)] text-[13px] font-medium">
                 <span className="w-2 h-2 rounded-full bg-[var(--color-hope)] animate-pulse" />
@@ -374,7 +233,7 @@ export default function CommitmentPage() {
           </section>
         )}
 
-        {/* ─── SUMMARY BAR (Sticky on mobile) ─── */}
+        {/* Sticky summary bar */}
         <section className={cn(
           "border-t border-[var(--color-border)] bg-white sticky bottom-0 z-40 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]",
           demoMode && "hidden"
@@ -387,48 +246,29 @@ export default function CommitmentPage() {
             )}
 
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-8">
-              {/* Total amount - desktop */}
-              <div className="hidden md:flex items-baseline gap-2">
+              <div className="flex items-baseline gap-2">
                 <p
-                  className="text-4xl font-light text-[var(--color-hope)]"
+                  className="text-4xl md:text-4xl font-light text-[var(--color-hope)]"
                   style={{ fontFamily: 'var(--font-serif)' }}
                 >
-                  ${calculateTotal()}
+                  ${(product.amount / 100).toFixed(0)}<span className="text-lg font-light text-[var(--color-text-muted)]">/mo</span>
                 </p>
                 <p className="text-xs tracking-[0.15em] uppercase text-[var(--color-text-muted)]">
-                  First payment
+                  {selected === 'leaf' ? 'Plant a Leaf' : 'Fund a Tree'}
                 </p>
               </div>
 
-              {/* Mobile: compact total */}
-              <div className="flex md:hidden items-baseline gap-2">
-                <p
-                  className="text-2xl font-light text-[var(--color-hope)]"
-                  style={{ fontFamily: 'var(--font-serif)' }}
-                >
-                  ${calculateTotal()}
-                </p>
-                <p className="text-xs text-[var(--color-text-muted)]">First payment</p>
-              </div>
-
-              {/* Buttons */}
               <div className="w-full md:w-auto flex gap-3">
                 <button
                   type="submit"
-                  disabled={!monthlyTier || loading}
-                  className={cn(
-                    'flex-1 md:flex-none whitespace-nowrap py-3 md:py-4 px-6 md:px-8 rounded-lg font-light text-sm md:text-base transition-all duration-200',
-                    monthlyTier
-                      ? 'bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white cursor-pointer hover:shadow-lg'
-                      : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  )}
+                  disabled={loading}
+                  className="flex-1 md:flex-none whitespace-nowrap py-3 md:py-4 px-6 md:px-8 rounded-lg font-light text-sm md:text-base transition-all duration-200 bg-[var(--color-hope)] hover:bg-[var(--color-hope-hover)] text-white cursor-pointer hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {loading ? 'Processing...' : 'Continue'}
+                  {loading ? 'Processing...' : 'Continue to checkout'}
                 </button>
               </div>
             </div>
 
-            {/* Trust signals - minimal text only */}
             <div className="mt-6 pt-6 border-t border-[var(--color-border)] flex flex-wrap justify-center gap-6 md:gap-10 text-xs text-[var(--color-text-muted)]">
               <span>Secure checkout via Stripe</span>
               <span>Pause anytime for hardship</span>
@@ -438,12 +278,12 @@ export default function CommitmentPage() {
         </section>
       </form>
 
-      {/* Trust language footer */}
+      {/* Trust language */}
       <section className="py-8 bg-[var(--color-bg)]">
         <div className="trust-language">
           <p>
             Tree of Hope is a for-profit service. Your contribution funds the Sanctuary
-            and ongoing platform operations. It is not sent to the patient.
+            and ongoing operations. It is not sent to the patient.
           </p>
         </div>
       </section>
