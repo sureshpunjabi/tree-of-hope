@@ -25,14 +25,14 @@ export const metadata: Metadata = {
     template: '%s | Tree of Hope',
   },
   description:
-    'Tree of Hope is a micro-campaign fundraising platform where supporters plant leaves of hope and commit to monthly support, funding a private Sanctuary for patients and caregivers.',
+    'Tree of Hope turns community love into lasting support. Plant a leaf, show up monthly, and help build a private Sanctuary for patients and caregivers.',
   keywords: [
-    'fundraising',
-    'micro-campaigns',
-    'community',
-    'support',
-    'health',
+    'tree of hope',
+    'community support',
+    'show up',
     'sanctuary',
+    'health',
+    'leaves of hope',
   ],
   authors: [{ name: 'Tree of Hope' }],
   robots: {
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Tree of Hope',
     description:
-      'Every tree starts with a single leaf. Turn community support into lasting care.',
+      'Every tree starts with a single leaf. Show up for someone you love.',
     type: 'website',
     url: 'https://tree-of-hope-olive.vercel.app',
     siteName: 'Tree of Hope',
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Tree of Hope - Community Fundraising Platform',
+        alt: 'Tree of Hope - Show up for someone you love',
       },
     ],
   },
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Tree of Hope',
     description:
-      'Every tree starts with a single leaf. Turn community support into lasting care.',
+      'Every tree starts with a single leaf. Show up for someone you love.',
     images: ['/og-image.png'],
   },
 }
