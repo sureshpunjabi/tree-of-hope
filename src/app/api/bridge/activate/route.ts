@@ -119,46 +119,27 @@ export async function POST(
       });
     }
 
-    // Create checkout session
-    const monthlyProduct = STRIPE_PRODUCTS.monthlyTiers[monthly_tier as keyof typeof STRIPE_PRODUCTS.monthlyTiers];
-    if (!monthlyProduct) {
+    // Create checkout session — Easter Minimum: map legacy tier to leaf/sponsor
+    const { LEGACY_TIER_MAP } = await import('@/lib/stripe-products');
+    const commitmentType = LEGACY_TIER_MAP[monthly_tier] || 'leaf';
+    const product = STRIPE_PRODUCTS[commitmentType];
+    if (!product || !product.priceId) {
       return NextResponse.json(
-        { success: false, error: 'Invalid monthly tier' },
+        { success: false, error: 'Invalid commitment type' },
         { status: 400 }
       );
-    }
-
-    const lineItems: Array<{
-      price: string;
-      quantity: number;
-    }> = [
-      {
-        price: monthlyProduct.priceId,
-        quantity: 1,
-      },
-    ];
-
-    if (joining_gift_tier) {
-      const joiningGiftProduct = STRIPE_PRODUCTS.joiningGifts[joining_gift_tier as keyof typeof STRIPE_PRODUCTS.joiningGifts];
-      if (joiningGiftProduct) {
-        lineItems.push({
-          price: joiningGiftProduct.priceId,
-          quantity: 1,
-        });
-      }
     }
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       payment_method_types: ['card'],
       customer_email: email,
-      line_items: lineItems,
+      line_items: [{ price: product.priceId, quantity: 1 }],
       success_url,
       cancel_url,
       metadata: {
         campaign_id,
-        monthly_tier,
-        joining_gift_tier: joining_gift_tier || 'none',
+        commitment_type: commitmentType,
       },
     });
 
