@@ -12,7 +12,7 @@ import ImpactNumbers from '@/components/ui/ImpactNumbers'
 export default function HomePage() {
   return (
     <div className="min-h-screen">
-      {/* ─── HERO ─── Cinematic, breathing, premium */}
+      {/* âââ HERO âââ Cinematic, breathing, premium */}
       <section className="relative min-h-[100svh] flex flex-col items-center justify-center px-5 sm:px-8 pt-20 pb-12 overflow-hidden">
         {/* Atmospheric particles */}
         <HeroAtmosphere />
@@ -45,7 +45,7 @@ export default function HomePage() {
             </p>
           </ScrollReveal>
 
-          {/* Terrarium image — floating with warm glow */}
+          {/* Terrarium image â floating with warm glow */}
           <ScrollReveal delay={550}>
             <div className="relative mx-auto mb-12 w-[min(380px,75vw)]">
               {/* Warm halo behind image */}
@@ -85,17 +85,17 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── INTERACTIVE TREE ─── Living, breathing, canvas-drawn */}
+      {/* âââ INTERACTIVE TREE âââ Living, breathing, canvas-drawn */}
       <section className="py-16 md:py-24 flex justify-center px-5">
         <ScrollReveal>
           <InteractiveTree />
         </ScrollReveal>
       </section>
 
-      {/* ─── IMPACT NUMBERS ─── Animated counters */}
+      {/* âââ IMPACT NUMBERS âââ Animated counters */}
       <ImpactNumbers />
 
-      {/* ─── THE RHYTHM ─── Three beats, maximum restraint */}
+      {/* âââ THE RHYTHM âââ Three beats, maximum restraint */}
       <section id="how" className="py-16 md:py-44">
         <div className="max-w-5xl mx-auto px-5 sm:px-8">
           <SplitText
@@ -110,7 +110,7 @@ export default function HomePage() {
               {
                 num: '01',
                 title: 'Gather',
-                desc: 'People who care leave messages of hope — their leaves on a growing tree.',
+                desc: 'People who care leave messages of hope â their leaves on a growing tree.',
                 icon: (
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--color-hope)] mb-4 opacity-60">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -164,7 +164,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── DARK SECTION ─── Gradient mesh + emotional gravity */}
+      {/* âââ DARK SECTION âââ Gradient mesh + emotional gravity */}
       <section className="relative py-20 md:py-48 overflow-hidden">
         <GradientMesh />
         <div className="relative z-10 max-w-3xl mx-auto px-5 sm:px-8 text-center">
@@ -184,7 +184,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── THREE SURFACES ─── Product architecture with glass cards */}
+      {/* âââ THREE SURFACES âââ Product architecture with glass cards */}
       <section className="py-16 md:py-44">
         <div className="max-w-5xl mx-auto px-5 sm:px-8">
           <div className="text-center mb-12 md:mb-28">
@@ -205,7 +205,7 @@ export default function HomePage() {
                 label: 'View example',
                 bg: 'rgba(245, 240, 234, 0.7)',
                 border: 'rgba(200, 180, 160, 0.2)',
-                icon: '🌱',
+                icon: 'ð±',
               },
               {
                 title: 'Sanctuary',
@@ -214,7 +214,7 @@ export default function HomePage() {
                 label: 'Learn more',
                 bg: 'rgba(238, 243, 235, 0.7)',
                 border: 'rgba(160, 200, 160, 0.2)',
-                icon: '🏡',
+                icon: 'ð¡',
               },
               {
                 title: 'Bridge',
@@ -223,7 +223,7 @@ export default function HomePage() {
                 label: 'Learn more',
                 bg: 'rgba(235, 238, 243, 0.7)',
                 border: 'rgba(160, 170, 200, 0.2)',
-                icon: '🌉',
+                icon: 'ð',
               },
             ].map((card) => (
               <StaggerItem key={card.title}>
@@ -244,7 +244,7 @@ export default function HomePage() {
                     </p>
                     <span className="text-[14px] font-medium text-[var(--color-hope)] inline-flex items-center gap-1.5 group-hover:gap-2.5 transition-all duration-300">
                       {card.label}
-                      <span className="text-[12px] transition-transform duration-300 group-hover:translate-x-0.5">→</span>
+                      <span className="text-[12px] transition-transform duration-300 group-hover:translate-x-0.5">â</span>
                     </span>
                   </div>
                 </Link>
@@ -254,7 +254,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── TRUST ─── Radical transparency, no gimmicks */}
+      {/* âââ TRUST âââ Radical transparency, no gimmicks */}
       <section className="py-16 md:py-44" style={{ backgroundColor: 'rgba(245, 245, 240, 0.5)' }}>
         <div className="max-w-[680px] mx-auto px-5 sm:px-8">
           <SplitText
@@ -269,7 +269,7 @@ export default function HomePage() {
               {[
                 {
                   q: 'Where do the funds go?',
-                  a: 'Funds support the platform, Sanctuary infrastructure, and operations. They are not transferred to the individual.',
+                  a: 'Funds support the Sanctuary infrastructure, and operations. They are not transferred to the individual.',
                 },
                 {
                   q: 'Can I pause my commitment?',
@@ -304,7 +304,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── FINAL CTA ─── One last breath */}
+      {/* âââ FINAL CTA âââ One last breath */}
       <section className="py-20 md:py-48">
         <div className="max-w-3xl mx-auto px-5 sm:px-8 text-center">
           <ScrollReveal>
