@@ -223,7 +223,7 @@ export default function MyCommitmentPage() {
 
                       {commitment.status === 'paused' && (
                         <p className="mt-4 text-sm text-[var(--color-text-muted)] italic">
-                          Life is bigger than any subscription. Your tree stays standing,
+                          Life is bigger than any commitment. Your tree stays standing,
                           your Sanctuary stays open, and we&apos;ll be here when you&apos;re
                           ready to resume. No questions asked.
                         </p>
